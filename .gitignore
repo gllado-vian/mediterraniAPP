@@ -8,33 +8,49 @@ node_modules/
 dist/
 web-build/
 
-# Native build output
-ios/
-android/
-*.ipa
-*.apk
-*.aab
-
 # Environment variables
 .env
 .env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env.*.local
 
 # Firebase
 .firebase/
 firebase-debug.log
 firestore-debug.log
 
+# iOS
+ios/
+Pods/
+ios/Podfile.lock
+*.pbxuser
+*.mode1v3
+xcuserdata/
+DerivedData/
+*.ipa
+
+# Android
+android/
+*.apk
+*.aab
+*.ap_
+*.dex
+*.class
+.gradle
+local.properties
+buck-out/
+\.buckd/
+.buckconfig
+
 # macOS
 .DS_Store
 .AppleDouble
 .LSOverride
+*~
 
 # Editor
-.vscode/
+.vscode/settings.json
 .idea/
+*.iml
 *.swp
 *.swo
 
@@ -42,6 +58,10 @@ firestore-debug.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Testing
+coverage/
+.nyc_output/
 
 # Build
 build/
