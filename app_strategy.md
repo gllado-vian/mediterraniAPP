@@ -944,8 +944,8 @@ Here are meals structured according to SJD Barcelona recommendations:
 ### 3.4 Development Tasks Breakdown
 
 #### **WEEK 3: Authentication & Home Screen (3-STEP FLOW)**
-- [ ] Set up Firebase project
-- [ ] Create login/signup screen (mobile & web)
+- [x] Set up Firebase project
+- [x] Create login/signup screen (mobile & web)
 - [ ] Build Home Screen with instant meal suggestion
 - [ ] Create three action buttons: Accept | Show Another | Customize
 - [ ] Implement instant suggestion loading (<1 second)
