@@ -19,7 +19,7 @@ async function renderToday(onOpenSwipe = vi.fn(), now = () => MONDAY) {
   const store = createAppStore({ repo, now });
   render(
     <AppStoreProvider store={store}>
-      <TodayScreen onOpenSwipe={onOpenSwipe} />
+      <TodayScreen onOpenSwipe={onOpenSwipe} onPickYesterday={vi.fn()} />
     </AppStoreProvider>,
   );
   await screen.findByRole('heading', { name: 'Dilluns, 28 de setembre' });
@@ -109,5 +109,105 @@ describe('TodayScreen', () => {
     now = new Date(2026, 8, 29, 19, 0);
     document.dispatchEvent(new Event('visibilitychange'));
     expect(await screen.findByRole('heading', { name: 'Dimarts, 29 de setembre' })).toBeInTheDocument();
+  });
+
+  describe('dinar', () => {
+    it('ofereix les 6 opcions de dinar', async () => {
+      await renderToday();
+      const group = screen.getByRole('group', { name: 'Què has dinat avui?' });
+      expect(within(group).getAllByRole('button').map((b) => b.textContent)).toEqual([
+        'Peix',
+        'Carn',
+        'Ou',
+        'Llegum',
+        'Vegetarià',
+        'Una altra cosa',
+      ]);
+    });
+
+    it('registrar el dinar el desa i, si coincideix, substitueix la proposta', async () => {
+      await renderToday();
+      await userEvent.click(screen.getByRole('button', { name: 'Peix' }));
+      expect(await screen.findByText('Canviat perquè has dinat peix')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Peix' })).toHaveAttribute('aria-pressed', 'true');
+      expect((await repo.getDay('2026-09-28'))?.lunch).toBe('peix');
+      const card = screen.getByRole('article', { name: 'Plat del dia' });
+      expect(within(card).queryByText('Sardines al forn')).not.toBeInTheDocument();
+    });
+
+    it('tornar a tocar l’opció marcada l’esborra', async () => {
+      await renderToday();
+      await userEvent.click(screen.getByRole('button', { name: 'Peix' }));
+      await userEvent.click(await screen.findByRole('button', { name: 'Peix', pressed: true }));
+      await vi.waitFor(async () => expect((await repo.getDay('2026-09-28'))?.lunch).toBeUndefined());
+      expect(screen.queryByText('Canviat perquè has dinat peix')).not.toBeInTheDocument();
+    });
+
+    it('"Una altra cosa" no veta cap categoria', async () => {
+      await renderToday();
+      await userEvent.click(screen.getByRole('button', { name: 'Una altra cosa' }));
+      const card = screen.getByRole('article', { name: 'Plat del dia' });
+      expect(within(card).getByText('Sardines al forn')).toBeInTheDocument();
+    });
+
+    it('amb el sopar confirmat, el dinar ja no es pot canviar', async () => {
+      await renderToday();
+      await userEvent.click(screen.getByRole('button', { name: 'Sopem això' }));
+      await screen.findByText('Bon profit!');
+      expect(screen.queryByRole('group', { name: 'Què has dinat avui?' })).not.toBeInTheDocument();
+    });
+  });
+
+  describe('avís d’ahir', () => {
+    it('no pregunta per ahir el dia que s’instal·la l’app', async () => {
+      await renderToday();
+      expect(screen.queryByRole('region', { name: 'Sopar d’ahir' })).not.toBeInTheDocument();
+    });
+
+    it('pregunta si ahir es va sopar el plat proposat i "Sí" el confirma', async () => {
+      await repo.ensureHouse(new Date(2026, 8, 20));
+      await renderToday();
+      const region = screen.getByRole('region', { name: 'Sopar d’ahir' });
+      expect(within(region).getByText('Ahir: vas sopar Sardines al forn?')).toBeInTheDocument();
+      await userEvent.click(within(region).getByRole('button', { name: 'Sí' }));
+      await vi.waitFor(() =>
+        expect(screen.queryByRole('region', { name: 'Sopar d’ahir' })).not.toBeInTheDocument(),
+      );
+      expect((await repo.getDay('2026-09-27'))?.dinner).toMatchObject({
+        status: 'confirmed',
+        dishId: 'base-sardines-forn',
+      });
+    });
+
+    it('"No ho recordo" deixa ahir en blanc', async () => {
+      await repo.ensureHouse(new Date(2026, 8, 20));
+      await renderToday();
+      await userEvent.click(screen.getByRole('button', { name: 'No ho recordo' }));
+      await vi.waitFor(async () =>
+        expect((await repo.getDay('2026-09-27'))?.dinner).toEqual({ status: 'unknown' }),
+      );
+      expect(screen.queryByRole('region', { name: 'Sopar d’ahir' })).not.toBeInTheDocument();
+    });
+
+    it('"Una altra cosa" obre el swipe per a ahir', async () => {
+      await repo.ensureHouse(new Date(2026, 8, 20));
+      const onPickYesterday = vi.fn();
+      const store = createAppStore({ repo, now: () => MONDAY });
+      render(
+        <AppStoreProvider store={store}>
+          <TodayScreen onOpenSwipe={vi.fn()} onPickYesterday={onPickYesterday} />
+        </AppStoreProvider>,
+      );
+      const region = await screen.findByRole('region', { name: 'Sopar d’ahir' });
+      await userEvent.click(within(region).getByRole('button', { name: 'Una altra cosa' }));
+      expect(onPickYesterday).toHaveBeenCalledWith('2026-09-27');
+    });
+
+    it('no pregunta si ahir ja està resolt', async () => {
+      await repo.ensureHouse(new Date(2026, 8, 20));
+      await repo.markDinnerUnknown('2026-09-27');
+      await renderToday();
+      expect(screen.queryByRole('region', { name: 'Sopar d’ahir' })).not.toBeInTheDocument();
+    });
   });
 });

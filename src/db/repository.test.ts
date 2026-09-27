@@ -29,6 +29,13 @@ describe('casa única', () => {
   });
 });
 
+describe('data de creació de la casa', () => {
+  it('es pot fixar la data de creació (per saber des de quan existeix l’app)', async () => {
+    const house = await repo.ensureHouse(new Date(2026, 8, 20, 10));
+    expect(house.createdAt.slice(0, 10)).toBe('2026-09-20');
+  });
+});
+
 describe('ajustos', () => {
   it('el marge de capritx per defecte és de 7 dies', async () => {
     expect(await repo.getSettings()).toEqual({ capritxMarginDays: 7 });

@@ -25,11 +25,24 @@
 | 3 | Generador del pla setmanal dinàmic | ✅ fet |
 | 4 | Pantalla "plat del dia" + botó cap al swipe | ✅ fet + polish |
 | 5 | Swipe de plats (ordenat per equilibri pendent; capritxos al final) | ✅ fet (tocar la targeta obrirà el +info al pas 8) |
-| 6 | Registre del dinar (no bloquejant, vinculant) + avís "ahir: vas sopar X?" | ⏭️ següent |
+| 6 | Registre del dinar (no bloquejant, vinculant) + avís "ahir: vas sopar X?" | 🚧 en curs: tests escrits en vermell (TDD), falta el codi |
 | 7 | Resum setmanal per categoria | pendent |
 | 8 | "+info" del plat | pendent |
 | 9 | Export/import JSON + Ajustos (marge capritx, els meus plats) | pendent |
 | 10 | Passada final d'identitat visual + `DESIGN.md` (Impeccable document) | pendent |
+
+## On som exactament (pas 6)
+
+Tests ja escrits i fallant pel motiu correcte (fase RED):
+- `src/db/repository.test.ts`: `ensureHouse(data)` accepta la data de creació.
+- `src/screens/TodayScreen.test.tsx`: blocs "dinar" i "avís d'ahir".
+
+Falta implementar (fase GREEN):
+1. `repo.ensureHouse(createdAt = new Date())`; l'store hi passa `now()` i exposa la data d'instal·lació.
+2. Store: acció `markDinnerUnknown(date)`.
+3. `TodayScreen`: fila "Què has dinat avui?" (grup amb 6 botons `aria-pressed`: Peix, Carn, Ou, Llegum, Vegetarià, Una altra cosa; tornar a tocar esborra; s'amaga si el sopar és confirmat) i regió "Sopar d'ahir" ("Ahir: vas sopar X?" → Sí / Una altra cosa / No ho recordo), només si la casa existia ahir i ahir no té sopar. Nova prop `onPickYesterday(date)`.
+4. `SwipeScreen`: títol "Què vas sopar ahir?" quan la data no és avui.
+5. `App`: estat de pantalla amb data per al swipe d'ahir; test de flux complet.
 
 ## Decisions preses durant la construcció
 
@@ -39,6 +52,7 @@
 - Plats base ordenats segons el recetari (l'store els reordena; IndexedDB els retorna per id).
 - Swipe: en cas d'empat entre categories pendents, la del plat rebutjat (el de la pantalla Avui) va després.
 - Swipe: els capritxos porten el segell "No recomanat"; l'avís de marge surt a la targeta, sense passos extra.
+- L'avís d'ahir no surt el dia que s'instal·la l'app (data de creació de la casa).
 - Els plugins s'instal·len amb el hook `.claude/hooks/session-start.sh` (les sessions noves no ho feien soles).
 
 ## Pendents d'Impeccable (per a la sessió amb el plugin carregat)
