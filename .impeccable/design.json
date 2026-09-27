@@ -1,0 +1,412 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-27T16:45:28.247Z",
+  "title": "Design System: Què sopem",
+  "extensions": {
+    "colorMeta": {
+      "tinta": {
+        "role": "primary",
+        "displayName": "Tinta d'oliva",
+        "canonical": "oklch(36.4% 0.042 122.9)",
+        "tonalRamp": [
+          "oklch(15% 0.042 122.9)",
+          "oklch(25% 0.042 122.9)",
+          "oklch(35% 0.042 122.9)",
+          "oklch(45% 0.042 122.9)",
+          "oklch(55% 0.042 122.9)",
+          "oklch(65% 0.042 122.9)",
+          "oklch(80% 0.042 122.9)",
+          "oklch(95% 0.030 122.9)"
+        ]
+      },
+      "peix": {
+        "role": "secondary",
+        "displayName": "Blau de mar",
+        "canonical": "oklch(64.3% 0.052 233.5)",
+        "tonalRamp": [
+          "oklch(15% 0.052 233.5)",
+          "oklch(25% 0.052 233.5)",
+          "oklch(35% 0.052 233.5)",
+          "oklch(45% 0.052 233.5)",
+          "oklch(55% 0.052 233.5)",
+          "oklch(65% 0.052 233.5)",
+          "oklch(80% 0.052 233.5)",
+          "oklch(95% 0.030 233.5)"
+        ]
+      },
+      "carn": {
+        "role": "secondary",
+        "displayName": "Terracota rosada",
+        "canonical": "oklch(66.5% 0.079 32.5)",
+        "tonalRamp": [
+          "oklch(15% 0.079 32.5)",
+          "oklch(25% 0.079 32.5)",
+          "oklch(35% 0.079 32.5)",
+          "oklch(45% 0.079 32.5)",
+          "oklch(55% 0.079 32.5)",
+          "oklch(65% 0.079 32.5)",
+          "oklch(80% 0.079 32.5)",
+          "oklch(95% 0.030 32.5)"
+        ]
+      },
+      "ou": {
+        "role": "secondary",
+        "displayName": "Groc de rovell",
+        "canonical": "oklch(83.7% 0.123 81.2)",
+        "tonalRamp": [
+          "oklch(15% 0.123 81.2)",
+          "oklch(25% 0.123 81.2)",
+          "oklch(35% 0.123 81.2)",
+          "oklch(45% 0.123 81.2)",
+          "oklch(55% 0.123 81.2)",
+          "oklch(65% 0.123 81.2)",
+          "oklch(80% 0.123 81.2)",
+          "oklch(95% 0.030 81.2)"
+        ]
+      },
+      "llegum": {
+        "role": "secondary",
+        "displayName": "Oliva fosca",
+        "canonical": "oklch(52.4% 0.070 111.6)",
+        "tonalRamp": [
+          "oklch(15% 0.070 111.6)",
+          "oklch(25% 0.070 111.6)",
+          "oklch(35% 0.070 111.6)",
+          "oklch(45% 0.070 111.6)",
+          "oklch(55% 0.070 111.6)",
+          "oklch(65% 0.070 111.6)",
+          "oklch(80% 0.070 111.6)",
+          "oklch(95% 0.030 111.6)"
+        ]
+      },
+      "vegetaria": {
+        "role": "secondary",
+        "displayName": "Verd d'olivó",
+        "canonical": "oklch(78.4% 0.110 110.4)",
+        "tonalRamp": [
+          "oklch(15% 0.110 110.4)",
+          "oklch(25% 0.110 110.4)",
+          "oklch(35% 0.110 110.4)",
+          "oklch(45% 0.110 110.4)",
+          "oklch(55% 0.110 110.4)",
+          "oklch(65% 0.110 110.4)",
+          "oklch(80% 0.110 110.4)",
+          "oklch(95% 0.030 110.4)"
+        ]
+      },
+      "capritx": {
+        "role": "secondary",
+        "displayName": "Granat de rajola",
+        "canonical": "oklch(51.2% 0.141 32.0)",
+        "tonalRamp": [
+          "oklch(15% 0.141 32.0)",
+          "oklch(25% 0.141 32.0)",
+          "oklch(35% 0.141 32.0)",
+          "oklch(45% 0.141 32.0)",
+          "oklch(55% 0.141 32.0)",
+          "oklch(65% 0.141 32.0)",
+          "oklch(80% 0.141 32.0)",
+          "oklch(95% 0.030 32.0)"
+        ]
+      },
+      "capritx-tinta": {
+        "role": "tertiary",
+        "displayName": "Granat d'avís",
+        "canonical": "oklch(44.5% 0.126 32.3)",
+        "tonalRamp": [
+          "oklch(15% 0.126 32.3)",
+          "oklch(25% 0.126 32.3)",
+          "oklch(35% 0.126 32.3)",
+          "oklch(45% 0.126 32.3)",
+          "oklch(55% 0.126 32.3)",
+          "oklch(65% 0.126 32.3)",
+          "oklch(80% 0.126 32.3)",
+          "oklch(95% 0.030 32.3)"
+        ]
+      },
+      "ciment": {
+        "role": "neutral",
+        "displayName": "Ciment de junta",
+        "canonical": "oklch(96.1% 0.000 89.9)",
+        "tonalRamp": [
+          "oklch(15% 0.000 89.9)",
+          "oklch(25% 0.000 89.9)",
+          "oklch(35% 0.000 89.9)",
+          "oklch(45% 0.000 89.9)",
+          "oklch(55% 0.000 89.9)",
+          "oklch(65% 0.000 89.9)",
+          "oklch(80% 0.000 89.9)",
+          "oklch(95% 0.000 89.9)"
+        ]
+      },
+      "rajola": {
+        "role": "neutral",
+        "displayName": "Rajola crua",
+        "canonical": "oklch(89.5% 0.027 71.2)",
+        "tonalRamp": [
+          "oklch(15% 0.027 71.2)",
+          "oklch(25% 0.027 71.2)",
+          "oklch(35% 0.027 71.2)",
+          "oklch(45% 0.027 71.2)",
+          "oklch(55% 0.027 71.2)",
+          "oklch(65% 0.027 71.2)",
+          "oklch(80% 0.027 71.2)",
+          "oklch(95% 0.027 71.2)"
+        ]
+      },
+      "tinta-suau": {
+        "role": "neutral",
+        "displayName": "Tinta suau",
+        "canonical": "oklch(48.5% 0.043 121.4)",
+        "tonalRamp": [
+          "oklch(15% 0.043 121.4)",
+          "oklch(25% 0.043 121.4)",
+          "oklch(35% 0.043 121.4)",
+          "oklch(45% 0.043 121.4)",
+          "oklch(55% 0.043 121.4)",
+          "oklch(65% 0.043 121.4)",
+          "oklch(80% 0.043 121.4)",
+          "oklch(95% 0.030 121.4)"
+        ]
+      },
+      "tinta-fosca": {
+        "role": "neutral",
+        "displayName": "Tinta fosca",
+        "canonical": "oklch(25.0% 0.032 121.4)",
+        "tonalRamp": [
+          "oklch(15% 0.032 121.4)",
+          "oklch(25% 0.032 121.4)",
+          "oklch(35% 0.032 121.4)",
+          "oklch(45% 0.032 121.4)",
+          "oklch(55% 0.032 121.4)",
+          "oklch(65% 0.032 121.4)",
+          "oklch(80% 0.032 121.4)",
+          "oklch(95% 0.030 121.4)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Nom del plat a la rajola (1.5rem en compacte)."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Nom al dors de la rajola i estats buits."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Títol de capçalera i etiqueta del botó primari."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Text corrent, categoria · temps, camps."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Llegendes, rajoletes, etiquetes de camp, accions de text."
+      }
+    },
+    "shadows": [
+      {
+        "name": "panell-flotant",
+        "value": "0 8px 24px -6px rgb(58 66 41 / 0.28)",
+        "purpose": "Només el panell del menú. L'única ombra d'elevació del sistema."
+      },
+      {
+        "name": "linia-de-camp",
+        "value": "inset 0 -1px 0 rgb(58 66 41 / 0.3)",
+        "purpose": "Línia de base dels camps de text; no és elevació."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out-expo",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Única corba de moviment del sistema."
+      },
+      {
+        "name": "rajola-col-locada",
+        "value": "520ms ease-out-expo; scale 0.55 → 1 + clip-path inset(50% round 6px) → inset(0 round 6px)",
+        "purpose": "Interacció signatura: la rajoleta d'avui es col·loca a la setmana en confirmar. Desactivada amb prefers-reduced-motion."
+      },
+      {
+        "name": "gir-de-rajola",
+        "value": "420ms ease-out-expo; rotateY(180deg), perspective 1400px",
+        "purpose": "Gir de la rajola del plat per veure el dors. Instantani amb prefers-reduced-motion."
+      },
+      {
+        "name": "menu-obert",
+        "value": "180ms ease-out-expo; opacity 0 → 1, translateY(-6px) → 0",
+        "purpose": "Entrada del panell del menú. Desactivada amb prefers-reduced-motion."
+      },
+      {
+        "name": "vol-del-swipe",
+        "value": "220ms ease-out-expo; translateX + rotate(offset/24 deg)",
+        "purpose": "Sortida de la rajola al swipe. Sense espera amb prefers-reduced-motion."
+      },
+      {
+        "name": "premut",
+        "value": "150ms; scale 0.98",
+        "purpose": "Resposta tàctil del botó primari."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "columna",
+        "value": "28rem",
+        "purpose": "Amplada màxima de l'única columna; no hi ha disposició d'escriptori diferent."
+      },
+      {
+        "name": "mobil-petit",
+        "value": "375x667",
+        "purpose": "Viewport de referència: Avui, formulari i Ajustos hi caben sense scroll."
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Botó primari",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Tinta plena, 56px: \"Sopem això\", \"Desar\".",
+      "html": "<button class=\"ds-btn-primary\">Sopem això</button>",
+      "css": ".ds-btn-primary { width: 100%; height: 56px; border: none; border-radius: 6px; background: #3a4229; color: #f2f2f2; font: 600 1.125rem/1.556 \"Figtree Variable\", system-ui, sans-serif; transition: transform 150ms, background-color 150ms; cursor: pointer; } .ds-btn-primary:hover { background: rgb(58 66 41 / 0.9); } .ds-btn-primary:active { transform: scale(0.98); } .ds-btn-primary:focus-visible { outline: 2px solid #3a4229; outline-offset: 3px; }"
+    },
+    {
+      "name": "Botó secundari",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Vora de tinta al 25%, sense fons: \"Canviar plat\".",
+      "html": "<button class=\"ds-btn-secondary\">Canviar plat</button>",
+      "css": ".ds-btn-secondary { width: 100%; height: 48px; border: 2px solid rgb(58 66 41 / 0.25); border-radius: 6px; background: transparent; color: #3a4229; font: 500 1rem/1.5 \"Figtree Variable\", system-ui, sans-serif; transition: border-color 150ms, background-color 150ms; cursor: pointer; } .ds-btn-secondary:hover { border-color: rgb(58 66 41 / 0.5); background: rgb(232 218 202 / 0.5); } .ds-btn-secondary:active { background: #e8daca; } .ds-btn-secondary:focus-visible { outline: 2px solid #3a4229; outline-offset: 3px; }"
+    },
+    {
+      "name": "Acció de text",
+      "kind": "button",
+      "refersTo": "button-text",
+      "description": "Acció menor subratllada: \"Desfer\", \"No ho recordo\".",
+      "html": "<button class=\"ds-btn-text\">Desfer</button>",
+      "css": ".ds-btn-text { min-height: 44px; padding: 0 12px; border: none; border-radius: 6px; background: transparent; color: #3a4229; font: 500 0.875rem/1.43 \"Figtree Variable\", system-ui, sans-serif; text-decoration: underline; text-decoration-color: rgb(58 66 41 / 0.4); text-underline-offset: 4px; cursor: pointer; } .ds-btn-text:hover { text-decoration-color: #3a4229; } .ds-btn-text:focus-visible { outline: 2px solid #3a4229; outline-offset: 3px; }"
+    },
+    {
+      "name": "Rajoletes de dinar",
+      "kind": "chip",
+      "refersTo": "rajoleta",
+      "description": "Mini-taulell amb juntes de 2px; franja superior de categoria, plena en marcar-la.",
+      "html": "<div class=\"ds-rajoletes\"><button class=\"ds-rajoleta\" style=\"--c:#6e93a8\">Peix</button><button class=\"ds-rajoleta\" style=\"--c:#bf8275\" aria-pressed=\"true\">Carn</button><button class=\"ds-rajoleta\" style=\"--c:#f2c166\">Ou</button></div>",
+      "css": ".ds-rajoletes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; } .ds-rajoleta { position: relative; overflow: hidden; min-height: 44px; border: none; border-radius: 6px; background: #e8daca; color: #3a4229; font: 500 0.875rem/1.43 \"Figtree Variable\", system-ui, sans-serif; transition: background-color 150ms; cursor: pointer; } .ds-rajoleta::before { content: \"\"; position: absolute; inset: 0 0 auto 0; height: 4px; background: var(--c); } .ds-rajoleta:hover { background: rgb(232 218 202 / 0.7); } .ds-rajoleta[aria-pressed=\"true\"] { background: var(--c); color: #1f2412; } .ds-rajoleta[aria-pressed=\"true\"]::before { display: none; } .ds-rajoleta:focus-visible { outline: 2px solid #3a4229; outline-offset: 3px; }"
+    },
+    {
+      "name": "Rajola del plat",
+      "kind": "card",
+      "refersTo": "dish-tile",
+      "description": "Camp de color de categoria a dalt amb la icona outline; nom i categoria · temps a sota.",
+      "html": "<article class=\"ds-dish\" tabindex=\"0\"><div class=\"ds-dish-field\"><svg width=\"104\" height=\"104\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#3a4229\" stroke-width=\"1.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M16.69 7.44a6.973 6.973 0 0 0 -1.69 4.56c0 1.747 .64 3.345 1.699 4.571\"/><path d=\"M2 9.504c7.715 8.647 14.75 10.265 20 2.498c-5.25 -7.761 -12.285 -6.142 -20 2.504\"/><path d=\"M18 11v.01\"/><path d=\"M11.5 10.5c-.667 1 -.667 2 0 3\"/></svg></div><div class=\"ds-dish-body\"><h2>Menestra amb tonyina</h2><p>Peix · 30 min</p></div></article>",
+      "css": ".ds-dish { display: flex; flex-direction: column; overflow: hidden; border-radius: 6px; background: #e8daca; color: #3a4229; font-family: \"Figtree Variable\", system-ui, sans-serif; cursor: pointer; } .ds-dish:focus-visible { outline: 2px solid #3a4229; outline-offset: 3px; } .ds-dish-field { display: grid; place-items: center; min-height: 128px; background: #6e93a8; } .ds-dish-body { padding: 16px 20px 20px; } .ds-dish-body h2 { margin: 0; font-size: 1.75rem; line-height: 1.25; font-weight: 600; text-wrap: balance; } .ds-dish-body p { margin: 6px 0 0; font-size: 1rem; color: #5b6348; }"
+    },
+    {
+      "name": "Fila de la setmana",
+      "kind": "custom",
+      "refersTo": "rajoleta",
+      "description": "Set rajoletes quadrades amb juntes de 2px: plena (confirmada), marc granat (capritx), anell de tinta (avui).",
+      "html": "<ul class=\"ds-week\"><li style=\"background:#6e93a8;color:#1f2412\">Dl</li><li style=\"background:#f2c166\">Dt</li><li class=\"ds-capritx\">Dc</li><li class=\"ds-avui\">Dj</li><li>Dv</li><li>Ds</li><li>Dg</li></ul>",
+      "css": ".ds-week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; list-style: none; margin: 0; padding: 0; font: 500 0.875rem/1.43 \"Figtree Variable\", system-ui, sans-serif; } .ds-week li { position: relative; display: grid; place-items: center; aspect-ratio: 1; border-radius: 6px; background: rgb(232 218 202 / 0.6); color: #5b6348; } .ds-week li[style] { color: #3a4229; } .ds-week .ds-capritx { box-shadow: inset 0 0 0 3px #a8402e; } .ds-week .ds-avui { box-shadow: inset 0 0 0 2px #3a4229; } @keyframes ds-col-locada { from { transform: scale(0.55); clip-path: inset(50% 50% 50% 50% round 6px); } to { transform: scale(1); clip-path: inset(0 round 6px); } } .ds-week li[style]:first-child { animation: ds-col-locada 520ms cubic-bezier(0.16, 1, 0.3, 1) both; } @media (prefers-reduced-motion: reduce) { .ds-week li { animation: none !important; } }"
+    },
+    {
+      "name": "Camp de text",
+      "kind": "input",
+      "refersTo": "input-field",
+      "description": "Rajola plena amb línia de base; la vora passa a tinta en focus i a granat en error.",
+      "html": "<label class=\"ds-field-label\" for=\"ds-nom\">Nom del plat</label><input id=\"ds-nom\" class=\"ds-field\" placeholder=\"Truita de patates\">",
+      "css": ".ds-field-label { display: block; font: 500 0.875rem/1.43 \"Figtree Variable\", system-ui, sans-serif; color: #3a4229; } .ds-field { display: block; width: 100%; margin-top: 4px; padding: 10px 12px; border: 2px solid transparent; border-radius: 6px; background: #e8daca; box-shadow: inset 0 -1px 0 rgb(58 66 41 / 0.3); color: #3a4229; font: 400 1rem/1.5 \"Figtree Variable\", system-ui, sans-serif; } .ds-field::placeholder { color: rgb(91 99 72 / 0.7); } .ds-field:focus { border-color: #3a4229; outline: none; } .ds-field[aria-invalid=\"true\"] { border-color: #8c3222; }"
+    },
+    {
+      "name": "Menú",
+      "kind": "nav",
+      "refersTo": "menu-panel",
+      "description": "Panell de ciment amb ombra suau i tres rajoles; la pantalla actual en tinta plena.",
+      "html": "<nav class=\"ds-menu\"><button class=\"ds-menu-item\" aria-current=\"page\">Avui</button><button class=\"ds-menu-item\">La teva setmana</button><button class=\"ds-menu-item\">Ajustos</button></nav>",
+      "css": ".ds-menu { display: grid; gap: 2px; width: 240px; padding: 4px; border-radius: 8px; background: #f2f2f2; box-shadow: 0 8px 24px -6px rgb(58 66 41 / 0.28); animation: ds-menu-obert 180ms cubic-bezier(0.16, 1, 0.3, 1) both; } @keyframes ds-menu-obert { from { opacity: 0; transform: translateY(-6px); } } .ds-menu-item { min-height: 48px; padding: 0 12px; border: none; border-radius: 6px; background: #e8daca; color: #3a4229; text-align: left; font: 500 1rem/1.5 \"Figtree Variable\", system-ui, sans-serif; transition: background-color 150ms; cursor: pointer; } .ds-menu-item:hover { background: rgb(232 218 202 / 0.7); } .ds-menu-item[aria-current] { background: #3a4229; color: #f2f2f2; } .ds-menu-item:focus-visible { outline: 2px solid #3a4229; outline-offset: 3px; } @media (prefers-reduced-motion: reduce) { .ds-menu { animation: none; } }"
+    }
+  ],
+  "narrative": {
+    "northStar": "El Taulell",
+    "overview": "La setmana s'enrajola. El fons de l'app és el ciment de les juntes; cada superfície és una rajola hidràulica de color terra amb la cantonada petita, separada de la veïna per una junta de 2px. Cada plat porta a la part superior un camp de color de la seva categoria amb la icona Tabler outline gran com a motiu central, i cada sopar confirmat col·loca una rajoleta de color a la fila de la setmana. L'equilibri es llegeix com un mosaic que s'omple, mai com a números.\n\nLa densitat és la d'una eina de vespre, a una mà: una sola columna estreta, poques peces, accions al terç inferior a l'abast del polze. El món és pla i material alhora: la profunditat surt de la geometria (rajola sobre ciment, juntes, camp de color que omple o emmarca), no d'ombres ni de degradats. El refús explícit de la direcció és el tauler de targetes blanques amb mètriques i anells de progrés.\n\nLa veu és curta i propera, en català i amb tuteig (\"Sopem això\", \"Canviar plat\", \"Bon profit!\", \"No ho recordo\"), amb l'apòstrof tipogràfic (’) a tota la interfície.",
+    "keyCharacteristics": [
+      "Ciment `ciment` de fons, rajoles `rajola` com a única superfície, tinta verda oliva `tinta` per a tot el text.",
+      "Juntes de 2px entre rajoles germanes; cantonada de 6px a totes les rajoles.",
+      "Camp de color de categoria a dalt de la rajola, amb la icona outline com a motiu.",
+      "Una sola interacció signatura: la rajola del dia es col·loca a la setmana.",
+      "Pla: cap ombra d'elevació excepte el panell del menú."
+    ],
+    "rules": [
+      {
+        "name": "The Ink-On Rule",
+        "body": "Tota icona o text sobre un color de categoria es tria per contrast, mai a mà. Icones: `inkOn` (la tinta de paleta amb més contrast, ≥3:1): tinta sobre Peix, Carn, Ou i Vegetarià; ciment sobre Llegum i Capritx. Text: `textInkOn` (≥4,5:1): la mateixa tinta si hi arriba; si no, tinta fosca. Tinta fosca només apareix sobre Peix i Carn.",
+        "section": "colors"
+      },
+      {
+        "name": "The Category-Is-Field Rule",
+        "body": "Un color de categoria sempre és superfície (camp, franja, farciment o marc), mai text. El text que ha de dir \"capritx\" o \"error\" fa servir granat d'avís.",
+        "section": "colors"
+      },
+      {
+        "name": "The Capritx Frame Rule",
+        "body": "El capritx no compta per a cap quota, i per això a la setmana no omple la rajoleta: l'emmarca amb una vora de 3px en granat. Si és avui, la marca d'avui va per dins del marc.",
+        "section": "colors"
+      },
+      {
+        "name": "The Plain Case Rule",
+        "body": "Cap etiqueta en majúscules ni amb espaiat ampliat; no hi ha titolets sobre els títols. Una llegenda és una frase normal (\"Què has dinat avui?\").",
+        "section": "typography"
+      },
+      {
+        "name": "The Tabular Count Rule",
+        "body": "Els valors numèrics que canvien al lloc (comptador del marge, minuts al formulari) porten xifres tabulars.",
+        "section": "typography"
+      },
+      {
+        "name": "The First Viewport Rule",
+        "body": "Avui (amb l'avís d'ahir obert i noms de dues línies), el formulari de plat (nou i editant) i Ajustos (inclosa la confirmació d'importar) caben sencers a 375×667 sense scroll. Quan no hi caben, es compacta la peça (rajola compacta, ingredients en tres línies que es desplacen dins la caixa, dors que es desplaça dins la rajola), mai s'afegeix scroll a la pantalla.",
+        "section": "layout"
+      },
+      {
+        "name": "The Thumb Rule",
+        "body": "Tot objectiu tàctil fa com a mínim 44px d'alçada; el primari fa 56px. L'acció principal és sempre l'última peça gran de la columna.",
+        "section": "layout"
+      },
+      {
+        "name": "The Flat Tile Rule",
+        "body": "Cap rajola, botó ni fila porta ombra. Si un element necessita separar-se, es separa amb una junta, amb un canvi de to (rajola / ciment / tinta) o amb un marc, no amb una ombra.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Top Field Rule",
+        "body": "El color de categoria d'una rajola ocupa la part superior (camp de color a la rajola del plat, franja de 4px a les rajoletes) o la peça sencera quan està marcada o complerta. Mai una franja lateral.",
+        "section": "shapes"
+      }
+    ],
+    "dos": [
+      "**Do** fer servir `ciment` de fons i `rajola` com a única superfície; separar les peces germanes amb juntes de 2px.",
+      "**Do** posar el color de categoria a dalt de la rajola o omplint-la sencera, i triar la tinta de sobre amb `inkOn` (icones, ≥3:1) o `textInkOn` (text, ≥4,5:1).",
+      "**Do** emmarcar el capritx (vora de 3px) a la setmana, no omplir-lo.",
+      "**Do** fer servir icones Tabler outline: 20–24px amb traç 1,75 a la interfície, 22px amb traç 1,5 dins el quadret de categoria, 104px amb traç 1,25 com a motiu.",
+      "**Do** mantenir Avui, el formulari i Ajustos sencers a 375×667; compactar la peça abans de deixar que la pantalla faci scroll.",
+      "**Do** escriure curt, en català, amb tuteig i apòstrof tipogràfic (’).",
+      "**Do** respectar `prefers-reduced-motion`: sense col·locació de rajola, sense entrada del menú, gir instantani i swipe sense vol.",
+      "**Do** mostrar el focus amb un contorn de 2px en tinta a 3px de distància."
+    ],
+    "donts": [
+      "**Don't** posar franges laterals de color a cap rajola, avís ni fila.",
+      "**Don't** fer servir ombres, excepte l'ombra suau del panell del menú (i la línia de base dels camps, que no és elevació).",
+      "**Don't** fer servir degradats ni ombres de colors.",
+      "**Don't** omplir la rajoleta d'un capritx a la setmana.",
+      "**Don't** fer servir un color de categoria com a color de text; per a text d'avís, granat d'avís.",
+      "**Don't** fer servir tinta fosca com a color general; és només per a text petit sobre Peix i Carn.",
+      "**Don't** mostrar números nutricionals, mètriques ni anells de progrés; el progrés és la rajola plena.",
+      "**Don't** posar titolets en majúscules ni etiquetes espaiades sobre els títols.",
+      "**Don't** fer servir fotos de plats ni icones farcides; el motiu d'un plat és la seva icona outline."
+    ]
+  }
+}

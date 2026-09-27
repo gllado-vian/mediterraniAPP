@@ -29,14 +29,18 @@
 | 7 | Resum setmanal per categoria | ✅ fet + polish |
 | 8 | "+info" del plat | ✅ fet + polish |
 | 9 | Export/import JSON + Ajustos (marge capritx, els meus plats) | ✅ fet + polish (9a menú + marge, 9b els meus plats, 9c còpia de seguretat) |
-| 10 | Passada final d'identitat visual + `DESIGN.md` (Impeccable document) | 🚧 en curs: 10a ✅ revisió, 10b ✅ correccions, 10c ✅ icona, 10d DESIGN.md |
+| 10 | Passada final d'identitat visual + `DESIGN.md` (Impeccable document) | ✅ fet (10a revisió, 10b correccions, 10c icona, 10d DESIGN.md) |
 
-## On som exactament (pas 10)
+## On som exactament
 
-- **10a ✅** Revisió final amb `impeccable-finish-reviewer` (veredicte: publicable amb correccions).
-- **10b ✅** Correccions aplicades (totes, per decisió de l'Olga). El punt 3 de la revisió (focus d'"Importar un fitxer") era un fals positiu: el focus ja es veia (comprovat al navegador).
-- **10c ✅** Icona "rajola del dia" amb el motiu `salad` de Tabler (triada per l'Olga): SVG + PNG 180/192/512 + maskable. Procedència a `docs/ICONES.md`; es regeneren amb `node scripts/generate-icons.mjs`.
-- **10d** `DESIGN.md` amb `impeccable-documenter`.
+**MVP complet: els 10 passos fets.** 208 tests en verd, `tsc` net, detector d'Impeccable sense findings.
+
+- Pas 10: revisió final amb `impeccable-finish-reviewer` (publicable amb correccions; aplicades totes), icona "rajola del dia" amb amanida (`docs/ICONES.md`) i `DESIGN.md` + `.impeccable/design.json` redactats per `impeccable-documenter` a partir del codi.
+- Següent: que l'Olga provi l'app 1–2 setmanes al seu mòbil (sobretot: on va a parar el fitxer exportat a iOS i la icona a la pantalla d'inici).
+
+**Punts oberts (no bloquejants), detectats al pas 10:**
+- Els colors de categoria són en dos llocs (`src/index.css` i `src/domain/categories.ts`); si mai canvien, cal canviar-los tots dos.
+- La línia de base dels camps (`inset 0 -1px 0`) és l'única ombra a part de la del menú; aprovada per l'Olga (punt 9 de la revisió) i documentada a `DESIGN.md`.
 
 ## Decisions preses durant la construcció
 
@@ -73,7 +77,7 @@
 
 - ~~Pas 10: pista per saber que la fila de la setmana obre el resum.~~ Resolt a la 9a: el menú de capçalera porta a "La teva setmana" (la fila continua sent una drecera).
 
-## Pendents d'Impeccable (per a la sessió amb el plugin carregat)
+## Impeccable
 
-- Tirada de direcció degradada (impeccable.style bloquejat per la xarxa de l'entorn). La direcció Taulell ja està aprovada: no cal tornar-la a triar.
-- Revisió final amb `impeccable-finish-reviewer` i `DESIGN.md` amb `impeccable-documenter`: fer-ho al pas 10.
+- Tirada de direcció degradada (impeccable.style bloquejat per la xarxa de l'entorn). La direcció Taulell està aprovada i documentada a `DESIGN.md`.
+- Revisió final i `DESIGN.md`: fets al pas 10.
