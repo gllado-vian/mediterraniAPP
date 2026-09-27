@@ -141,7 +141,7 @@ Els sis colors de categoria. Només apareixen com a camp de color d'un plat, com
 - **Granat de rajola** (`capritx`): Capritx per un dia. Mateixa família que Carn; es distingeixen per forma (ple / marc), icona i nom. Decisió de la propietària: la paleta es queda com està.
 
 ### Tertiary
-- **Granat d'avís** (`capritx-tinta`): el mateix to del capritx enfosquit perquè el text petit arribi a 4,5:1 (5,9:1 sobre rajola). Errors de formulari, avís de marge entre capritxos, segell "No recomanat", accions destructives ("Esborrar el plat", "Sí, esborra’l").
+- **Granat d'avís** (`capritx-tinta`): el mateix to del capritx enfosquit perquè el text petit arribi a 4,5:1 (5,9:1 sobre rajola). Errors de formulari, avís de marge entre capritxos, segell "No recomanat", accions destructives ("Esborrar el plat"; el botó "Esborrar" de la confirmació és granat d’avís ple amb text ciment).
 
 ### Neutral
 - **Ciment de junta** (`ciment`): fons de tota l'app, color que es veu a les juntes, text sobre tinta plena, fons del panell del menú i dels segells sobre el camp de color.
@@ -215,7 +215,7 @@ Peces de tinta plena o de rajola; mai contorns acolorits ni degradats.
 - **Shape:** cantonada de rajola (6px).
 - **Primary:** tinta plena, text ciment en semibold, 56px d'alçada i amplada sencera ("Sopem això", "Desar", "Afegir un plat"). Al swipe i a l'avís d'ahir, 56px i 44px.
 - **Hover / Active:** tinta al 90% en passar-hi; en prémer, s'encongeix a 0,98 (150ms). Desactivat: 70% d'opacitat.
-- **Secondary:** vora de 2px en tinta al 25%, sense fons; en passar-hi, vora al 50% i rajola al 50% ("Canviar plat", "Un altre", "Cancel·lar"). 48px.
+- **Secondary:** vora de 2px en tinta al 25%, sense fons; en passar-hi, vora al 50% i rajola al 50% ("Canviar plat", "Un altre", "Deixar-ho com està", "No, deixa’l"). 48px.
 - **Text:** acció de text subratllada amb subratllat de tinta al 40% i desplaçament de 4px, 44px d'alçada ("Desfer", "Un altre plat", "No ho recordo"). Les destructives van en granat d'avís.
 - **Icon:** 44px quadrat, sense fons; rajola al 60% en passar-hi (tornar, menú).
 
@@ -272,3 +272,4 @@ Tres rajoles de 56px amb juntes de 2px (−, valor, +), valor en title tabular. 
 - **Don't** mostrar números nutricionals, mètriques ni anells de progrés; el progrés és la rajola plena.
 - **Don't** posar titolets en majúscules ni etiquetes espaiades sobre els títols.
 - **Don't** fer servir fotos de plats ni icones farcides; el motiu d'un plat és la seva icona outline.
+- **Don't** preguntar "Segur?": les confirmacions diuen què passarà i els botons diuen l’acció ("Substituir les dades" / "Deixar-ho com està", "Esborrar" / "No, deixa’l").

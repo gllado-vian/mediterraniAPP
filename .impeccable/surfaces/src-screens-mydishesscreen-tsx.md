@@ -19,4 +19,4 @@ Hereta la direcció **Taulell** aprovada per a la pantalla Avui (`src-screens-to
 - Cada plat de la llista és una rajola amb la rajoleta de color i la icona de la categoria.
 - Categoria: sis rajoletes amb juntes de 2px i franja de color a dalt; la triada s'omple del color (com la fila del dinar).
 - Camps de text sobre rajola `#E8DACA`, vora de tinta en el focus i granat fosc en error.
-- Esborrar en granat fosc de capritx, amb confirmació en línia ("Segur? · Sí, esborra'l · No").
+- Esborrar en granat fosc de capritx. La confirmació ("Esborrar aquest plat? Els sopars que ja n’has fet es queden a l’historial." · No, deixa’l · Esborrar) ocupa el lloc de Desar mentre és oberta.

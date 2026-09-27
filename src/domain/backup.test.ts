@@ -64,7 +64,7 @@ describe('parseBackup', () => {
     ['té un sopar malmès', JSON.stringify({ ...valid(), days: [{ date: '2026-09-27', dinner: { status: 'confirmed' } }] })],
   ])('rebutja un fitxer que %s', (_, text) => {
     expect(() => parseBackup(text)).toThrow(BackupError);
-    expect(() => parseBackup(text)).toThrow('Aquest fitxer no és una còpia de Què sopem.');
+    expect(() => parseBackup(text)).toThrow('Aquest fitxer no és una còpia de Què sopem. Tria el que vas baixar des d’aquí (que-sopem-….json).');
   });
 });
 

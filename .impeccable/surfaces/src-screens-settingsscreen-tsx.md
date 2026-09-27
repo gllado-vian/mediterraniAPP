@@ -18,4 +18,4 @@ Hereta la direcció **Taulell** aprovada per a la pantalla Avui (`src-screens-to
 
 - Comptador fet de tres rajoles `#E8DACA` amb juntes de 2px: −, valor, +.
 - Menú: panell de rajoles sobre el ciment, amb ombra suau; la pantalla actual en tinta plena.
-- Còpia de seguretat: dues rajoles (Exportar · Importar); la confirmació d'importar ocupa el seu lloc mentre és oberta. Tota la pantalla, confirmació inclosa, cap a 375×667 sense scroll.
+- Còpia de seguretat: dues rajoles (Baixar una còpia · Recuperar una còpia; una sota l’altra per sota de 400px); la confirmació d'importar ocupa el seu lloc mentre és oberta. Tota la pantalla, confirmació inclosa, cap a 375×667 sense scroll.

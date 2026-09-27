@@ -18,7 +18,7 @@ export interface Backup {
 
 export class BackupError extends Error {
   constructor() {
-    super('Aquest fitxer no és una còpia de Què sopem.');
+    super('Aquest fitxer no és una còpia de Què sopem. Tria el que vas baixar des d’aquí (que-sopem-….json).');
   }
 }
 

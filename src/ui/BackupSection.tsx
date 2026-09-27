@@ -34,8 +34,9 @@ export function BackupSection() {
   const [busy, setBusy] = useState(false);
 
   async function exportNow() {
-    downloadJson(backupFileName(today), await exportBackup());
-    setMessage({ kind: 'ok', text: 'Fet! Ja tens el fitxer a les baixades.' });
+    const fileName = backupFileName(today);
+    downloadJson(fileName, await exportBackup());
+    setMessage({ kind: 'ok', text: `Fet! S’ha baixat ${fileName}.` });
   }
 
   async function chooseFile(e: ChangeEvent<HTMLInputElement>) {
@@ -64,7 +65,7 @@ export function BackupSection() {
       setPending(null);
       setMessage({ kind: 'ok', text: 'Fet! Ja tens les dades del fitxer.' });
     } catch {
-      setMessage({ kind: 'error', text: 'No s’ha pogut importar. No s’ha canviat res.' });
+      setMessage({ kind: 'error', text: 'No s’ha pogut importar. No s’ha canviat res: torna-ho a provar.' });
     } finally {
       setBusy(false);
     }
@@ -79,15 +80,15 @@ export function BackupSection() {
 
       {/* Mentre es confirma, els botons no pinten res: la confirmació n'ocupa el lloc. */}
       {!pending && (
-        <div className="mt-3 grid grid-cols-2 gap-0.5">
+        <div className="mt-3 grid gap-0.5 min-[400px]:grid-cols-2">
           <button type="button" onClick={exportNow} className={buttonClass}>
             <IconDownload size={20} stroke={1.75} aria-hidden="true" />
-            Exportar les dades
+            Baixar una còpia
           </button>
           <label className={buttonClass}>
             <input type="file" accept="application/json,.json" onChange={chooseFile} className="sr-only" />
             <IconUpload size={20} stroke={1.75} aria-hidden="true" />
-            Importar un fitxer
+            Recuperar una còpia
           </label>
         </div>
       )}
@@ -95,7 +96,7 @@ export function BackupSection() {
       {pending && (
         <div className="mt-3 rounded-(--radius-rajola) bg-rajola p-3">
           <p className="text-pretty">
-            Aquest fitxer {contents(pending)}. Substituirà tot el que hi ha en aquest mòbil.
+            Aquest fitxer {contents(pending)}. Substituirà tot el que hi ha en aquest mòbil i no es pot desfer.
           </p>
           {hasData && (
             <label className="mt-2 flex min-h-11 cursor-pointer items-center gap-3 text-sm font-medium">
@@ -114,7 +115,7 @@ export function BackupSection() {
               onClick={() => setPending(null)}
               className="h-12 rounded-(--radius-rajola) border-2 border-tinta/25 font-medium transition-colors hover:border-tinta/50"
             >
-              Cancel·lar
+              Deixar-ho com està
             </button>
             <button
               type="button"
@@ -122,7 +123,7 @@ export function BackupSection() {
               disabled={busy}
               className="h-12 rounded-(--radius-rajola) bg-tinta font-semibold text-ciment transition-colors hover:bg-tinta/90 disabled:opacity-70"
             >
-              Substituir
+              Substituir les dades
             </button>
           </div>
         </div>

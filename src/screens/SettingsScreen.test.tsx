@@ -131,8 +131,8 @@ describe('SettingsScreen', () => {
     it('exportar baixa un fitxer amb totes les dades', async () => {
       await repo.addUserDish({ name: 'Amanida', category: 'vegetaria', ingredients: [], prepMinutes: null });
       await renderSettings();
-      await userEvent.click(screen.getByRole('button', { name: 'Exportar les dades' }));
-      expect(await screen.findByText('Fet! Ja tens el fitxer a les baixades.')).toBeInTheDocument();
+      await userEvent.click(screen.getByRole('button', { name: 'Baixar una còpia' }));
+      expect(await screen.findByText('Fet! S’ha baixat que-sopem-2026-09-28.json.')).toBeInTheDocument();
       await vi.waitFor(() => expect(downloads[0]?.json).not.toBeNull());
       expect(downloads[0].name).toBe('que-sopem-2026-09-28.json');
       expect(downloads[0].json).toMatchObject({ app: 'que-sopem', dishes: [{ name: 'Amanida' }] });
@@ -140,20 +140,20 @@ describe('SettingsScreen', () => {
 
     it('un fitxer que no és una còpia ho diu i no toca res', async () => {
       await renderSettings();
-      await userEvent.upload(screen.getByLabelText('Importar un fitxer'), fileOf('hola'));
-      expect(await screen.findByText('Aquest fitxer no és una còpia de Què sopem.')).toBeInTheDocument();
-      expect(screen.queryByRole('button', { name: 'Substituir' })).not.toBeInTheDocument();
+      await userEvent.upload(screen.getByLabelText('Recuperar una còpia'), fileOf('hola'));
+      expect(await screen.findByText('Aquest fitxer no és una còpia de Què sopem. Tria el que vas baixar des d’aquí (que-sopem-….json).')).toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: 'Substituir les dades' })).not.toBeInTheDocument();
     });
 
-    it('abans de substituir, ensenya què hi ha al fitxer i "Cancel·lar" no toca res', async () => {
+    it('abans de substituir, ensenya què hi ha al fitxer i "Deixar-ho com està" no toca res', async () => {
       const mine = await repo.addUserDish({ name: 'Amanida', category: 'vegetaria', ingredients: [], prepMinutes: null });
       await renderSettings();
-      await userEvent.upload(screen.getByLabelText('Importar un fitxer'), fileOf(JSON.stringify(otherHouse())));
+      await userEvent.upload(screen.getByLabelText('Recuperar una còpia'), fileOf(JSON.stringify(otherHouse())));
       expect(
-        await screen.findByText('Aquest fitxer té 1 plat propi i 2 dies apuntats. Substituirà tot el que hi ha en aquest mòbil.'),
+        await screen.findByText('Aquest fitxer té 1 plat propi i 2 dies apuntats. Substituirà tot el que hi ha en aquest mòbil i no es pot desfer.'),
       ).toBeInTheDocument();
-      await userEvent.click(screen.getByRole('button', { name: 'Cancel·lar' }));
-      expect(screen.queryByRole('button', { name: 'Substituir' })).not.toBeInTheDocument();
+      await userEvent.click(screen.getByRole('button', { name: 'Deixar-ho com està' }));
+      expect(screen.queryByRole('button', { name: 'Substituir les dades' })).not.toBeInTheDocument();
       expect(await repo.getDish(mine.id)).toBeDefined();
       expect(downloads).toEqual([]);
     });
@@ -161,10 +161,10 @@ describe('SettingsScreen', () => {
     it('"Substituir" baixa abans una còpia del mòbil i després ho substitueix tot', async () => {
       const mine = await repo.addUserDish({ name: 'Amanida', category: 'vegetaria', ingredients: [], prepMinutes: null });
       await renderSettings();
-      await userEvent.upload(screen.getByLabelText('Importar un fitxer'), fileOf(JSON.stringify(otherHouse())));
+      await userEvent.upload(screen.getByLabelText('Recuperar una còpia'), fileOf(JSON.stringify(otherHouse())));
       const keep = await screen.findByRole('checkbox', { name: 'Abans, baixa una còpia del que hi ha ara' });
       expect(keep).toBeChecked();
-      await userEvent.click(screen.getByRole('button', { name: 'Substituir' }));
+      await userEvent.click(screen.getByRole('button', { name: 'Substituir les dades' }));
       expect(await screen.findByText('Fet! Ja tens les dades del fitxer.')).toBeInTheDocument();
 
       await vi.waitFor(() => expect(downloads[0]?.json).not.toBeNull());
@@ -182,9 +182,9 @@ describe('SettingsScreen', () => {
     it('si es desmarca la còpia prèvia, substitueix sense baixar res', async () => {
       await repo.addUserDish({ name: 'Amanida', category: 'vegetaria', ingredients: [], prepMinutes: null });
       await renderSettings();
-      await userEvent.upload(screen.getByLabelText('Importar un fitxer'), fileOf(JSON.stringify(otherHouse())));
+      await userEvent.upload(screen.getByLabelText('Recuperar una còpia'), fileOf(JSON.stringify(otherHouse())));
       await userEvent.click(await screen.findByRole('checkbox', { name: 'Abans, baixa una còpia del que hi ha ara' }));
-      await userEvent.click(screen.getByRole('button', { name: 'Substituir' }));
+      await userEvent.click(screen.getByRole('button', { name: 'Substituir les dades' }));
       expect(await screen.findByText('Fet! Ja tens les dades del fitxer.')).toBeInTheDocument();
       expect(downloads).toEqual([]);
     });
@@ -192,25 +192,35 @@ describe('SettingsScreen', () => {
     it('el resum es llegeix bé encara que el fitxer no tingui plats propis', async () => {
       await renderSettings();
       const backup = { ...otherHouse(), dishes: [] };
-      await userEvent.upload(screen.getByLabelText('Importar un fitxer'), fileOf(JSON.stringify(backup)));
+      await userEvent.upload(screen.getByLabelText('Recuperar una còpia'), fileOf(JSON.stringify(backup)));
       expect(
-        await screen.findByText('Aquest fitxer té 2 dies apuntats (sense plats propis). Substituirà tot el que hi ha en aquest mòbil.'),
+        await screen.findByText('Aquest fitxer té 2 dies apuntats (sense plats propis). Substituirà tot el que hi ha en aquest mòbil i no es pot desfer.'),
       ).toBeInTheDocument();
     });
 
     it('mentre es confirma, els botons d’exportar i importar s’amaguen', async () => {
       await renderSettings();
-      await userEvent.upload(screen.getByLabelText('Importar un fitxer'), fileOf(JSON.stringify(otherHouse())));
-      await screen.findByRole('button', { name: 'Substituir' });
-      expect(screen.queryByRole('button', { name: 'Exportar les dades' })).not.toBeInTheDocument();
-      await userEvent.click(screen.getByRole('button', { name: 'Cancel·lar' }));
-      expect(screen.getByRole('button', { name: 'Exportar les dades' })).toBeInTheDocument();
+      await userEvent.upload(screen.getByLabelText('Recuperar una còpia'), fileOf(JSON.stringify(otherHouse())));
+      await screen.findByRole('button', { name: 'Substituir les dades' });
+      expect(screen.queryByRole('button', { name: 'Baixar una còpia' })).not.toBeInTheDocument();
+      await userEvent.click(screen.getByRole('button', { name: 'Deixar-ho com està' }));
+      expect(screen.getByRole('button', { name: 'Baixar una còpia' })).toBeInTheDocument();
+    });
+
+    it('si la importació falla, ho diu i convida a tornar-ho a provar', async () => {
+      vi.spyOn(repo, 'replaceAll').mockRejectedValueOnce(new Error('disc ple'));
+      await renderSettings();
+      await userEvent.upload(screen.getByLabelText('Recuperar una còpia'), fileOf(JSON.stringify(otherHouse())));
+      await userEvent.click(await screen.findByRole('button', { name: 'Substituir les dades' }));
+      expect(
+        await screen.findByText('No s’ha pogut importar. No s’ha canviat res: torna-ho a provar.'),
+      ).toBeInTheDocument();
     });
 
     it('en un mòbil sense res apuntat no ofereix la còpia prèvia', async () => {
       await renderSettings();
-      await userEvent.upload(screen.getByLabelText('Importar un fitxer'), fileOf(JSON.stringify(otherHouse())));
-      await screen.findByRole('button', { name: 'Substituir' });
+      await userEvent.upload(screen.getByLabelText('Recuperar una còpia'), fileOf(JSON.stringify(otherHouse())));
+      await screen.findByRole('button', { name: 'Substituir les dades' });
       expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
     });
   });

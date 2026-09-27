@@ -176,43 +176,50 @@ export function DishFormScreen({
           </div>
 
           <div className="mt-auto grid gap-1 sm:mt-4">
-            <button
-              type="submit"
-              disabled={saving}
-              className="h-14 rounded-(--radius-rajola) bg-tinta text-lg font-semibold text-ciment transition-[transform,background-color] duration-150 hover:bg-tinta/90 active:scale-[0.98] disabled:opacity-70"
-            >
-              Desar
-            </button>
-
-            {editing &&
-              (confirmDelete ? (
-                <div className="flex min-h-11 flex-wrap items-center justify-center gap-x-2">
-                  <p className="font-medium">Segur?</p>
+            {confirmDelete ? (
+              // Mentre es confirma, la confirmació ocupa el lloc de Desar (no fa scroll a 375×667).
+              <div className="grid gap-2">
+                <p className="text-center text-sm font-medium text-balance">
+                  Esborrar aquest plat? Els sopars que ja n’has fet es queden a l’historial.
+                </p>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setConfirmDelete(false)}
+                    className="h-12 rounded-(--radius-rajola) border-2 border-tinta/25 font-medium transition-colors hover:border-tinta/50"
+                  >
+                    No, deixa’l
+                  </button>
                   <button
                     type="button"
                     onClick={remove}
                     disabled={saving}
-                    className="min-h-11 rounded-(--radius-rajola) px-3 font-semibold text-capritx-tinta underline decoration-capritx-tinta/40 underline-offset-4 hover:decoration-capritx-tinta"
+                    className="h-12 rounded-(--radius-rajola) bg-capritx-tinta font-semibold text-ciment transition-colors hover:bg-capritx-tinta/90 disabled:opacity-70"
                   >
-                    Sí, esborra’l
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setConfirmDelete(false)}
-                    className="min-h-11 rounded-(--radius-rajola) px-3 font-medium underline decoration-tinta/40 underline-offset-4 hover:decoration-tinta"
-                  >
-                    No
+                    Esborrar
                   </button>
                 </div>
-              ) : (
+              </div>
+            ) : (
+              <>
                 <button
-                  type="button"
-                  onClick={() => setConfirmDelete(true)}
-                  className="min-h-11 justify-self-center rounded-(--radius-rajola) px-3 font-medium text-capritx-tinta underline decoration-capritx-tinta/40 underline-offset-4 hover:decoration-capritx-tinta"
+                  type="submit"
+                  disabled={saving}
+                  className="h-14 rounded-(--radius-rajola) bg-tinta text-lg font-semibold text-ciment transition-[transform,background-color] duration-150 hover:bg-tinta/90 active:scale-[0.98] disabled:opacity-70"
                 >
-                  Esborrar el plat
+                  Desar
                 </button>
-              ))}
+                {editing && (
+                  <button
+                    type="button"
+                    onClick={() => setConfirmDelete(true)}
+                    className="min-h-11 justify-self-center rounded-(--radius-rajola) px-3 font-medium text-capritx-tinta underline decoration-capritx-tinta/40 underline-offset-4 hover:decoration-capritx-tinta"
+                  >
+                    Esborrar el plat
+                  </button>
+                )}
+              </>
+            )}
           </div>
         </form>
       )}

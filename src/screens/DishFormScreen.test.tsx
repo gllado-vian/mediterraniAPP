@@ -104,13 +104,15 @@ describe('DishFormScreen', () => {
     const dish = await repo.addUserDish({ name: 'Amanida', category: 'vegetaria', ingredients: [], prepMinutes: null });
     const { onDone } = await renderForm(dish.id);
     await userEvent.click(screen.getByRole('button', { name: 'Esborrar el plat' }));
-    expect(screen.getByText('Segur?')).toBeInTheDocument();
-    await userEvent.click(screen.getByRole('button', { name: 'No' }));
-    expect(screen.queryByText('Segur?')).not.toBeInTheDocument();
+    expect(
+      screen.getByText('Esborrar aquest plat? Els sopars que ja n’has fet es queden a l’historial.'),
+    ).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'No, deixa’l' }));
+    expect(screen.queryByText(/^Esborrar aquest plat\?/)).not.toBeInTheDocument();
     expect(await repo.getDish(dish.id)).toBeDefined();
 
     await userEvent.click(screen.getByRole('button', { name: 'Esborrar el plat' }));
-    await userEvent.click(screen.getByRole('button', { name: 'Sí, esborra’l' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Esborrar' }));
     await vi.waitFor(() => expect(onDone).toHaveBeenCalledOnce());
     expect(await repo.getDish(dish.id)).toBeUndefined();
   });

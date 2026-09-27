@@ -35,9 +35,9 @@ export function App() {
   if (failed) {
     return (
       <main className="mx-auto grid min-h-dvh max-w-md content-center gap-2 px-4">
-        <h1 className="text-xl font-semibold">No puc obrir les dades</h1>
+        <h1 className="text-xl font-semibold">No podem obrir les dades</h1>
         <p className="text-tinta-suau">
-          El navegador no em deixa guardar res en aquest mòbil. Si estàs en mode privat, obre
+          El navegador no ens deixa guardar res en aquest mòbil. Si estàs en mode privat, obre
           l’app en una finestra normal i torna-ho a provar.
         </p>
       </main>

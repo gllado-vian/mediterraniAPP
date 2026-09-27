@@ -152,6 +152,13 @@ describe('SwipeScreen', () => {
     expect(screen.getByText('No recomanat')).toBeInTheDocument();
   });
 
+  it('explica com funciona el swipe', async () => {
+    await renderSwipe();
+    expect(
+      screen.getByText('Llisca a la dreta si t’agrada, a l’esquerra per passar-lo i toca’l per veure més informació.'),
+    ).toBeInTheDocument();
+  });
+
   it('avisa del marge si fa poc de l’últim capritx', async () => {
     await repo.confirmDinner('2026-09-25', BASE_RECIPES.find((d) => d.id === 'base-pizza-casolana')!);
     await renderSwipe();
@@ -159,7 +166,7 @@ describe('SwipeScreen', () => {
     while (topCardName() !== 'Croquetes casolanes' && guard--) {
       await userEvent.click(screen.getByRole('button', { name: 'Un altre' }));
     }
-    expect(screen.getByText('Fa 3 dies de l’últim capritx (el teu marge és de 7).')).toBeInTheDocument();
+    expect(screen.getByText('Fa 3 dies de l’últim capritx i el teu marge és de 7. Tu decideixes.')).toBeInTheDocument();
   });
 
   it('quan s’acaben els plats, permet tornar a començar', async () => {

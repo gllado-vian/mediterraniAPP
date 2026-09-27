@@ -24,8 +24,8 @@ function CapritxWarning({ warning }: { warning: NonNullable<SwipeCard['capritxWa
   return (
     <p className="mt-3 flex items-start gap-1.5 text-sm text-tinta">
       <IconAlertTriangle size={18} stroke={1.75} className="mt-px shrink-0 text-capritx-tinta" aria-hidden="true" />
-      Fa {warning.daysSince} {warning.daysSince === 1 ? 'dia' : 'dies'} de l’últim capritx (el teu marge
-      és de {warning.marginDays}).
+      Fa {warning.daysSince} {warning.daysSince === 1 ? 'dia' : 'dies'} de l’últim capritx i el teu marge
+      és de {warning.marginDays}. Tu decideixes.
     </p>
   );
 }
@@ -218,7 +218,7 @@ export function SwipeScreen({
             </button>
           </div>
           <p className="pt-3 text-center text-sm text-tinta-suau">
-            Llisca a la dreta si t’agrada, a l’esquerra per veure’n un altre. Toca’l per veure’n més.
+            Llisca a la dreta si t’agrada, a l’esquerra per passar-lo i toca’l per veure més informació.
           </p>
         </>
       ) : status === 'ready' ? (

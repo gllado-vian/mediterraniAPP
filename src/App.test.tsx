@@ -16,7 +16,7 @@ describe('App', () => {
     vi.spyOn(db, 'openAppDb').mockRejectedValueOnce(new Error('IndexedDB no disponible'));
     render(<App />);
     expect(
-      await screen.findByRole('heading', { name: 'No puc obrir les dades' }),
+      await screen.findByRole('heading', { name: 'No podem obrir les dades' }),
     ).toBeInTheDocument();
   });
 
