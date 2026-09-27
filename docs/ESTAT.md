@@ -29,13 +29,13 @@
 | 7 | Resum setmanal per categoria | ✅ fet + polish |
 | 8 | "+info" del plat | ✅ fet + polish |
 | 9 | Export/import JSON + Ajustos (marge capritx, els meus plats) | ✅ fet + polish (9a menú + marge, 9b els meus plats, 9c còpia de seguretat) |
-| 10 | Passada final d'identitat visual + `DESIGN.md` (Impeccable document) | 🚧 en curs: 10a ✅ revisió, 10b ✅ correccions, 10c icona, 10d DESIGN.md |
+| 10 | Passada final d'identitat visual + `DESIGN.md` (Impeccable document) | 🚧 en curs: 10a ✅ revisió, 10b ✅ correccions, 10c ✅ icona, 10d DESIGN.md |
 
 ## On som exactament (pas 10)
 
 - **10a ✅** Revisió final amb `impeccable-finish-reviewer` (veredicte: publicable amb correccions).
 - **10b ✅** Correccions aplicades (totes, per decisió de l'Olga). El punt 3 de la revisió (focus d'"Importar un fitxer") era un fals positiu: el focus ja es veia (comprovat al navegador).
-- **10c** Icona de l'app: 2–3 opcions Taulell, SVG + PNG (180 iOS, 192/512 Android, maskable) amb procedència anotada.
+- **10c ✅** Icona "rajola del dia" amb el motiu `salad` de Tabler (triada per l'Olga): SVG + PNG 180/192/512 + maskable. Procedència a `docs/ICONES.md`; es regeneren amb `node scripts/generate-icons.mjs`.
 - **10d** `DESIGN.md` amb `impeccable-documenter`.
 
 ## Decisions preses durant la construcció
