@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { BASE_RECIPES } from './baseRecipes';
-import type { Category, LunchOption, RotationCategory } from './categories';
+import { DEFAULT_CATEGORIES, type Category, type CategoryDef, type LunchOption, type RotationCategory } from './categories';
 import { planWeek, proposeTonight, weeklyProgress, type WeekSlot } from './planner';
 import { addDays } from './dates';
 import type { DayRecord, Dish } from './types';
@@ -252,3 +252,133 @@ describe('acceptació: 4 setmanes confirmant sempre la proposta', () => {
     expect(history.some((d) => (d.dinner as { category: Category }).category === 'capritx')).toBe(false);
   });
 });
+
+describe('categories variables', () => {
+  const cats = (over: Partial<Record<string, number>>, extra: CategoryDef[] = []): CategoryDef[] => [
+    ...DEFAULT_CATEGORIES.map((c) => ({ ...c, quota: over[c.id] ?? c.quota })),
+    ...extra,
+  ];
+  const userDish = (id: string, category: string): Dish => ({
+    id, name: id, category, ingredients: [], prepMinutes: 10, source: 'user',
+  });
+
+  it('amb les categories per defecte, el resultat és idèntic al d’abans', () => {
+    const scenarios = [
+      { today: MON, days: [] as DayRecord[] },
+      { today: WED, days: [ate(MON, firstOf('peix')), ate(TUE, firstOf('llegum'), 'ou')] },
+      { today: THU, days: [{ date: THU, lunch: 'peix' as LunchOption }] },
+    ];
+    scenarios.forEach(({ today, days }) => {
+      expect(planWeek({ today, days, dishes, categories: DEFAULT_CATEGORIES })).toEqual(
+        planWeek({ today, days, dishes }),
+      );
+    });
+  });
+
+  it('una categoria amb 0 vegades no es proposa mai', () => {
+    const slots = planWeek({ today: MON, days: [], dishes, categories: cats({ carn: 0 }) });
+    expect(plannedCategories(slots)).toHaveLength(7);
+    expect(plannedCategories(slots)).not.toContain('carn');
+  });
+
+  it('si la suma és menor que 7, els dies que sobren són de categories amb vegades', () => {
+    const slots = planWeek({
+      today: MON, days: [], dishes, categories: cats({ llegum: 0, carn: 0, vegetaria: 0 }),
+    });
+    const planned = plannedCategories(slots);
+    expect(planned).toHaveLength(7);
+    expect(new Set(planned)).toEqual(new Set(['peix', 'ou']));
+    expectNoConsecutiveRepeats(planned);
+  });
+
+  it('proposa una categoria pròpia tantes vegades com se li demana', () => {
+    const pasta: CategoryDef = { id: 'c-pasta', name: 'Pasta', icon: 'bread', color: '#D98F4E', quota: 2 };
+    const slots = planWeek({
+      today: MON, days: [], dishes: [...dishes, userDish('macarrons', 'c-pasta')],
+      categories: cats({ peix: 1, ou: 1 }, [pasta]),
+    });
+    expect(countOf(plannedCategories(slots))['c-pasta']).toBe(2);
+  });
+
+  it('una categoria sense cap plat no es proposa (i no peta)', () => {
+    const buida: CategoryDef = { id: 'c-buida', name: 'Buida', icon: 'leaf', color: '#A395C2', quota: 1 };
+    const slots = planWeek({ today: MON, days: [], dishes, categories: cats({ peix: 1 }, [buida]) });
+    expect(plannedCategories(slots)).not.toContain('c-buida');
+    expect(plannedCategories(slots)).toHaveLength(7);
+  });
+
+  it('amb una sola categoria, la repeteix cada dia', () => {
+    const only = [{ ...DEFAULT_CATEGORIES[0], quota: 7 }];
+    const slots = planWeek({ today: MON, days: [], dishes, categories: only });
+    expect(plannedCategories(slots)).toEqual(Array(7).fill('peix'));
+  });
+
+  it('amb una sola categoria, la proposa encara que sigui la del dinar', () => {
+    const only = [{ ...DEFAULT_CATEGORIES[0], quota: 7 }];
+    const proposal = proposeTonight({ today: MON, days: [{ date: MON, lunch: 'peix' }], dishes, categories: only });
+    expect(proposal?.category).toBe('peix');
+  });
+
+  it('si no hi ha res per proposar, no hi ha proposta', () => {
+    const none = cats({ peix: 0, ou: 0, llegum: 0, carn: 0, vegetaria: 0 });
+    expect(proposeTonight({ today: MON, days: [], dishes, categories: none })).toBeNull();
+    expect(planWeek({ today: MON, days: [], dishes, categories: none }).every((s) => s.status === 'empty')).toBe(true);
+  });
+
+  it('un sopar d’una categoria esborrada a l’historial no compta ni peta', () => {
+    const days: DayRecord[] = [
+      { date: MON, dinner: { status: 'confirmed', dishId: 'x', dishName: 'Vell', category: 'c-vella' } },
+    ];
+    expect(() => planWeek({ today: TUE, days, dishes })).not.toThrow();
+    expect(weeklyProgress(TUE, days)).not.toHaveProperty('c-vella');
+  });
+
+  it('acceptació: 4 setmanes amb 3 categories pròpies compleixen les vegades', () => {
+    const own: CategoryDef[] = [
+      { id: 'a', name: 'A', icon: 'leaf', color: '#A395C2', quota: 3 },
+      { id: 'b', name: 'B', icon: 'salad', color: '#6FA89A', quota: 2 },
+      { id: 'c', name: 'C', icon: 'bread', color: '#D98F4E', quota: 2 },
+    ];
+    const ownDishes = ['a', 'b', 'c'].flatMap((c) => [userDish(`${c}1`, c), userDish(`${c}2`, c)]);
+    const history: DayRecord[] = [];
+    let date = MON;
+    for (let i = 0; i < 28; i++) {
+      const proposal = proposeTonight({ today: date, days: history, dishes: ownDishes, categories: own })!;
+      history.push(ate(date, proposal.dish));
+      date = addDays(date, 1);
+    }
+    for (let week = 0; week < 4; week++) {
+      const progress = weeklyProgress(addDays(MON, week * 7 + 6), history, own);
+      Object.values(progress).forEach(({ done, quota }) => expect(done).toBe(quota));
+    }
+    expectNoConsecutiveRepeats(history.map((d) => (d.dinner as { category: Category }).category));
+  });
+
+  it('amb 200 configuracions a l’atzar mai peta i sempre proposa una categoria vàlida', () => {
+    let seed = 7;
+    const rnd = (n: number) => {
+      seed = (seed * 1103515245 + 12345) % 2147483648;
+      return seed % n;
+    };
+    const palette = ['#6E93A8', '#F2C166', '#6B6E3D', '#BF8275', '#BCBF69', '#A395C2', '#6FA89A', '#D98F4E', '#6B4A6E'];
+    for (let run = 0; run < 200; run++) {
+      const n = 1 + rnd(9);
+      let left = 7;
+      const list: CategoryDef[] = Array.from({ length: n }, (_, i) => {
+        const quota = rnd(Math.min(left, 3) + 1);
+        left -= quota;
+        return { id: `k${i}`, name: `K${i}`, icon: 'leaf', color: palette[i], quota };
+      });
+      const pool = list.filter(() => rnd(4) > 0).map((c, i) => userDish(`d${i}`, c.id));
+      const today = addDays(MON, rnd(7));
+      const days: DayRecord[] = [];
+      if (pool.length && rnd(2)) days.push(ate(addDays(today, -1), pool[rnd(pool.length)]));
+      if (rnd(2)) days.push({ date: today, lunch: list[rnd(n)].id });
+      const proposal = proposeTonight({ today, days, dishes: pool, categories: list });
+      const plannable = list.filter((c) => c.quota > 0 && pool.some((d) => d.category === c.id)).map((c) => c.id);
+      if (plannable.length === 0) expect(proposal).toBeNull();
+      else expect(plannable).toContain(proposal?.category);
+    }
+  });
+});
+

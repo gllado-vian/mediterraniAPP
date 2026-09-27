@@ -1,4 +1,12 @@
-import { ROTATION_CATEGORIES, isRotationCategory, type Category, type RotationCategory } from './categories';
+import {
+  activeCategories,
+  CAPRITX_ID,
+  DEFAULT_CATEGORIES,
+  LUNCH_OTHER,
+  type Category,
+  type CategoryDef,
+  type RotationCategory,
+} from './categories';
 import { addDays, daysBetween } from './dates';
 import { proposeTonight, weeklyProgress } from './planner';
 import type { DayRecord, Dish, IsoDate, Settings } from './types';
@@ -10,6 +18,8 @@ export interface SwipeDeckInput {
   days: DayRecord[];
   dishes: Dish[];
   settings: Settings;
+  /** Categories de la casa (per defecte, les recomanades). */
+  categories?: readonly CategoryDef[];
 }
 
 export interface SwipeCard {
@@ -58,7 +68,7 @@ function capritxWarning(
   marginDays: number,
 ): SwipeCard['capritxWarning'] {
   const last = days
-    .filter((d) => d.date < date && confirmedDinner(d)?.category === 'capritx')
+    .filter((d) => d.date < date && confirmedDinner(d)?.category === CAPRITX_ID)
     .map((d) => d.date)
     .sort()
     .at(-1);
@@ -72,22 +82,31 @@ function capritxWarning(
  * categories ja complertes → capritxos al final. Les categories vetades
  * (dinar del dia i sopar del dia anterior) no hi surten.
  */
-export function buildSwipeDeck({ date, days, dishes, settings }: SwipeDeckInput): SwipeCard[] {
+export function buildSwipeDeck({
+  date,
+  days,
+  dishes,
+  settings,
+  categories = DEFAULT_CATEGORIES,
+}: SwipeDeckInput): SwipeCard[] {
   const byDate = new Map(days.map((d) => [d.date, d]));
   const vetoed = new Set<Category>();
   const lunch = byDate.get(date)?.lunch;
-  if (isRotationCategory(lunch)) vetoed.add(lunch);
+  if (lunch && lunch !== LUNCH_OTHER) vetoed.add(lunch);
   const dayBefore = confirmedDinner(byDate.get(addDays(date, -1)));
   if (dayBefore) vetoed.add(dayBefore.category);
 
-  const proposal = proposeTonight({ today: date, days, dishes });
+  const proposal = proposeTonight({ today: date, days, dishes, categories });
   const candidates = dishes.filter((d) => d.id !== proposal?.dish.id);
   const rejected = (c: Category) => (c === proposal?.category ? 1 : 0);
   const lastEaten = lastEatenById(days, date);
 
-  const progress = weeklyProgress(date, days);
+  const progress = weeklyProgress(date, days, categories);
   const pending = (c: RotationCategory) => progress[c].quota - progress[c].done;
-  const valid = ROTATION_CATEGORIES.filter((c) => !vetoed.has(c));
+  // Amb 0 vegades una categoria no es proposa: tampoc surt al swipe.
+  const valid = activeCategories(categories)
+    .filter((c) => c.quota > 0 && !vetoed.has(c.id))
+    .map((c) => c.id);
   // Les que en falten més primer; en cas d'empat, la del plat rebutjat va després.
   const open = valid
     .filter((c) => pending(c) > 0)
@@ -103,7 +122,7 @@ export function buildSwipeDeck({ date, days, dishes, settings }: SwipeDeckInput)
 
   const warning = capritxWarning(days, date, settings.capritxMarginDays);
   const capritxos = candidates
-    .filter((d) => d.category === 'capritx')
+    .filter((d) => d.category === CAPRITX_ID)
     .sort((a, b) => (a.source === 'user' ? 0 : 1) - (b.source === 'user' ? 0 : 1))
     .map((dish): SwipeCard => ({ dish, capritx: true, capritxWarning: warning }));
 

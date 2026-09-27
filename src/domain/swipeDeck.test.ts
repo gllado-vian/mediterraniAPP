@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { BASE_RECIPES } from './baseRecipes';
-import type { Category } from './categories';
+import { DEFAULT_CATEGORIES, type Category, type CategoryDef } from './categories';
 import { buildSwipeDeck } from './swipeDeck';
 import type { DayRecord, Dish } from './types';
 
@@ -107,3 +107,21 @@ describe('buildSwipeDeck', () => {
     expect(categoriesOf(deck)).not.toContain('carn');
   });
 });
+
+describe('buildSwipeDeck amb categories variables', () => {
+  it('no mostra els plats d’una categoria amb 0 vegades', () => {
+    const categories = DEFAULT_CATEGORIES.map((c) => (c.id === 'carn' ? { ...c, quota: 0 } : c));
+    const deck = buildSwipeDeck({ date: MON, today: MON, days: [], dishes, settings, categories });
+    expect(categoriesOf(deck)).not.toContain('carn');
+    expect(categoriesOf(deck)).toContain('capritx');
+  });
+
+  it('inclou els plats d’una categoria pròpia', () => {
+    const pasta: CategoryDef = { id: 'c-pasta', name: 'Pasta', icon: 'bread', color: '#D98F4E', quota: 1 };
+    const categories = [...DEFAULT_CATEGORIES.map((c) => (c.id === 'peix' ? { ...c, quota: 1 } : c)), pasta];
+    const own: Dish = { id: 'macarrons', name: 'Macarrons', category: 'c-pasta', ingredients: [], prepMinutes: 20, source: 'user' };
+    const deck = buildSwipeDeck({ date: MON, today: MON, days: [], dishes: [...dishes, own], settings, categories });
+    expect(categoriesOf(deck)).toContain('c-pasta');
+  });
+});
+

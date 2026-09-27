@@ -86,8 +86,7 @@ describe('plats', () => {
     await expect(
       repo.addUserDish({
         name: 'Pastís',
-        // @ts-expect-error categoria invàlida a propòsit
-        category: 'postres',
+        category: 'postres', // categoria que no existeix
         ingredients: [],
         prepMinutes: 10,
       }),

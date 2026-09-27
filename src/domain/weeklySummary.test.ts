@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { BASE_RECIPES } from './baseRecipes';
-import type { Category } from './categories';
+import { DEFAULT_CATEGORIES, type Category } from './categories';
 import type { DayRecord, Dish } from './types';
 import { weeklySummary } from './weeklySummary';
 
@@ -46,3 +46,16 @@ describe('weeklySummary', () => {
     expect(weeklySummary(THU, days).capritxos).toBe(2);
   });
 });
+
+describe('weeklySummary amb categories variables', () => {
+  it('amaga les categories amb 0 vegades i fa servir les de la llista', () => {
+    const categories = [
+      ...DEFAULT_CATEGORIES.map((c) => (c.id === 'carn' ? { ...c, quota: 0 } : c)),
+      { id: 'c-pasta', name: 'Pasta', icon: 'bread' as const, color: '#D98F4E', quota: 1 },
+    ];
+    const { rows } = weeklySummary(THU, [], categories);
+    expect(rows.map((r) => r.category)).toEqual(['peix', 'ou', 'llegum', 'vegetaria', 'c-pasta']);
+    expect(rows.at(-1)).toMatchObject({ done: 0, quota: 1, complete: false });
+  });
+});
+
