@@ -1,0 +1,154 @@
+import { render, screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import * as db from './db/db';
+import { createRepository } from './db/repository';
+import { addDays, toIsoDate } from './domain/dates';
+import { App } from './App';
+
+afterEach(() => {
+  vi.restoreAllMocks();
+  vi.unstubAllGlobals();
+});
+
+describe('App', () => {
+  it('explica el problema si no es poden obrir les dades del dispositiu', async () => {
+    vi.spyOn(db, 'openAppDb').mockRejectedValueOnce(new Error('IndexedDB no disponible'));
+    render(<App />);
+    expect(
+      await screen.findByRole('heading', { name: 'No podem obrir les dades' }),
+    ).toBeInTheDocument();
+  });
+
+  it('canviar plat amb el swipe i tornar a Avui amb el plat confirmat', async () => {
+    vi.stubGlobal('matchMedia', (q: string) => ({ matches: q.includes('reduce'), media: q, addEventListener() {}, removeEventListener() {} }));
+    const real = db.openAppDb;
+    vi.spyOn(db, 'openAppDb').mockImplementation(() => real(`app-${Date.now()}`));
+    render(<App />);
+    await userEvent.click(await screen.findByRole('button', { name: 'Canviar plat' }));
+    const card = await screen.findByRole('article', { name: /^Plat proposat/ });
+    const chosen = within(card).getByRole('heading', { level: 2 }).textContent!;
+    await userEvent.click(screen.getByRole('button', { name: 'Aquest!' }));
+    expect(await screen.findByText('Bon profit!')).toBeInTheDocument();
+    const today = screen.getByRole('article', { name: 'Plat del dia' });
+    expect(within(today).getByText(chosen)).toBeInTheDocument();
+  });
+
+  it('tornar del swipe no canvia res', async () => {
+    const real = db.openAppDb;
+    vi.spyOn(db, 'openAppDb').mockImplementation(() => real(`app-back-${Date.now()}`));
+    render(<App />);
+    await userEvent.click(await screen.findByRole('button', { name: 'Canviar plat' }));
+    await userEvent.click(await screen.findByRole('button', { name: 'Tornar' }));
+    expect(await screen.findByRole('button', { name: 'Sopem això' })).toBeInTheDocument();
+  });
+
+  it('"Un altre plat" a l’avís d’ahir tria el sopar d’ahir amb el swipe', async () => {
+    vi.stubGlobal('matchMedia', (q: string) => ({ matches: q.includes('reduce'), media: q, addEventListener() {}, removeEventListener() {} }));
+    const real = db.openAppDb;
+    const name = `app-ahir-${Date.now()}`;
+    const repo = createRepository(await real(name));
+    await repo.ensureHouse(new Date(2026, 0, 1));
+    vi.spyOn(db, 'openAppDb').mockImplementation(() => real(name));
+    render(<App />);
+
+    const region = await screen.findByRole('region', { name: 'Sopar d’ahir' });
+    await userEvent.click(within(region).getByRole('button', { name: 'Un altre plat' }));
+    await screen.findByRole('heading', { name: 'Què vas sopar ahir?' });
+    const card = await screen.findByRole('article', { name: /^Plat proposat/ });
+    const chosen = within(card).getByRole('heading', { level: 2 }).textContent;
+    await userEvent.click(screen.getByRole('button', { name: 'Aquest!' }));
+
+    expect(await screen.findByRole('button', { name: 'Sopem això' })).toBeInTheDocument();
+    expect(screen.queryByRole('region', { name: 'Sopar d’ahir' })).not.toBeInTheDocument();
+    const yesterday = addDays(toIsoDate(new Date()), -1);
+    expect((await repo.getDay(yesterday))?.dinner).toMatchObject({ dishName: chosen });
+  });
+
+  it('tocar la setmana obre el resum i "Tornar" torna a Avui', async () => {
+    const real = db.openAppDb;
+    vi.spyOn(db, 'openAppDb').mockImplementation(() => real(`app-resum-${Date.now()}`));
+    render(<App />);
+    await userEvent.click(await screen.findByRole('button', { name: 'Sopem això' }));
+    await userEvent.click(await screen.findByRole('button', { name: 'Veure el resum de la setmana' }));
+    const list = await screen.findByRole('list', { name: 'Resum per categoria' });
+    expect(within(list).getAllByRole('listitem')).toHaveLength(5);
+    await userEvent.click(screen.getByRole('button', { name: 'Tornar' }));
+    expect(await screen.findByText('Bon profit!')).toBeInTheDocument();
+  });
+
+  it('el menú porta a totes les pantalles principals', async () => {
+    const real = db.openAppDb;
+    vi.spyOn(db, 'openAppDb').mockImplementation(() => real(`app-menu-${Date.now()}`));
+    render(<App />);
+    await userEvent.click(await screen.findByRole('button', { name: 'Menú' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Ajustos' }));
+    await screen.findByRole('heading', { name: 'Ajustos' });
+    await userEvent.click(screen.getByRole('button', { name: 'Menú' }));
+    await userEvent.click(screen.getByRole('button', { name: 'La teva setmana' }));
+    await screen.findByRole('list', { name: 'Resum per categoria' });
+    await userEvent.click(screen.getByRole('button', { name: 'Menú' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Avui' }));
+    expect(await screen.findByRole('button', { name: 'Sopem això' })).toBeInTheDocument();
+  });
+
+  it('el marge d’Ajustos canvia l’avís de capritx del swipe', async () => {
+    vi.stubGlobal('matchMedia', (q: string) => ({ matches: q.includes('reduce'), media: q, addEventListener() {}, removeEventListener() {} }));
+    const real = db.openAppDb;
+    const name = `app-marge-${Date.now()}`;
+    const repo = createRepository(await real(name));
+    const yesterday = addDays(toIsoDate(new Date()), -1);
+    await repo.confirmDinner(yesterday, {
+      id: 'base-fora-de-casa', name: 'Fora de casa', category: 'capritx', ingredients: [], prepMinutes: null, source: 'base',
+    });
+    vi.spyOn(db, 'openAppDb').mockImplementation(() => real(name));
+    render(<App />);
+    await userEvent.click(await screen.findByRole('button', { name: 'Menú' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Ajustos' }));
+    const less = await screen.findByRole('button', { name: 'Un dia menys' });
+    for (let i = 0; i < 7; i++) await userEvent.click(less);
+    await screen.findByText('0 dies');
+    await userEvent.click(screen.getByRole('button', { name: 'Tornar' }));
+    await userEvent.click(await screen.findByRole('button', { name: 'Canviar plat' }));
+    await screen.findByRole('article', { name: /^Plat proposat/ });
+    // Els capritxos surten al final: avancem fins al primer.
+    while (!screen.queryByText('No recomanat')) {
+      await userEvent.click(screen.getByRole('button', { name: 'Un altre' }));
+    }
+    expect(screen.queryByText(/de l’últim capritx/)).not.toBeInTheDocument();
+  });
+
+  it('un plat propi nou surt primer a la proposta d’Avui', async () => {
+    const real = db.openAppDb;
+    vi.spyOn(db, 'openAppDb').mockImplementation(() => real(`app-plats-${Date.now()}`));
+    render(<App />);
+    const today = await screen.findByRole('article', { name: 'Plat del dia' });
+    const category = within(today).getByText(/^(Peix|Ou|Llegum|Carn magra|Vegetarià pur)$/).textContent!;
+
+    await userEvent.click(screen.getByRole('button', { name: 'Menú' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Ajustos' }));
+    await userEvent.click(await screen.findByRole('button', { name: /Els meus plats/ }));
+    await userEvent.click(await screen.findByRole('button', { name: 'Afegir un plat' }));
+    await userEvent.type(await screen.findByLabelText('Nom'), 'El plat de la casa');
+    await userEvent.click(screen.getByRole('radio', { name: category }));
+    await userEvent.click(screen.getByRole('button', { name: 'Desar' }));
+
+    const list = await screen.findByRole('list', { name: 'Els meus plats' });
+    expect(within(list).getByText('El plat de la casa')).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Menú' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Avui' }));
+    const card = await screen.findByRole('article', { name: 'Plat del dia' });
+    expect(within(card).getByText('El plat de la casa')).toBeInTheDocument();
+  });
+
+  it('des del menú s’obre "Com funciona"', async () => {
+    const real = db.openAppDb;
+    vi.spyOn(db, 'openAppDb').mockImplementation(() => real(`app-ajuda-${Date.now()}`));
+    render(<App />);
+    await userEvent.click(await screen.findByRole('button', { name: 'Menú' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Com funciona' }));
+    expect(await screen.findByRole('heading', { level: 1, name: 'Com funciona' })).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Tornar' }));
+    expect(await screen.findByRole('button', { name: 'Sopem això' })).toBeInTheDocument();
+  });
+});

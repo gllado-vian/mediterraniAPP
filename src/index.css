@@ -1,0 +1,91 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/figtree';
+
+@theme {
+  --font-sans: 'Figtree Variable', ui-sans-serif, system-ui, sans-serif;
+
+  /* Identitat: el fons és el ciment de les juntes, les targetes són rajoles. */
+  --color-ciment: #f2f2f2;
+  --color-rajola: #e8daca;
+  --color-tinta: #3a4229;
+  --color-tinta-suau: #5b6348;
+  /* Tinta més fosca per a text petit sobre Peix i Carn (≥4.5:1). */
+  --color-tinta-fosca: #1f2412;
+
+  --color-peix: #6e93a8;
+  --color-carn: #bf8275;
+  --color-ou: #f2c166;
+  --color-llegum: #6b6e3d;
+  --color-vegetaria: #bcbf69;
+  --color-capritx: #a8402e;
+  /* Colors nous per a categories creades per l'usuari (Impeccable colorize, aprovats per l'Olga). */
+  --color-lavanda: #a395c2;
+  --color-aigua-de-cala: #6fa89a;
+  --color-safra: #d98f4e;
+  --color-alberginia: #6b4a6e;
+  /* Mateix to, enfosquit per a text petit sobre la rajola (≥4.5:1). */
+  --color-capritx-tinta: #8c3222;
+
+  --radius-rajola: 6px;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@layer base {
+  html {
+    background: var(--color-ciment);
+    color: var(--color-tinta);
+    -webkit-tap-highlight-color: transparent;
+    font-feature-settings: 'tnum' 0;
+  }
+
+  body {
+    @apply font-sans antialiased;
+    caret-color: var(--color-tinta);
+    overscroll-behavior-y: none;
+  }
+
+  ::selection {
+    background: var(--color-ou);
+    color: var(--color-tinta);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-tinta);
+    outline-offset: 3px;
+  }
+}
+
+/* Interacció signatura: col·locar la rajola del dia a la setmana. */
+@keyframes rajola-col-locada {
+  from {
+    transform: scale(0.55);
+    clip-path: inset(50% 50% 50% 50% round var(--radius-rajola));
+  }
+  to {
+    transform: scale(1);
+    clip-path: inset(0 0 0 0 round var(--radius-rajola));
+  }
+}
+
+.rajola-nova {
+  animation: rajola-col-locada 520ms var(--ease-out-expo) both;
+}
+
+/* El panell del menú baixa just una mica des de la capçalera. */
+@keyframes menu-obert {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+.menu-obert {
+  animation: menu-obert 180ms var(--ease-out-expo) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rajola-nova,
+  .menu-obert {
+    animation: none;
+  }
+}
