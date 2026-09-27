@@ -19,11 +19,11 @@ beforeEach(async () => {
   repo = createRepository(await openAppDb(`summary-${++n}`));
 });
 
-async function renderSummary(onBack = vi.fn()) {
+async function renderSummary(onBack = vi.fn(), onNavigate = vi.fn()) {
   const store = createAppStore({ repo, now: () => THURSDAY });
   render(
     <AppStoreProvider store={store}>
-      <SummaryScreen onBack={onBack} />
+      <SummaryScreen onBack={onBack} onNavigate={onNavigate} />
     </AppStoreProvider>,
   );
   await screen.findByRole('heading', { name: 'La teva setmana' });
@@ -78,5 +78,13 @@ describe('SummaryScreen', () => {
     const { onBack } = await renderSummary();
     await userEvent.click(screen.getByRole('button', { name: 'Tornar' }));
     expect(onBack).toHaveBeenCalledOnce();
+  });
+
+  it('des del menú es torna a Avui', async () => {
+    const onNavigate = vi.fn();
+    await renderSummary(vi.fn(), onNavigate);
+    await userEvent.click(screen.getByRole('button', { name: 'Menú' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Avui' }));
+    expect(onNavigate).toHaveBeenCalledWith('today');
   });
 });

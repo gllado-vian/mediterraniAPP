@@ -19,7 +19,7 @@ async function renderToday(onOpenSwipe = vi.fn(), now = () => MONDAY) {
   const store = createAppStore({ repo, now });
   render(
     <AppStoreProvider store={store}>
-      <TodayScreen onOpenSwipe={onOpenSwipe} onPickYesterday={vi.fn()} onOpenSummary={vi.fn()} />
+      <TodayScreen onOpenSwipe={onOpenSwipe} onPickYesterday={vi.fn()} onNavigate={vi.fn()} />
     </AppStoreProvider>,
   );
   await screen.findByRole('heading', { name: 'Dilluns, 28 de setembre' });
@@ -104,15 +104,29 @@ describe('TodayScreen', () => {
   });
 
   it('tocar la setmana obre el resum', async () => {
-    const onOpenSummary = vi.fn();
+    const onNavigate = vi.fn();
     const store = createAppStore({ repo, now: () => MONDAY });
     render(
       <AppStoreProvider store={store}>
-        <TodayScreen onOpenSwipe={vi.fn()} onPickYesterday={vi.fn()} onOpenSummary={onOpenSummary} />
+        <TodayScreen onOpenSwipe={vi.fn()} onPickYesterday={vi.fn()} onNavigate={onNavigate} />
       </AppStoreProvider>,
     );
     await userEvent.click(await screen.findByRole('button', { name: 'Veure el resum de la setmana' }));
-    expect(onOpenSummary).toHaveBeenCalledOnce();
+    expect(onNavigate).toHaveBeenCalledWith('week');
+  });
+
+  it('des del menú es va a Ajustos', async () => {
+    const onNavigate = vi.fn();
+    const store = createAppStore({ repo, now: () => MONDAY });
+    render(
+      <AppStoreProvider store={store}>
+        <TodayScreen onOpenSwipe={vi.fn()} onPickYesterday={vi.fn()} onNavigate={onNavigate} />
+      </AppStoreProvider>,
+    );
+    await userEvent.click(await screen.findByRole('button', { name: 'Menú' }));
+    expect(screen.getByRole('button', { name: 'Avui' })).toHaveAttribute('aria-current', 'page');
+    await userEvent.click(screen.getByRole('button', { name: 'Ajustos' }));
+    expect(onNavigate).toHaveBeenCalledWith('settings');
   });
 
   it('carrega el recetari base en obrir l’app', async () => {
@@ -227,7 +241,7 @@ describe('TodayScreen', () => {
       const store = createAppStore({ repo, now: () => MONDAY });
       render(
         <AppStoreProvider store={store}>
-          <TodayScreen onOpenSwipe={vi.fn()} onPickYesterday={onPickYesterday} onOpenSummary={vi.fn()} />
+          <TodayScreen onOpenSwipe={vi.fn()} onPickYesterday={onPickYesterday} onNavigate={vi.fn()} />
         </AppStoreProvider>,
       );
       const region = await screen.findByRole('region', { name: 'Sopar d’ahir' });

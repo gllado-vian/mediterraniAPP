@@ -76,4 +76,45 @@ describe('App', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Tornar' }));
     expect(await screen.findByText('Bon profit!')).toBeInTheDocument();
   });
+
+  it('el menú porta a totes les pantalles principals', async () => {
+    const real = db.openAppDb;
+    vi.spyOn(db, 'openAppDb').mockImplementation(() => real(`app-menu-${Date.now()}`));
+    render(<App />);
+    await userEvent.click(await screen.findByRole('button', { name: 'Menú' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Ajustos' }));
+    await screen.findByRole('heading', { name: 'Ajustos' });
+    await userEvent.click(screen.getByRole('button', { name: 'Menú' }));
+    await userEvent.click(screen.getByRole('button', { name: 'La teva setmana' }));
+    await screen.findByRole('list', { name: 'Resum per categoria' });
+    await userEvent.click(screen.getByRole('button', { name: 'Menú' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Avui' }));
+    expect(await screen.findByRole('button', { name: 'Sopem això' })).toBeInTheDocument();
+  });
+
+  it('el marge d’Ajustos canvia l’avís de capritx del swipe', async () => {
+    vi.stubGlobal('matchMedia', (q: string) => ({ matches: q.includes('reduce'), media: q, addEventListener() {}, removeEventListener() {} }));
+    const real = db.openAppDb;
+    const name = `app-marge-${Date.now()}`;
+    const repo = createRepository(await real(name));
+    const yesterday = addDays(toIsoDate(new Date()), -1);
+    await repo.confirmDinner(yesterday, {
+      id: 'base-fora-de-casa', name: 'Fora de casa', category: 'capritx', ingredients: [], prepMinutes: null, source: 'base',
+    });
+    vi.spyOn(db, 'openAppDb').mockImplementation(() => real(name));
+    render(<App />);
+    await userEvent.click(await screen.findByRole('button', { name: 'Menú' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Ajustos' }));
+    const less = await screen.findByRole('button', { name: 'Un dia menys' });
+    for (let i = 0; i < 7; i++) await userEvent.click(less);
+    await screen.findByText('0 dies');
+    await userEvent.click(screen.getByRole('button', { name: 'Tornar' }));
+    await userEvent.click(await screen.findByRole('button', { name: 'Canviar plat' }));
+    await screen.findByRole('article', { name: /^Plat proposat/ });
+    // Els capritxos surten al final: avancem fins al primer.
+    while (!screen.queryByText('No recomanat')) {
+      await userEvent.click(screen.getByRole('button', { name: 'Un altre' }));
+    }
+    expect(screen.queryByText(/de l'últim capritx/)).not.toBeInTheDocument();
+  });
 });

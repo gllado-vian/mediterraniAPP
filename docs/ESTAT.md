@@ -28,14 +28,18 @@
 | 6 | Registre del dinar (no bloquejant, vinculant) + avís "ahir: vas sopar X?" | ✅ fet + polish |
 | 7 | Resum setmanal per categoria | ✅ fet + polish |
 | 8 | "+info" del plat | ✅ fet + polish |
-| 9 | Export/import JSON + Ajustos (marge capritx, els meus plats) | pendent |
+| 9 | Export/import JSON + Ajustos (marge capritx, els meus plats) | 🚧 en curs: 9a ✅ (menú + Ajustos amb marge), 9b els meus plats, 9c export/import |
 | 10 | Passada final d'identitat visual + `DESIGN.md` (Impeccable document) | pendent |
 
 ## On som exactament (pas 9)
 
-Pas 8 tancat (141 tests en verd, `tsc` net, polish del swipe i d'Avui fet,
-detector d'Impeccable sense findings). **Esperant el vistiplau de l'Olga** per
-començar el pas 9 (export/import JSON + Ajustos: marge de capritx, els meus plats), també amb TDD.
+El pas 9 es fa en tres peces, cadascuna amb disseny curt aprovat, TDD, commit i revisió de l'Olga:
+
+- **9a ✅** Menú de capçalera (Avui · La teva setmana · Ajustos) i Ajustos amb el marge entre capritxos (157 tests, `tsc` net, polish fet).
+- **9b** Els meus plats: afegir, editar i esborrar plats propis (ingredients un per línia).
+- **9c** Exportar / importar JSON: l'import **substitueix** tot el que hi ha al mòbil, amb confirmació.
+
+**Esperant el vistiplau de l'Olga** per començar la 9b.
 
 ## Decisions preses durant la construcció
 
@@ -57,10 +61,12 @@ començar el pas 9 (export/import JSON + Ajustos: marge de capritx, els meus pla
 - "+info": tocar la rajola del plat (swipe i Avui) la gira i ensenya el dors; tornar a tocar la torna de cara. Amb teclat, Retorn o Espai. Una icona d'informació a la cantonada del camp de color indica que es pot girar; al dors, una icona de girar.
 - Dors compacte perquè hi càpiga a Avui al mòbil petit: nom, "fa X dies · X cops aquest mes" en una línia, ingredients en dues columnes (si no hi cap, es desplaça dins la rajola; la rajola no canvia de mida).
 - "Cops aquest mes" = mes natural. Les dades del swipe d'ahir es calculen respecte d'ahir.
+- Navegació: icona de menú a la dreta de la capçalera d'Avui, La teva setmana i Ajustos. Panell de rajoles (la pantalla actual en tinta plena); es tanca en triar, amb Escape, tocant fora o tornant a tocar la icona. El swipe no porta menú. La fletxa de Tornar es manté a La teva setmana i Ajustos.
+- Ajustos · marge entre capritxos: comptador de tres rajoles (− valor +), de 0 a 30 dies, es desa a cada toc. Brief: `.impeccable/surfaces/src-screens-settingsscreen-tsx.md`.
 
 ## Pendents per a passos següents
 
-- **Pas 10:** la fila de la setmana d'Avui obre el resum, però no hi ha cap pista visual que es pugui tocar. Revisar-ho amb el mateix criteri que la icona de "+info" de la targeta del plat (pas 8).
+- ~~Pas 10: pista per saber que la fila de la setmana obre el resum.~~ Resolt a la 9a: el menú de capçalera porta a "La teva setmana" (la fila continua sent una drecera).
 
 ## Pendents d'Impeccable (per a la sessió amb el plugin carregat)
 

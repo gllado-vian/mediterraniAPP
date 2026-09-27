@@ -64,8 +64,21 @@
   animation: rajola-col-locada 520ms var(--ease-out-expo) both;
 }
 
+/* El panell del menú baixa just una mica des de la capçalera. */
+@keyframes menu-obert {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+.menu-obert {
+  animation: menu-obert 180ms var(--ease-out-expo) both;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .rajola-nova {
+  .rajola-nova,
+  .menu-obert {
     animation: none;
   }
 }

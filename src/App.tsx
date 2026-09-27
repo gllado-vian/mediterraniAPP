@@ -1,14 +1,16 @@
 import { useEffect, useState } from 'react';
 import { openAppDb } from './db/db';
 import { createRepository } from './db/repository';
+import { SettingsScreen } from './screens/SettingsScreen';
 import { SummaryScreen } from './screens/SummaryScreen';
 import { SwipeScreen } from './screens/SwipeScreen';
 import { TodayScreen } from './screens/TodayScreen';
 import type { IsoDate } from './domain/types';
 import { AppStoreProvider, createAppStore, type AppStore } from './store/appStore';
+import type { MainScreen } from './ui/AppMenu';
 
-/** El swipe porta la data per a la qual es tria (per defecte, avui). */
-type Screen = { name: 'today' } | { name: 'swipe'; date?: IsoDate } | { name: 'summary' };
+/** Les pantalles del menú, més el swipe (que porta la data per a la qual es tria). */
+type Screen = { name: MainScreen } | { name: 'swipe'; date?: IsoDate };
 
 const TODAY: Screen = { name: 'today' };
 
@@ -16,6 +18,7 @@ export function App() {
   const [store, setStore] = useState<AppStore | null>(null);
   const [screen, setScreen] = useState<Screen>(TODAY);
   const [failed, setFailed] = useState(false);
+  const navigate = (name: MainScreen) => setScreen({ name });
 
   useEffect(() => {
     openAppDb()
@@ -43,10 +46,13 @@ export function App() {
         <TodayScreen
           onOpenSwipe={() => setScreen({ name: 'swipe' })}
           onPickYesterday={(date) => setScreen({ name: 'swipe', date })}
-          onOpenSummary={() => setScreen({ name: 'summary' })}
+          onNavigate={navigate}
         />
       )}
-      {screen.name === 'summary' && <SummaryScreen onBack={() => setScreen(TODAY)} />}
+      {screen.name === 'week' && <SummaryScreen onBack={() => setScreen(TODAY)} onNavigate={navigate} />}
+      {screen.name === 'settings' && (
+        <SettingsScreen onBack={() => setScreen(TODAY)} onNavigate={navigate} />
+      )}
       {screen.name === 'swipe' && (
         <SwipeScreen
           date={screen.date}

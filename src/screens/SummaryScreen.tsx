@@ -4,6 +4,7 @@ import { weeklySummary, type SummaryRow } from '../domain/weeklySummary';
 import { useAppStore } from '../store/appStore';
 import { CategoryIcon } from '../ui/CategoryIcon';
 import { inkOn } from '../ui/contrast';
+import { AppMenu, type MainScreen } from '../ui/AppMenu';
 import { WeekTiles } from '../ui/WeekTiles';
 
 /** Una rajola per categoria: quan la quota és complerta, el color l'omple sencera. */
@@ -39,7 +40,13 @@ function Row({ row }: { row: SummaryRow }) {
   );
 }
 
-export function SummaryScreen({ onBack }: { onBack: () => void }) {
+export function SummaryScreen({
+  onBack,
+  onNavigate,
+}: {
+  onBack: () => void;
+  onNavigate: (screen: MainScreen) => void;
+}) {
   const status = useAppStore((s) => s.status);
   const today = useAppStore((s) => s.today);
   const days = useAppStore((s) => s.days);
@@ -56,7 +63,8 @@ export function SummaryScreen({ onBack }: { onBack: () => void }) {
         >
           <IconArrowLeft size={24} stroke={1.75} aria-hidden="true" />
         </button>
-        <h1 className="text-lg font-semibold">La teva setmana</h1>
+        <h1 className="flex-1 text-lg font-semibold">La teva setmana</h1>
+        <AppMenu current="week" onNavigate={onNavigate} />
       </header>
 
       {status === 'ready' && (

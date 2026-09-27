@@ -21,6 +21,7 @@ export interface AppState {
   undoDinner(date?: IsoDate): Promise<void>;
   setLunch(lunch: LunchOption | null): Promise<void>;
   markDinnerUnknown(date: IsoDate): Promise<void>;
+  updateSettings(patch: Partial<Settings>): Promise<void>;
 }
 
 export interface AppStoreDeps {
@@ -93,6 +94,10 @@ export function createAppStore({ repo, now = () => new Date() }: AppStoreDeps): 
       async markDinnerUnknown(date) {
         await repo.markDinnerUnknown(date);
         await refreshDays();
+      },
+
+      async updateSettings(patch) {
+        set({ settings: await repo.updateSettings(patch) });
       },
     };
   });

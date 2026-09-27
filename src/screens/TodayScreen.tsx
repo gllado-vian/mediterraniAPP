@@ -9,6 +9,7 @@ import { proposeTonight } from '../domain/planner';
 import { useAppStore } from '../store/appStore';
 import { DishInfo } from '../ui/DishInfo';
 import { DishTile } from '../ui/DishTile';
+import { AppMenu, type MainScreen } from '../ui/AppMenu';
 import { LunchPicker } from '../ui/LunchPicker';
 import { WeekTiles } from '../ui/WeekTiles';
 import { YesterdayPrompt } from '../ui/YesterdayPrompt';
@@ -39,11 +40,11 @@ function confirmedDishOf(dinner: DayRecord['dinner'], dishes: Dish[]): Dish | un
 export function TodayScreen({
   onOpenSwipe,
   onPickYesterday,
-  onOpenSummary,
+  onNavigate,
 }: {
   onOpenSwipe: () => void;
   onPickYesterday: (date: IsoDate) => void;
-  onOpenSummary: () => void;
+  onNavigate: (screen: MainScreen) => void;
 }) {
   const status = useAppStore((s) => s.status);
   const today = useAppStore((s) => s.today);
@@ -100,8 +101,9 @@ export function TodayScreen({
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-md flex-col px-4 pt-[max(1.25rem,env(safe-area-inset-top))] pb-[max(1.5rem,env(safe-area-inset-bottom))]">
-      <header className="pb-4">
-        <h1 className="text-lg font-semibold">{formatLongDate(today)}</h1>
+      <header className="flex items-center gap-2 pb-3">
+        <h1 className="flex-1 text-lg font-semibold">{formatLongDate(today)}</h1>
+        <AppMenu current="today" onNavigate={onNavigate} />
       </header>
 
       {yesterdayDish && (
@@ -177,7 +179,7 @@ export function TodayScreen({
           <WeekTiles today={today} days={days} justPlaced={justPlaced} />
           <button
             type="button"
-            onClick={onOpenSummary}
+            onClick={() => onNavigate('week')}
             aria-label="Veure el resum de la setmana"
             className="absolute -inset-1 z-30 rounded-(--radius-rajola) transition-colors hover:bg-tinta/5 active:bg-tinta/10"
           />
