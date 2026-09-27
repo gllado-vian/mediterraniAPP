@@ -11,7 +11,7 @@ import {
 } from '@tabler/icons-react';
 
 /** Què porta la rajoleta del sòcol: una icona o una mostra real de l'app. */
-export type HelpTile = { kind: 'icon'; icon: Icon } | { kind: 'week' } | { kind: 'capritx' };
+export type HelpTile = { kind: 'icon'; icon: Icon } | { kind: 'week' } | { kind: 'capritx' } | { kind: 'category' };
 
 export interface HelpStep {
   id: string;
@@ -96,6 +96,15 @@ export const HELP_GROUPS: HelpGroup[] = [
   {
     title: 'A Ajustos',
     steps: [
+      {
+        id: 'categories',
+        title: 'Categories',
+        tile: { kind: 'category' },
+        body: [
+          'Tria quantes vegades per setmana vols cada categoria: en total, 7 sopars. Amb 0, no te la proposarem.',
+          'També pots canviar-ne el nom, la icona i el color, crear-ne de noves o esborrar les que no facis servir.',
+        ],
+      },
       {
         id: 'plats',
         title: 'Els meus plats',

@@ -30,4 +30,9 @@ describe('contingut de "Com funciona"', () => {
   it('explica el vespre en ordre: ahir, dinar, plat, canviar, girar', () => {
     expect(HELP_GROUPS[0].steps.map((s) => s.id)).toEqual(['ahir', 'dinar', 'plat', 'canviar', 'girar']);
   });
+
+  it('explica les categories a la part d’Ajustos', () => {
+    const settings = HELP_GROUPS.find((g) => g.title === 'A Ajustos')!;
+    expect(settings.steps.map((s) => s.id)).toContain('categories');
+  });
 });

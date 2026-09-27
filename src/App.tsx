@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ComponentProps } from 'react';
 import { openAppDb } from './db/db';
 import { createRepository } from './db/repository';
 import { CategoriesScreen } from './screens/CategoriesScreen';
+import { CategoryFormScreen } from './screens/CategoryFormScreen';
 import { DishFormScreen } from './screens/DishFormScreen';
 import { HelpScreen } from './screens/HelpScreen';
 import { MyDishesScreen } from './screens/MyDishesScreen';
@@ -10,7 +11,7 @@ import { SummaryScreen } from './screens/SummaryScreen';
 import { SwipeScreen } from './screens/SwipeScreen';
 import { TodayScreen } from './screens/TodayScreen';
 import type { IsoDate } from './domain/types';
-import { AppStoreProvider, createAppStore, type AppStore } from './store/appStore';
+import { AppStoreProvider, createAppStore, useAppStore, type AppStore } from './store/appStore';
 import type { MainScreen } from './ui/AppMenu';
 
 /** Les pantalles del menú, més el swipe (que porta la data per a la qual es tria). */
@@ -19,9 +20,16 @@ type Screen =
   | { name: 'swipe'; date?: IsoDate }
   | { name: 'myDishes' }
   | { name: 'categories' }
+  | { name: 'categoryForm'; categoryId?: string }
   | { name: 'dishForm'; dishId?: string };
 
 const TODAY: Screen = { name: 'today' };
+
+/** L'ajuda amb les categories de la casa (per a les mostres). */
+function HelpRoute(props: Omit<ComponentProps<typeof HelpScreen>, 'categories'>) {
+  const categories = useAppStore((s) => s.categories);
+  return <HelpScreen {...props} categories={categories} />;
+}
 
 export function App() {
   const [store, setStore] = useState<AppStore | null>(null);
@@ -69,9 +77,21 @@ export function App() {
         />
       )}
       {screen.name === 'categories' && (
-        <CategoriesScreen onBack={() => navigate('settings')} onNavigate={navigate} />
+        <CategoriesScreen
+          onBack={() => navigate('settings')}
+          onNavigate={navigate}
+          onAdd={() => setScreen({ name: 'categoryForm' })}
+          onEdit={(categoryId) => setScreen({ name: 'categoryForm', categoryId })}
+        />
       )}
-      {screen.name === 'help' && <HelpScreen onBack={() => setScreen(TODAY)} onNavigate={navigate} />}
+      {screen.name === 'categoryForm' && (
+        <CategoryFormScreen
+          categoryId={screen.categoryId}
+          onDone={() => setScreen({ name: 'categories' })}
+          onBack={() => setScreen({ name: 'categories' })}
+        />
+      )}
+      {screen.name === 'help' && <HelpRoute onBack={() => setScreen(TODAY)} onNavigate={navigate} />}
       {screen.name === 'myDishes' && (
         <MyDishesScreen
           onBack={() => navigate('settings')}

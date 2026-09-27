@@ -164,4 +164,25 @@ describe('App', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Tornar' }));
     expect(await screen.findByRole('button', { name: /^Categories/ })).toHaveTextContent('5 categories · 6 sopars');
   });
+
+  it('una categoria nova surt a la llista i al dinar d’Avui', async () => {
+    const real = db.openAppDb;
+    vi.spyOn(db, 'openAppDb').mockImplementation(() => real(`app-categoria-nova-${Date.now()}`));
+    render(<App />);
+    await userEvent.click(await screen.findByRole('button', { name: 'Menú' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Ajustos' }));
+    await userEvent.click(await screen.findByRole('button', { name: /^Categories/ }));
+    await userEvent.click(await screen.findByRole('button', { name: 'Una vegada menys de Peix' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Afegir una categoria' }));
+    await userEvent.type(await screen.findByLabelText('Nom'), 'Arròs');
+    await userEvent.click(screen.getByRole('radio', { name: 'Bol' }));
+    await userEvent.click(screen.getByRole('radio', { name: 'Lavanda' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Desar' }));
+    expect(await screen.findByText('Arròs', { selector: '[data-name]' })).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Menú' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Avui' }));
+    const group = await screen.findByRole('group', { name: 'Què has dinat avui?' });
+    expect(within(group).getByRole('button', { name: 'Arròs' })).toBeInTheDocument();
+  });
 });
