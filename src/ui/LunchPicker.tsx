@@ -1,33 +1,29 @@
-import { categoryInfo, isRotationCategory, LUNCH_OPTIONS, type LunchOption } from '../domain/categories';
-import { textInkOn } from './contrast';
-
-const LUNCH_LABEL: Record<LunchOption, string> = {
-  peix: 'Peix',
-  carn: 'Carn',
-  ou: 'Ou',
-  llegum: 'Llegum',
-  vegetaria: 'Vegetarià',
-  altre: 'Una altra cosa',
-};
+import { categoryInfo, LUNCH_OTHER, lunchOptions, type CategoryDef, type LunchOption } from '../domain/categories';
+import { textInkOn, tileColumns } from './contrast';
 
 /**
- * Mini-taulell de 6 rajoletes amb juntes de 2px. Cada rajoleta porta la franja
+ * Mini-taulell de rajoletes (les categories actives + "Una altra cosa") amb juntes de 2px. Cada rajoleta porta la franja
  * de color de la categoria; en marcar-la, el color l'omple sencera.
  */
 export function LunchPicker({
   value,
   onChange,
+  categories,
 }: {
   value: LunchOption | undefined;
+  categories: readonly CategoryDef[];
   onChange: (lunch: LunchOption | null) => void;
 }) {
+  const options = lunchOptions(categories);
   return (
     <fieldset className="mb-3">
       <legend className="mb-2 text-sm font-medium text-tinta-suau">Què has dinat avui?</legend>
-      <div className="grid grid-cols-3 gap-0.5">
-        {LUNCH_OPTIONS.map((option) => {
+      <div className={`grid gap-0.5 ${tileColumns(options.length)}`}>
+        {options.map((option) => {
           const pressed = value === option;
-          const color = isRotationCategory(option) ? categoryInfo(option).color : null;
+          const other = option === LUNCH_OTHER;
+          const info = other ? null : categoryInfo(option, categories);
+          const color = info?.color ?? null;
           return (
             <button
               key={option}
@@ -35,7 +31,7 @@ export function LunchPicker({
               aria-pressed={pressed}
               onClick={() => onChange(pressed ? null : option)}
               className={[
-                'relative min-h-11 overflow-hidden rounded-(--radius-rajola) px-2 text-sm font-medium transition-colors duration-150',
+                'relative min-h-11 overflow-hidden rounded-(--radius-rajola) px-1.5 text-sm leading-tight font-medium transition-colors duration-150',
                 pressed
                   ? color
                     ? ''
@@ -51,7 +47,7 @@ export function LunchPicker({
                   style={{ backgroundColor: color }}
                 />
               )}
-              {LUNCH_LABEL[option]}
+              {other ? 'Una altra cosa' : info?.label}
             </button>
           );
         })}

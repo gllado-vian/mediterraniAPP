@@ -1,5 +1,5 @@
 import { IconCalendarEvent, IconHistory, IconRotate } from '@tabler/icons-react';
-import { categoryInfo } from '../domain/categories';
+import { categoryInfo, DEFAULT_CATEGORIES, type CategoryDef } from '../domain/categories';
 import type { DishStats } from '../domain/dishStats';
 import { formatMinutes } from '../domain/format';
 import type { Dish } from '../domain/types';
@@ -19,8 +19,16 @@ function thisMonth(times: number): string {
 }
 
 /** Dors de la rajola: el "+info" del plat. */
-export function DishInfo({ dish, stats }: { dish: Dish; stats: DishStats }) {
-  const { label, color } = categoryInfo(dish.category);
+export function DishInfo({
+  dish,
+  stats,
+  categories = DEFAULT_CATEGORIES,
+}: {
+  dish: Dish;
+  stats: DishStats;
+  categories?: readonly CategoryDef[];
+}) {
+  const { label, color, icon } = categoryInfo(dish.category, categories);
   const time = formatMinutes(dish.prepMinutes);
   return (
     <div className="h-full overflow-y-auto overscroll-contain px-5 pt-4 pb-5">
@@ -30,7 +38,7 @@ export function DishInfo({ dish, stats }: { dish: Dish; stats: DishStats }) {
           className="grid size-10 shrink-0 place-items-center rounded-(--radius-rajola)"
           style={{ backgroundColor: color }}
         >
-          <CategoryIcon category={dish.category} size={22} stroke={1.5} color={inkOn(color)} />
+          <CategoryIcon icon={icon} size={22} stroke={1.5} color={inkOn(color)} />
         </span>
         <div className="min-w-0 flex-1">
           <h2 className="text-xl leading-tight font-semibold text-balance">{dish.name}</h2>

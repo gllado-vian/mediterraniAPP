@@ -122,32 +122,14 @@ export function lunchWord(id: CategoryId, categories: readonly CategoryDef[]): s
   return categoryInfo(id, categories).label.toLocaleLowerCase('ca');
 }
 
-// --- Compatibilitat amb les pantalles que encara fan servir les categories fixes (fins a la peça 3) ---
+// --- Només per a la còpia de seguretat v1 (es treu a la peça 3b) ---
 
-export interface CategoryInfo {
-  id: Category;
-  label: string;
-  color: string;
-}
-
-export const CATEGORIES: readonly CategoryInfo[] = [
-  ...DEFAULT_CATEGORIES.map((c) => ({ id: c.id, label: c.name, color: c.color })),
-  { id: CAPRITX_ID, label: CAPRITX_VIEW.label, color: CAPRITX_VIEW.color },
-];
-
-export const ROTATION_CATEGORIES: readonly RotationCategory[] = DEFAULT_CATEGORIES.map((c) => c.id);
-
-/** Sopars per setmana (dilluns → diumenge). Sumen 7. */
-export const WEEKLY_QUOTAS: Readonly<Record<RotationCategory, number>> = Object.fromEntries(
-  DEFAULT_CATEGORIES.map((c) => [c.id, c.quota]),
-);
-
-export const LUNCH_OPTIONS: readonly LunchOption[] = ['peix', 'carn', 'ou', 'llegum', 'vegetaria', LUNCH_OTHER];
+const LEGACY_IDS: readonly string[] = [...DEFAULT_CATEGORIES.map((c) => c.id), CAPRITX_ID];
 
 export function isCategory(value: unknown): value is Category {
-  return CATEGORIES.some((c) => c.id === value);
+  return LEGACY_IDS.includes(value as string);
 }
 
 export function isRotationCategory(value: unknown): value is RotationCategory {
-  return ROTATION_CATEGORIES.includes(value as RotationCategory);
+  return value !== CAPRITX_ID && isCategory(value);
 }

@@ -33,6 +33,7 @@ export function DishFormScreen({
   const addDish = useAppStore((s) => s.addDish);
   const updateDish = useAppStore((s) => s.updateDish);
   const deleteDish = useAppStore((s) => s.deleteDish);
+  const categories = useAppStore((s) => s.categories);
 
   const [name, setName] = useState(dish?.name ?? '');
   const [category, setCategory] = useState<Category | null>(dish?.category ?? null);
@@ -124,6 +125,7 @@ export function DishFormScreen({
           </div>
 
           <CategoryPicker
+            categories={categories}
             value={category}
             onChange={(c) => {
               setCategory(c);

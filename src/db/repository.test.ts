@@ -1,6 +1,8 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { openAppDb } from './db';
-import { createRepository, DishValidationError, type Repository } from './repository';
+import { CategoryInUseError, createRepository, DishValidationError, type Repository } from './repository';
+import { DEFAULT_CATEGORIES } from '../domain/categories';
+import { CategoryValidationError } from '../domain/categoryRules';
 import type { Dish } from '../domain/types';
 
 let repo: Repository;
@@ -259,6 +261,7 @@ describe('còpia de seguretat', () => {
       house: { id: 'casa', createdAt: '2026-09-01T00:00:00.000Z' },
       settings: { capritxMarginDays: 7 },
       dishes: [],
+      categories: [...DEFAULT_CATEGORIES],
       // Un dia sense data no es pot desar: la transacció ha de desfer-se sencera.
       days: [{ date: '2026-09-27' }, {} as never],
     };
@@ -268,3 +271,97 @@ describe('còpia de seguretat', () => {
     expect(await repo.getDay('2026-09-27')).toBeUndefined();
   });
 });
+
+describe('categories', () => {
+  const pasta = { name: 'Pasta', icon: 'bread', color: '#D98F4E', quota: 0 };
+
+  it('sense res desat, són les recomanades', async () => {
+    expect(await repo.getCategories()).toEqual(DEFAULT_CATEGORIES);
+  });
+
+  it('crea una categoria amb un id propi i la desa', async () => {
+    const created = await repo.addCategory(pasta);
+    expect(created).toMatchObject(pasta);
+    expect(created.id).toMatch(/^c-/);
+    expect((await repo.getCategories()).at(-1)).toEqual(created);
+  });
+
+  it('no desa una categoria invàlida i diu quin camp falla', async () => {
+    await expect(repo.addCategory({ ...pasta, color: '#6E93A8' })).rejects.toMatchObject({
+      field: 'color',
+      message: 'Aquest color ja el fa servir Peix.',
+    });
+    await expect(repo.addCategory({ ...pasta, color: '#6E93A8' })).rejects.toBeInstanceOf(CategoryValidationError);
+    expect(await repo.getCategories()).toEqual(DEFAULT_CATEGORIES);
+  });
+
+  it('edita una categoria (nom, icona, color i vegades)', async () => {
+    await repo.updateCategory('peix', { quota: 1, name: 'Peix blau', icon: 'fish', color: '#6E93A8' });
+    expect((await repo.getCategories())[0]).toEqual({ id: 'peix', name: 'Peix blau', icon: 'fish', color: '#6E93A8', quota: 1 });
+  });
+
+  it('esborrar arxiva la categoria i en conserva les dades per a l’historial', async () => {
+    await repo.archiveCategory('carn');
+    expect((await repo.getCategories()).find((c) => c.id === 'carn')).toMatchObject({
+      name: 'Carn magra', color: '#BF8275', archived: true,
+    });
+  });
+
+  it('no deixa esborrar una categoria amb plats propis i diu quants', async () => {
+    await repo.addUserDish({ name: 'Llom', category: 'carn', ingredients: [], prepMinutes: null });
+    await repo.addUserDish({ name: 'Pollastre', category: 'carn', ingredients: [], prepMinutes: null });
+    const error = await repo.archiveCategory('carn').catch((e) => e);
+    expect(error).toBeInstanceOf(CategoryInUseError);
+    expect(error).toMatchObject({ count: 2 });
+    expect((await repo.getCategories()).find((c) => c.id === 'carn')?.archived).toBeFalsy();
+  });
+
+  it('no deixa esborrar l’última categoria ni el capritx', async () => {
+    for (const c of DEFAULT_CATEGORIES.slice(1)) await repo.archiveCategory(c.id);
+    await expect(repo.archiveCategory('peix')).rejects.toThrow('Ha de quedar almenys una categoria.');
+    await expect(repo.archiveCategory('capritx')).rejects.toThrow();
+  });
+
+  it('crear-ne una amb el nom d’una d’esborrada la recupera amb el mateix id', async () => {
+    await repo.archiveCategory('carn');
+    const back = await repo.addCategory({ name: 'carn magra', icon: 'meat', color: '#D98F4E', quota: 0 });
+    expect(back).toEqual({ id: 'carn', name: 'carn magra', icon: 'meat', color: '#D98F4E', quota: 0 });
+    expect((await repo.getCategories()).filter((c) => c.id === 'carn')).toHaveLength(1);
+  });
+
+  it('tornar a les recomanades reactiva les de sempre i arxiva les pròpies', async () => {
+    await repo.updateCategory('peix', { name: 'Peix', icon: 'fish', color: '#6E93A8', quota: 0 });
+    await repo.archiveCategory('ou');
+    const own = await repo.addCategory(pasta);
+    await repo.resetCategories();
+    const list = await repo.getCategories();
+    expect(list.filter((c) => !c.archived)).toEqual(DEFAULT_CATEGORIES);
+    expect(list.find((c) => c.id === own.id)).toMatchObject({ name: 'Pasta', archived: true });
+  });
+
+  it('no torna a les recomanades si una categoria pròpia té plats', async () => {
+    const own = await repo.addCategory(pasta);
+    await repo.addUserDish({ name: 'Macarrons', category: own.id, ingredients: [], prepMinutes: 20 });
+    await expect(repo.resetCategories()).rejects.toBeInstanceOf(CategoryInUseError);
+  });
+
+  it('un plat propi només pot anar a una categoria activa o al capritx', async () => {
+    const own = await repo.addCategory(pasta);
+    await expect(repo.addUserDish({ name: 'Macarrons', category: own.id, ingredients: [], prepMinutes: 20 })).resolves.toBeTruthy();
+    await expect(repo.addUserDish({ name: 'Fora', category: 'capritx', ingredients: [], prepMinutes: null })).resolves.toBeTruthy();
+    await repo.archiveCategory('llegum');
+    await expect(
+      repo.addUserDish({ name: 'Cigrons', category: 'llegum', ingredients: [], prepMinutes: 30 }),
+    ).rejects.toMatchObject({ field: 'category' });
+  });
+
+  it('la còpia de seguretat porta les categories i en tornar-la les desa', async () => {
+    const own = await repo.addCategory(pasta);
+    const data = await repo.exportAll();
+    expect(data.categories.at(-1)).toEqual(own);
+    const other = createRepository(await openAppDb(`test-cat-dest-${dbCounter}`));
+    await other.replaceAll(data);
+    expect(await other.getCategories()).toEqual(data.categories);
+  });
+});
+

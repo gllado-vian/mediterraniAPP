@@ -1,63 +1,35 @@
 import { describe, expect, it } from 'vitest';
 import {
   CAPRITX_ID,
-  CATEGORIES,
   CATEGORY_ICON_KEYS,
   DEFAULT_CATEGORIES,
   activeCategories,
   categoryInfo,
   lunchOptions,
   lunchWord,
-  LUNCH_OPTIONS,
-  ROTATION_CATEGORIES,
-  WEEKLY_QUOTAS,
-  isCategory,
-  isRotationCategory,
 } from './categories';
 
 describe('categories', () => {
-  it('defineix les 5 categories de rotació més el capritx', () => {
-    expect(CATEGORIES.map((c) => c.id)).toEqual([
-      'peix',
-      'ou',
-      'llegum',
-      'carn',
-      'vegetaria',
-      'capritx',
-    ]);
+  it('les recomanades són les 5 de rotació; el capritx en queda fora', () => {
+    expect(DEFAULT_CATEGORIES.map((c) => c.id)).toEqual(['peix', 'ou', 'llegum', 'carn', 'vegetaria']);
+    expect(DEFAULT_CATEGORIES.map((c) => c.id)).not.toContain(CAPRITX_ID);
   });
 
-  it('el capritx no forma part de la rotació', () => {
-    expect(ROTATION_CATEGORIES).not.toContain('capritx');
-    expect(isRotationCategory('capritx')).toBe(false);
-    expect(isRotationCategory('peix')).toBe(true);
-  });
-
-  it('les quotes setmanals sumen exactament 7 sopars', () => {
-    expect(WEEKLY_QUOTAS).toEqual({ peix: 2, ou: 2, llegum: 1, carn: 1, vegetaria: 1 });
-    const total = Object.values(WEEKLY_QUOTAS).reduce((a, b) => a + b, 0);
-    expect(total).toBe(7);
+  it('les vegades recomanades sumen exactament 7 sopars', () => {
+    expect(DEFAULT_CATEGORIES.reduce((sum, c) => sum + c.quota, 0)).toBe(7);
   });
 
   it('cada categoria té nom en català i color de la identitat', () => {
-    const byId = Object.fromEntries(CATEGORIES.map((c) => [c.id, c]));
-    expect(byId.peix).toMatchObject({ label: 'Peix', color: '#6E93A8' });
-    expect(byId.carn).toMatchObject({ label: 'Carn magra', color: '#BF8275' });
-    expect(byId.ou).toMatchObject({ label: 'Ou', color: '#F2C166' });
-    expect(byId.llegum).toMatchObject({ label: 'Llegum', color: '#6B6E3D' });
-    expect(byId.vegetaria).toMatchObject({ label: 'Vegetarià pur', color: '#BCBF69' });
-    expect(byId.capritx).toMatchObject({ label: 'Capritx per un dia', color: '#A8402E' });
+    expect(categoryInfo('peix')).toMatchObject({ label: 'Peix', color: '#6E93A8' });
+    expect(categoryInfo('carn')).toMatchObject({ label: 'Carn magra', color: '#BF8275' });
+    expect(categoryInfo('ou')).toMatchObject({ label: 'Ou', color: '#F2C166' });
+    expect(categoryInfo('llegum')).toMatchObject({ label: 'Llegum', color: '#6B6E3D' });
+    expect(categoryInfo('vegetaria')).toMatchObject({ label: 'Vegetarià pur', color: '#BCBF69' });
+    expect(categoryInfo('capritx')).toMatchObject({ label: 'Capritx per un dia', color: '#A8402E' });
   });
 
-  it("les opcions de dinar són les 5 de rotació més 'altre'", () => {
-    expect(LUNCH_OPTIONS).toEqual(['peix', 'carn', 'ou', 'llegum', 'vegetaria', 'altre']);
-  });
-
-  it('isCategory valida identificadors desconeguts', () => {
-    expect(isCategory('peix')).toBe(true);
-    expect(isCategory('capritx')).toBe(true);
-    expect(isCategory('gust')).toBe(false);
-    expect(isCategory(42)).toBe(false);
+  it('les opcions de dinar per defecte són les 5 recomanades més "altre"', () => {
+    expect(lunchOptions(DEFAULT_CATEGORIES)).toEqual(['peix', 'ou', 'llegum', 'carn', 'vegetaria', 'altre']);
   });
 });
 

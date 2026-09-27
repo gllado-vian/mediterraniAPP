@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { BASE_RECIPES, seedBaseRecipes } from './baseRecipes';
-import { isRotationCategory } from './categories';
+import { DEFAULT_CATEGORIES } from './categories';
 import { openAppDb } from '../db/db';
 import { createRepository, type Repository } from '../db/repository';
 
@@ -34,7 +34,7 @@ describe('recetari base', () => {
   });
 
   it('tots els plats de rotació tenen ingredients i temps', () => {
-    BASE_RECIPES.filter((d) => isRotationCategory(d.category)).forEach((d) => {
+    BASE_RECIPES.filter((d) => DEFAULT_CATEGORIES.some((c) => c.id === d.category)).forEach((d) => {
       expect(d.ingredients.length, d.name).toBeGreaterThan(0);
       expect(d.prepMinutes, d.name).toBeGreaterThan(0);
     });

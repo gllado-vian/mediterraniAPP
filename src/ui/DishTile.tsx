@@ -1,6 +1,6 @@
 import { IconInfoCircle } from '@tabler/icons-react';
 import { useEffect, useState, type HTMLAttributes, type KeyboardEvent, type ReactNode } from 'react';
-import { categoryInfo } from '../domain/categories';
+import { categoryInfo, DEFAULT_CATEGORIES, type CategoryDef } from '../domain/categories';
 import { formatMinutes } from '../domain/format';
 import type { Dish } from '../domain/types';
 import { CategoryIcon } from './CategoryIcon';
@@ -20,6 +20,7 @@ interface DishTileProps extends HTMLAttributes<HTMLElement> {
   onFlip?: () => void;
   /** Versió més baixa, per quan a sobre hi ha l'avís d'ahir. */
   compact?: boolean;
+  categories?: readonly CategoryDef[];
 }
 
 /** Rajola d'un plat: camp de color de la categoria amb la icona com a motiu. */
@@ -31,11 +32,12 @@ export function DishTile({
   back,
   flipped = false,
   compact = false,
+  categories = DEFAULT_CATEGORIES,
   onFlip,
   className = '',
   ...rest
 }: DishTileProps) {
-  const info = categoryInfo(dish.category);
+  const info = categoryInfo(dish.category, categories);
   const time = formatMinutes(dish.prepMinutes);
   // El dors només és al DOM mentre es veu o mentre gira (no dupliquem el nom del plat).
   const [backMounted, setBackMounted] = useState(flipped);
@@ -58,7 +60,7 @@ export function DishTile({
         className={`relative grid flex-1 place-items-center ${compact ? 'min-h-20' : 'min-h-32'}`}
         style={{ backgroundColor: info.color }}
       >
-        <CategoryIcon category={dish.category} size={compact ? 64 : 104} stroke={1.25} color={inkOn(info.color)} />
+        <CategoryIcon icon={info.icon} size={compact ? 64 : 104} stroke={1.25} color={inkOn(info.color)} />
         {overlay}
         {back && (
           <span

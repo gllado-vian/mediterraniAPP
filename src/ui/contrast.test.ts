@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { CATEGORIES, CATEGORY_PALETTE } from '../domain/categories';
+import { CAPRITX_ID, CATEGORY_PALETTE, categoryInfo, DEFAULT_CATEGORIES } from '../domain/categories';
+
+const CATEGORIES = [...DEFAULT_CATEGORIES.map((c) => c.id), CAPRITX_ID].map((id) => categoryInfo(id));
 import { contrastRatio, inkOn, INK_DARK, INK_DEEP, INK_LIGHT, textInkOn } from './contrast';
 
 describe('contrast', () => {

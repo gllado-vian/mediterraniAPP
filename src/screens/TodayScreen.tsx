@@ -1,7 +1,7 @@
 import { IconArrowsExchange, IconCheck } from '@tabler/icons-react';
 import { useState } from 'react';
 import type { DayRecord, Dish, IsoDate } from '../domain/types';
-import type { RotationCategory } from '../domain/categories';
+import { activeCategories, lunchWord } from '../domain/categories';
 import { addDays } from '../domain/dates';
 import { dishStats } from '../domain/dishStats';
 import { formatLongDate } from '../domain/format';
@@ -13,14 +13,6 @@ import { AppMenu, type MainScreen } from '../ui/AppMenu';
 import { LunchPicker } from '../ui/LunchPicker';
 import { WeekTiles } from '../ui/WeekTiles';
 import { YesterdayPrompt } from '../ui/YesterdayPrompt';
-
-const LUNCH_WORD: Record<RotationCategory, string> = {
-  peix: 'peix',
-  carn: 'carn',
-  ou: 'ou',
-  llegum: 'llegum',
-  vegetaria: 'vegetarià',
-};
 
 /** El plat confirmat, o una còpia feta amb l'historial si el plat s'ha esborrat. */
 function confirmedDishOf(dinner: DayRecord['dinner'], dishes: Dish[]): Dish | undefined {
@@ -49,6 +41,7 @@ export function TodayScreen({
   const status = useAppStore((s) => s.status);
   const today = useAppStore((s) => s.today);
   const houseSince = useAppStore((s) => s.houseSince);
+  const categories = useAppStore((s) => s.categories);
   const days = useAppStore((s) => s.days);
   const dishes = useAppStore((s) => s.dishes);
   const confirmDinner = useAppStore((s) => s.confirmDinner);
@@ -67,7 +60,9 @@ export function TodayScreen({
   const todayRecord = days.find((d) => d.date === today);
   const dinner = todayRecord?.dinner;
   const confirmedDish = confirmedDishOf(dinner, dishes);
-  const proposal = confirmedDish ? null : proposeTonight({ today, days, dishes });
+  const proposal = confirmedDish ? null : proposeTonight({ today, days, dishes, categories });
+  // Sense res planificable (p. ex. totes les categories a 0 vegades) no hi ha cap proposta.
+  const nothingToPropose = !confirmedDish && !proposal;
   const shownDish = confirmedDish ?? proposal?.dish;
 
   // Només preguntem per ahir si l'app ja existia i ahir encara és en blanc.
@@ -77,7 +72,7 @@ export function TodayScreen({
     houseSince <= yesterday &&
     !days.find((d) => d.date === yesterday)?.dinner;
   const yesterdayDish = yesterdayOpen
-    ? proposeTonight({ today: yesterday, days: days.filter((d) => d.date <= yesterday), dishes })?.dish
+    ? proposeTonight({ today: yesterday, days: days.filter((d) => d.date <= yesterday), dishes, categories })?.dish
     : undefined;
 
   /** Evita dobles tocs mentre es desa. */
@@ -113,24 +108,29 @@ export function TodayScreen({
           onYes={() => save(() => confirmDinner(yesterdayDish, yesterday))}
           onOther={() => onPickYesterday(yesterday)}
           onUnknown={() => save(() => markDinnerUnknown(yesterday))}
+          categories={categories}
         />
       )}
 
-      {!confirmedDish && <LunchPicker value={todayRecord?.lunch} onChange={setLunch} />}
+      {!confirmedDish && (
+        <LunchPicker value={todayRecord?.lunch} onChange={setLunch} categories={categories} />
+      )}
 
       {proposal?.replacedForLunch && (
         <p className="mb-3 flex items-center gap-2 text-sm text-tinta-suau">
           <IconArrowsExchange size={18} stroke={1.75} aria-hidden="true" />
-          Canviat perquè has dinat {LUNCH_WORD[proposal.replacedForLunch]}
+          Canviat perquè has dinat {lunchWord(proposal.replacedForLunch, categories)}
         </p>
       )}
 
       {shownDish && (
         <DishTile
-          compact={Boolean(yesterdayDish)}
+          // Amb l'avís d'ahir o moltes categories al dinar, la rajola es compacta (tot cap a 375×667).
+          compact={Boolean(yesterdayDish) || activeCategories(categories).length > 5}
           dish={shownDish}
           label="Plat del dia"
-          back={<DishInfo dish={shownDish} stats={dishStats(shownDish.id, today, days)} />}
+          categories={categories}
+          back={<DishInfo dish={shownDish} stats={dishStats(shownDish.id, today, days)} categories={categories} />}
           flipped={flippedId === shownDish.id}
           onFlip={() => setFlippedId((id) => (id === shownDish.id ? null : shownDish.id))}
           onClick={() => setFlippedId((id) => (id === shownDish.id ? null : shownDish.id))}
@@ -155,6 +155,20 @@ export function TodayScreen({
               Desfer
             </button>
           </div>
+        ) : nothingToPropose ? (
+          <div className="rounded-(--radius-rajola) bg-rajola px-5 py-4">
+            <p className="font-semibold">No tenim cap sopar per proposar</p>
+            <p className="mt-1 text-sm text-tinta-suau">
+              Cap categoria té vegades aquesta setmana, o les que en tenen encara no tenen plats.
+            </p>
+            <button
+              type="button"
+              onClick={() => onNavigate('settings')}
+              className="mt-3 h-12 w-full rounded-(--radius-rajola) bg-tinta font-semibold text-ciment transition-colors hover:bg-tinta/90"
+            >
+              Revisar les categories
+            </button>
+          </div>
         ) : (
           <div className="grid gap-2">
             <button
@@ -177,7 +191,7 @@ export function TodayScreen({
 
         {/* La llista es queda com a llista; el botó la cobreix sencera. */}
         <div className="relative mt-6">
-          <WeekTiles today={today} days={days} justPlaced={justPlaced} />
+          <WeekTiles today={today} days={days} justPlaced={justPlaced} categories={categories} />
           <button
             type="button"
             onClick={() => onNavigate('week')}

@@ -45,12 +45,13 @@ export function SwipeScreen({
   const days = useAppStore((s) => s.days);
   const dishes = useAppStore((s) => s.dishes);
   const settings = useAppStore((s) => s.settings);
+  const categories = useAppStore((s) => s.categories);
   const confirmDinner = useAppStore((s) => s.confirmDinner);
   const forDate = date ?? today;
 
   // La baralla es congela en obrir la pantalla perquè no es reordeni mentre es llisca.
   const deck = useMemo(
-    () => (status === 'ready' ? buildSwipeDeck({ date: forDate, today, days, dishes, settings }) : []),
+    () => (status === 'ready' ? buildSwipeDeck({ date: forDate, today, days, dishes, settings, categories }) : []),
     [status, forDate],
   );
   const [index, setIndex] = useState(0);
@@ -149,14 +150,15 @@ export function SwipeScreen({
           <div className="relative flex flex-1 flex-col">
             {next && (
               <div aria-hidden="true" className="absolute inset-0 flex translate-y-2 scale-[0.96] flex-col opacity-80">
-                <DishTile dish={next.dish} label="" />
+                <DishTile dish={next.dish} label="" categories={categories} />
               </div>
             )}
             <DishTile
               key={card.dish.id}
               dish={card.dish}
               label={`Plat proposat: ${card.dish.name}`}
-              back={<DishInfo dish={card.dish} stats={dishStats(card.dish.id, forDate, days)} />}
+              categories={categories}
+              back={<DishInfo dish={card.dish} stats={dishStats(card.dish.id, forDate, days)} categories={categories} />}
               flipped={flipped}
               onFlip={() => setFlipped((f) => !f)}
               onPointerDown={onPointerDown}

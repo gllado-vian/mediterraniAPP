@@ -1,4 +1,4 @@
-import { categoryInfo } from '../domain/categories';
+import { categoryInfo, DEFAULT_CATEGORIES, type CategoryDef } from '../domain/categories';
 import { weekDates } from '../domain/dates';
 import { WEEKDAY_LONG_FROM_MONDAY, WEEKDAY_SHORT } from '../domain/format';
 import type { DayRecord, IsoDate } from '../domain/types';
@@ -9,20 +9,23 @@ export function WeekTiles({
   today,
   days,
   justPlaced,
+  categories = DEFAULT_CATEGORIES,
 }: {
   today: IsoDate;
   days: DayRecord[];
   justPlaced?: IsoDate | null;
+  /** Categories de la casa, també les esborrades (per pintar l'historial). */
+  categories?: readonly CategoryDef[];
 }) {
   const byDate = new Map(days.map((d) => [d.date, d]));
   return (
     <ul aria-label="La teva setmana" className="grid grid-cols-7 gap-0.5">
       {weekDates(today).map((date, i) => {
         const dinner = byDate.get(date)?.dinner;
-        const info = dinner?.status === 'confirmed' ? categoryInfo(dinner.category) : null;
+        const info = dinner?.status === 'confirmed' ? categoryInfo(dinner.category, categories) : null;
         const isToday = date === today;
         // El capritx no compta per a cap quota: no omple la rajoleta, l'emmarca.
-        const capritx = info?.id === 'capritx';
+        const capritx = Boolean(info?.capritx);
         const placed = justPlaced === date ? 'rajola-nova' : '';
         return (
           <li
@@ -50,7 +53,7 @@ export function WeekTiles({
                 data-marc
                 aria-hidden="true"
                 className={`absolute inset-0 rounded-(--radius-rajola) border-[3px] ${placed}`}
-                style={{ borderColor: info.color }}
+                style={{ borderColor: info?.color }}
               />
             )}
             <span

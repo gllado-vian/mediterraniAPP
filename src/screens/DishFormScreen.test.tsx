@@ -135,4 +135,14 @@ describe('DishFormScreen', () => {
     expect(onBack).toHaveBeenCalledOnce();
     expect(await userDishes()).toEqual([]);
   });
+
+  it('ofereix les categories de la casa: les pròpies sí, les esborrades no', async () => {
+    await repo.addCategory({ name: 'Pasta', icon: 'bread', color: '#D98F4E', quota: 0 });
+    await repo.archiveCategory('carn');
+    await renderForm();
+    expect(screen.getByRole('radio', { name: 'Pasta' })).toBeInTheDocument();
+    expect(screen.queryByRole('radio', { name: 'Carn magra' })).not.toBeInTheDocument();
+    expect(screen.getByRole('radio', { name: 'Capritx per un dia' })).toBeInTheDocument();
+  });
 });
+

@@ -87,4 +87,17 @@ describe('SummaryScreen', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Avui' }));
     expect(onNavigate).toHaveBeenCalledWith('today');
   });
+
+  it('mostra les categories pròpies i amaga les de 0 vegades', async () => {
+    await repo.updateCategory('peix', { quota: 1 });
+    await repo.updateCategory('carn', { quota: 0 });
+    await repo.addCategory({ name: 'Pasta', icon: 'bread', color: '#D98F4E', quota: 2 });
+    await renderSummary();
+    const list = screen.getByRole('list', { name: 'Resum per categoria' });
+    const labels = within(list)
+      .getAllByRole('listitem')
+      .map((li) => li.querySelector('[data-label]')?.textContent);
+    expect(labels).toEqual(['Peix', 'Ou', 'Llegum', 'Vegetarià pur', 'Pasta']);
+  });
 });
+

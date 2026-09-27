@@ -64,4 +64,13 @@ describe('MyDishesScreen', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Avui' }));
     expect(onNavigate).toHaveBeenCalledWith('today');
   });
+
+  it('un plat d’una categoria pròpia en mostra el nom', async () => {
+    const pasta = await repo.addCategory({ name: 'Pasta', icon: 'bread', color: '#D98F4E', quota: 0 });
+    await repo.addUserDish({ name: 'Macarrons', category: pasta.id, ingredients: [], prepMinutes: 20 });
+    await renderList();
+    const list = await screen.findByRole('list', { name: 'Els meus plats' });
+    expect(within(list).getByText('Pasta · 20 min')).toBeInTheDocument();
+  });
 });
+

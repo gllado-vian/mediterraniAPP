@@ -1,5 +1,5 @@
 import { IconCheck, IconChefHat } from '@tabler/icons-react';
-import { categoryInfo } from '../domain/categories';
+import { categoryInfo, type CategoryDef } from '../domain/categories';
 import { weeklySummary, type SummaryRow } from '../domain/weeklySummary';
 import { useAppStore } from '../store/appStore';
 import { CategoryIcon } from '../ui/CategoryIcon';
@@ -9,8 +9,8 @@ import { ScreenHeader } from '../ui/ScreenHeader';
 import { WeekTiles } from '../ui/WeekTiles';
 
 /** Una rajola per categoria: quan la quota és complerta, el color l'omple sencera. */
-function Row({ row }: { row: SummaryRow }) {
-  const { label, color } = categoryInfo(row.category);
+function Row({ row, categories }: { row: SummaryRow; categories: readonly CategoryDef[] }) {
+  const { label, color, icon } = categoryInfo(row.category, categories);
   const ink = inkOn(color);
   return (
     <li
@@ -22,7 +22,7 @@ function Row({ row }: { row: SummaryRow }) {
         className="grid size-10 shrink-0 place-items-center rounded-(--radius-rajola)"
         style={{ backgroundColor: color }}
       >
-        <CategoryIcon category={row.category} size={22} stroke={1.5} color={ink} />
+        <CategoryIcon icon={icon} size={22} stroke={1.5} color={ink} />
       </span>
       <span data-label className="flex-1 font-medium">
         {label}
@@ -51,7 +51,8 @@ export function SummaryScreen({
   const status = useAppStore((s) => s.status);
   const today = useAppStore((s) => s.today);
   const days = useAppStore((s) => s.days);
-  const { rows, capritxos } = weeklySummary(today, days);
+  const categories = useAppStore((s) => s.categories);
+  const { rows, capritxos } = weeklySummary(today, days, categories);
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-md flex-col px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1.5rem,env(safe-area-inset-bottom))]">
@@ -59,11 +60,11 @@ export function SummaryScreen({
 
       {status === 'ready' && (
         <>
-          <WeekTiles today={today} days={days} />
+          <WeekTiles today={today} days={days} categories={categories} />
 
           <ul aria-label="Resum per categoria" className="mt-6 grid gap-0.5">
             {rows.map((row) => (
-              <Row key={row.category} row={row} />
+              <Row key={row.category} row={row} categories={categories} />
             ))}
           </ul>
 

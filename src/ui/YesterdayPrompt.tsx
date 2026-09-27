@@ -1,4 +1,4 @@
-import { categoryInfo } from '../domain/categories';
+import { categoryInfo, DEFAULT_CATEGORIES, type CategoryDef } from '../domain/categories';
 import type { Dish } from '../domain/types';
 import { CategoryIcon } from './CategoryIcon';
 import { inkOn } from './contrast';
@@ -10,14 +10,16 @@ export function YesterdayPrompt({
   onYes,
   onOther,
   onUnknown,
+  categories = DEFAULT_CATEGORIES,
 }: {
   dish: Dish;
   busy: boolean;
   onYes: () => void;
   onOther: () => void;
   onUnknown: () => void;
+  categories?: readonly CategoryDef[];
 }) {
-  const { color } = categoryInfo(dish.category);
+  const { color, icon } = categoryInfo(dish.category, categories);
   return (
     <section aria-label="Sopar d’ahir" className="mb-3 rounded-(--radius-rajola) bg-rajola p-3">
       <div className="flex items-center gap-3">
@@ -26,7 +28,7 @@ export function YesterdayPrompt({
           className="grid size-10 shrink-0 place-items-center rounded-(--radius-rajola)"
           style={{ backgroundColor: color }}
         >
-          <CategoryIcon category={dish.category} size={22} stroke={1.5} color={inkOn(color)} />
+          <CategoryIcon icon={icon} size={22} stroke={1.5} color={inkOn(color)} />
         </span>
         <p className="font-medium text-balance">Ahir: vas sopar {dish.name}?</p>
       </div>

@@ -1,4 +1,5 @@
 import { openDB, type DBSchema, type IDBPDatabase } from 'idb';
+import type { CategoryDef } from '../domain/categories';
 import type { DayRecord, Dish, House, Settings } from '../domain/types';
 
 export const DB_NAME = 'que-sopem';
@@ -7,7 +8,7 @@ export const DB_VERSION = 1;
 export interface AppSchema extends DBSchema {
   dishes: { key: string; value: Dish; indexes: { byCategory: string } };
   days: { key: string; value: DayRecord };
-  meta: { key: 'house' | 'settings'; value: House | Settings };
+  meta: { key: 'house' | 'settings' | 'categories'; value: House | Settings | CategoryDef[] };
 }
 
 export type AppDb = IDBPDatabase<AppSchema>;

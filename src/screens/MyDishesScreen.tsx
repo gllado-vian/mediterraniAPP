@@ -1,5 +1,5 @@
 import { IconChevronRight, IconPlus } from '@tabler/icons-react';
-import { categoryInfo } from '../domain/categories';
+import { categoryInfo, type CategoryDef } from '../domain/categories';
 import { formatMinutes } from '../domain/format';
 import type { Dish } from '../domain/types';
 import { useAppStore } from '../store/appStore';
@@ -8,8 +8,16 @@ import { CategoryIcon } from '../ui/CategoryIcon';
 import { inkOn } from '../ui/contrast';
 import { ScreenHeader } from '../ui/ScreenHeader';
 
-function DishRow({ dish, onEdit }: { dish: Dish; onEdit: (id: string) => void }) {
-  const { label, color } = categoryInfo(dish.category);
+function DishRow({
+  dish,
+  onEdit,
+  categories,
+}: {
+  dish: Dish;
+  onEdit: (id: string) => void;
+  categories: readonly CategoryDef[];
+}) {
+  const { label, color, icon } = categoryInfo(dish.category, categories);
   const time = formatMinutes(dish.prepMinutes);
   return (
     <li>
@@ -23,7 +31,7 @@ function DishRow({ dish, onEdit }: { dish: Dish; onEdit: (id: string) => void })
           className="grid size-10 shrink-0 place-items-center rounded-(--radius-rajola)"
           style={{ backgroundColor: color }}
         >
-          <CategoryIcon category={dish.category} size={22} stroke={1.5} color={inkOn(color)} />
+          <CategoryIcon icon={icon} size={22} stroke={1.5} color={inkOn(color)} />
         </span>
         <span className="min-w-0 flex-1">
           <span className="block truncate font-medium">{dish.name}</span>
@@ -48,6 +56,7 @@ export function MyDishesScreen({
 }) {
   const status = useAppStore((s) => s.status);
   const dishes = useAppStore((s) => s.dishes);
+  const categories = useAppStore((s) => s.categories);
   const mine = dishes
     .filter((d) => d.source === 'user')
     .sort((a, b) => a.name.localeCompare(b.name, 'ca'));
@@ -74,7 +83,7 @@ export function MyDishesScreen({
           {mine.length > 0 ? (
             <ul aria-label="Els meus plats" className="mt-6 grid gap-0.5">
               {mine.map((dish) => (
-                <DishRow key={dish.id} dish={dish} onEdit={onEdit} />
+                <DishRow key={dish.id} dish={dish} onEdit={onEdit} categories={categories} />
               ))}
             </ul>
           ) : (

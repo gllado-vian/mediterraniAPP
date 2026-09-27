@@ -34,4 +34,16 @@ describe('WeekTiles', () => {
     expect(thursday).toHaveAttribute('aria-current', 'date');
     expect(thursday.querySelector('[data-marc]')).not.toBeNull();
   });
+
+  it('pinta un sopar d’una categoria esborrada amb el seu color i nom', () => {
+    const history: DayRecord[] = [
+      { date: '2026-09-29', dinner: { status: 'confirmed', dishId: 'm', dishName: 'Macarrons', category: 'c-pasta' } },
+    ];
+    const categories = [{ id: 'c-pasta', name: 'Pasta', icon: 'bread', color: '#D98F4E', quota: 0, archived: true }];
+    render(<WeekTiles today="2026-10-02" days={history} categories={categories} />);
+    const tuesday = within(screen.getByRole('list', { name: 'La teva setmana' })).getAllByRole('listitem')[1];
+    expect(tuesday).toHaveAccessibleName('Dimarts: Pasta');
+    expect(tuesday.querySelector('[data-fill]')).toHaveStyle({ backgroundColor: '#D98F4E' });
+  });
 });
+

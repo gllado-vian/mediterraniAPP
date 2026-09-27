@@ -161,17 +161,24 @@ describe('TodayScreen', () => {
   });
 
   describe('dinar', () => {
-    it('ofereix les 6 opcions de dinar', async () => {
+    it('ofereix les categories amb el nom sencer, en l’ordre de la llista, i "Una altra cosa"', async () => {
       await renderToday();
       const group = screen.getByRole('group', { name: 'Què has dinat avui?' });
       expect(within(group).getAllByRole('button').map((b) => b.textContent)).toEqual([
         'Peix',
-        'Carn',
         'Ou',
         'Llegum',
-        'Vegetarià',
+        'Carn magra',
+        'Vegetarià pur',
         'Una altra cosa',
       ]);
+    });
+
+    it('una categoria esborrada ja no surt al dinar', async () => {
+      await repo.archiveCategory('carn');
+      await renderToday();
+      const group = screen.getByRole('group', { name: 'Què has dinat avui?' });
+      expect(within(group).queryByRole('button', { name: 'Carn magra' })).not.toBeInTheDocument();
     });
 
     it('registrar el dinar el desa i, si coincideix, substitueix la proposta', async () => {
@@ -260,5 +267,20 @@ describe('TodayScreen', () => {
       await renderToday();
       expect(screen.queryByRole('region', { name: 'Sopar d’ahir' })).not.toBeInTheDocument();
     });
+  });
+
+  it('si no hi ha res per proposar, ho diu i porta a revisar les categories', async () => {
+    for (const id of ['peix', 'ou', 'llegum', 'carn', 'vegetaria']) await repo.updateCategory(id, { quota: 0 });
+    const onNavigate = vi.fn();
+    const store = createAppStore({ repo, now: () => MONDAY });
+    render(
+      <AppStoreProvider store={store}>
+        <TodayScreen onOpenSwipe={vi.fn()} onPickYesterday={vi.fn()} onNavigate={onNavigate} />
+      </AppStoreProvider>,
+    );
+    expect(await screen.findByText('No tenim cap sopar per proposar')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Sopem això' })).not.toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Revisar les categories' }));
+    expect(onNavigate).toHaveBeenCalledWith('settings');
   });
 });

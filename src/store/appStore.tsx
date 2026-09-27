@@ -3,7 +3,8 @@ import { createStore, useStore, type StoreApi } from 'zustand';
 import type { Repository } from '../db/repository';
 import { buildBackup, type Backup } from '../domain/backup';
 import { BASE_RECIPES, seedBaseRecipes } from '../domain/baseRecipes';
-import type { LunchOption } from '../domain/categories';
+import { DEFAULT_CATEGORIES, type CategoryDef, type CategoryId, type LunchOption } from '../domain/categories';
+import type { CategoryInput } from '../domain/categoryRules';
 import { toIsoDate } from '../domain/dates';
 import type { DayRecord, Dish, IsoDate, NewDish, Settings } from '../domain/types';
 
@@ -13,6 +14,8 @@ export interface AppState {
   days: DayRecord[];
   dishes: Dish[];
   settings: Settings;
+  /** Categories de la casa (també les esborrades, per a l'historial). */
+  categories: CategoryDef[];
   /** Dia que es va crear la casa (instal·lació de l'app). */
   houseSince: IsoDate | null;
   load(): Promise<void>;
@@ -26,6 +29,10 @@ export interface AppState {
   addDish(input: NewDish): Promise<void>;
   updateDish(id: string, input: NewDish): Promise<void>;
   deleteDish(id: string): Promise<void>;
+  addCategory(input: CategoryInput): Promise<void>;
+  updateCategory(id: CategoryId, patch: Partial<CategoryInput>): Promise<void>;
+  archiveCategory(id: CategoryId): Promise<void>;
+  resetCategories(): Promise<void>;
   /** Còpia de seguretat de tota la casa. */
   exportBackup(): Promise<Backup>;
   /** Substitueix totes les dades per les d'una còpia (ja validada) i les torna a carregar. */
@@ -53,6 +60,10 @@ export function createAppStore({ repo, now = () => new Date() }: AppStoreDeps): 
       set({ days: await repo.listAllDays() });
     }
 
+    async function refreshCategories() {
+      set({ categories: await repo.getCategories() });
+    }
+
     async function refreshDishes() {
       set({ dishes: inRecipeOrder(await repo.listDishes()) });
     }
@@ -63,15 +74,17 @@ export function createAppStore({ repo, now = () => new Date() }: AppStoreDeps): 
       days: [],
       dishes: [],
       settings: { capritxMarginDays: 7 },
+      categories: [...DEFAULT_CATEGORIES],
       houseSince: null,
 
       async load() {
         const house = await repo.ensureHouse(now());
         await seedBaseRecipes(repo);
-        const [dishes, days, settings] = await Promise.all([
+        const [dishes, days, settings, categories] = await Promise.all([
           repo.listDishes(),
           repo.listAllDays(),
           repo.getSettings(),
+          repo.getCategories(),
         ]);
         set({
           status: 'ready',
@@ -80,6 +93,7 @@ export function createAppStore({ repo, now = () => new Date() }: AppStoreDeps): 
           dishes: inRecipeOrder(dishes),
           days,
           settings,
+          categories,
         });
       },
 
@@ -127,12 +141,33 @@ export function createAppStore({ repo, now = () => new Date() }: AppStoreDeps): 
         await refreshDishes();
       },
 
+      async addCategory(input) {
+        await repo.addCategory(input);
+        await refreshCategories();
+      },
+
+      async updateCategory(id, patch) {
+        await repo.updateCategory(id, patch);
+        await refreshCategories();
+      },
+
+      async archiveCategory(id) {
+        await repo.archiveCategory(id);
+        await refreshCategories();
+      },
+
+      async resetCategories() {
+        await repo.resetCategories();
+        await refreshCategories();
+      },
+
       async exportBackup() {
         return buildBackup(await repo.exportAll(), now());
       },
 
       async importBackup(backup) {
-        await repo.replaceAll(backup);
+        // Fins a la còpia v2, una còpia sense categories porta les recomanades.
+        await repo.replaceAll({ ...backup, categories: [...DEFAULT_CATEGORIES] });
         await get().load();
       },
     };

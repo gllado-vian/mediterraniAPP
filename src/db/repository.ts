@@ -1,4 +1,12 @@
-import { isCategory, type LunchOption } from '../domain/categories';
+import {
+  activeCategories,
+  CAPRITX_ID,
+  DEFAULT_CATEGORIES,
+  type CategoryDef,
+  type CategoryId,
+  type LunchOption,
+} from '../domain/categories';
+import { validateCategoryInput, validateCategoryList, type CategoryInput } from '../domain/categoryRules';
 import type { DayRecord, Dish, House, IsoDate, NewDish, Settings } from '../domain/types';
 import type { AppDb } from './db';
 
@@ -14,6 +22,13 @@ export class DishValidationError extends Error {
   }
 }
 
+/** No es pot esborrar una categoria (o tornar a les recomanades) mentre hi hagi plats propis. */
+export class CategoryInUseError extends Error {
+  constructor(readonly count: number) {
+    super(count === 1 ? 'Hi tens 1 plat propi.' : `Hi tens ${count} plats propis.`);
+  }
+}
+
 const DEFAULT_SETTINGS: Settings = { capritxMarginDays: 7 };
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -21,10 +36,15 @@ function assertDate(date: IsoDate) {
   if (!ISO_DATE.test(date)) throw new Error(`Data invàlida: ${date}`);
 }
 
-function normalizeDish(input: NewDish): NewDish {
+/** Un plat propi pot anar a una categoria activa o al capritx. */
+function isDishCategory(id: unknown, categories: readonly CategoryDef[]): boolean {
+  return id === CAPRITX_ID || activeCategories(categories).some((c) => c.id === id);
+}
+
+function normalizeDish(input: NewDish, categories: readonly CategoryDef[]): NewDish {
   const name = input.name.trim();
   if (!name) throw new DishValidationError('Posa-li un nom al plat.', 'name');
-  if (!isCategory(input.category)) throw new DishValidationError('Tria una categoria.', 'category');
+  if (!isDishCategory(input.category, categories)) throw new DishValidationError('Tria una categoria.', 'category');
   const { prepMinutes } = input;
   if (prepMinutes !== null && !(Number.isInteger(prepMinutes) && prepMinutes > 0)) {
     throw new DishValidationError('El temps ha de ser un nombre de minuts més gran que 0.', 'prepMinutes');
@@ -39,6 +59,21 @@ export function createRepository(db: AppDb) {
     if (!dish) throw new Error('Aquest plat no existeix.');
     if (dish.source !== 'user') throw new Error('Els plats del recetari base no es poden modificar.');
     return dish;
+  }
+
+  async function getCategories(): Promise<CategoryDef[]> {
+    const stored = (await db.get('meta', 'categories')) as CategoryDef[] | undefined;
+    return stored ? stored : [...DEFAULT_CATEGORIES];
+  }
+
+  async function saveCategories(list: CategoryDef[]): Promise<void> {
+    validateCategoryList(list);
+    await db.put('meta', list, 'categories');
+  }
+
+  async function userDishCount(ids: CategoryId[]): Promise<number> {
+    const dishes = await db.getAll('dishes');
+    return dishes.filter((d) => d.source === 'user' && ids.includes(d.category)).length;
   }
 
   async function updateDay(date: IsoDate, change: (day: DayRecord) => DayRecord) {
@@ -87,14 +122,14 @@ export function createRepository(db: AppDb) {
     },
 
     async addUserDish(input: NewDish): Promise<Dish> {
-      const dish: Dish = { ...normalizeDish(input), id: crypto.randomUUID(), source: 'user' };
+      const dish: Dish = { ...normalizeDish(input, await getCategories()), id: crypto.randomUUID(), source: 'user' };
       await db.add('dishes', dish);
       return dish;
     },
 
     async updateUserDish(id: string, patch: Partial<NewDish>): Promise<Dish> {
       const current = await getUserDish(id);
-      const dish: Dish = { ...current, ...normalizeDish({ ...current, ...patch }) };
+      const dish: Dish = { ...current, ...normalizeDish({ ...current, ...patch }, await getCategories()) };
       await db.put('dishes', dish);
       return dish;
     },
@@ -142,15 +177,65 @@ export function createRepository(db: AppDb) {
       return updateDay(date, (day) => ({ ...day, dinner: { status: 'unknown' } }));
     },
 
+    getCategories,
+
+    /** Crea una categoria; si n'hi ha una d'esborrada amb el mateix nom, la recupera (mateix id). */
+    async addCategory(input: CategoryInput): Promise<CategoryDef> {
+      const list = await getCategories();
+      const name = input.name.trim().toLocaleLowerCase('ca');
+      const archived = list.find((c) => c.archived && c.name.trim().toLocaleLowerCase('ca') === name);
+      if (archived) {
+        // Recuperar-la també suma una categoria activa: comprovem que hi càpiga.
+        validateCategoryInput(input, list);
+        const back: CategoryDef = { id: archived.id, ...validateCategoryInput(input, list, archived.id) };
+        await saveCategories(list.map((c) => (c.id === archived.id ? back : c)));
+        return back;
+      }
+      const created: CategoryDef = { id: `c-${crypto.randomUUID()}`, ...validateCategoryInput(input, list) };
+      await saveCategories([...list, created]);
+      return created;
+    },
+
+    async updateCategory(id: CategoryId, patch: Partial<CategoryInput>): Promise<CategoryDef> {
+      const list = await getCategories();
+      const current = list.find((c) => c.id === id && !c.archived);
+      if (!current) throw new Error('Aquesta categoria no existeix.');
+      const { archived: _archived, id: _id, ...fields } = current;
+      const updated: CategoryDef = { id, ...validateCategoryInput({ ...fields, ...patch }, list, id) };
+      await saveCategories(list.map((c) => (c.id === id ? updated : c)));
+      return updated;
+    },
+
+    /** Esborra (arxiva) una categoria: en conserva nom, icona i color per a l'historial. */
+    async archiveCategory(id: CategoryId): Promise<void> {
+      if (id === CAPRITX_ID) throw new Error('El capritx no es pot esborrar.');
+      const list = await getCategories();
+      if (!list.some((c) => c.id === id && !c.archived)) throw new Error('Aquesta categoria no existeix.');
+      const count = await userDishCount([id]);
+      if (count > 0) throw new CategoryInUseError(count);
+      await saveCategories(list.map((c) => (c.id === id ? { ...c, archived: true } : c)));
+    },
+
+    /** Torna a les recomanades; les pròpies queden esborrades (si no tenen plats). */
+    async resetCategories(): Promise<void> {
+      const list = await getCategories();
+      const defaultIds = DEFAULT_CATEGORIES.map((c) => c.id);
+      const own = list.filter((c) => !defaultIds.includes(c.id));
+      const count = await userDishCount(own.filter((c) => !c.archived).map((c) => c.id));
+      if (count > 0) throw new CategoryInUseError(count);
+      await saveCategories([...DEFAULT_CATEGORIES, ...own.map((c) => ({ ...c, archived: true }))]);
+    },
+
     /** Totes les dades de la casa (per fer-ne una còpia de seguretat). */
     async exportAll(): Promise<HouseData> {
-      const [house, settings, dishes, days] = await Promise.all([
+      const [house, settings, dishes, days, categories] = await Promise.all([
         this.ensureHouse(),
         this.getSettings(),
         db.getAll('dishes'),
         db.getAll('days'),
+        getCategories(),
       ]);
-      return { house, settings, dishes, days };
+      return { house, settings, dishes, days, categories };
     },
 
     /**
@@ -170,6 +255,7 @@ export function createRepository(db: AppDb) {
         for (const day of data.days) await days.put(day);
         await meta.put(data.house, 'house');
         await meta.put(data.settings, 'settings');
+        await meta.put(data.categories, 'categories');
       } catch (error) {
         tx.abort();
         await tx.done.catch(() => {});
@@ -187,4 +273,5 @@ export interface HouseData {
   settings: Settings;
   dishes: Dish[];
   days: DayRecord[];
+  categories: CategoryDef[];
 }

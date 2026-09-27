@@ -1,27 +1,32 @@
-import { CATEGORIES, type Category } from '../domain/categories';
-import { textInkOn } from './contrast';
+import { activeCategories, CAPRITX_ID, categoryInfo, type Category, type CategoryDef } from '../domain/categories';
+import { textInkOn, tileColumns } from './contrast';
 
 /** Etiquetes curtes perquè cap rajoleta no es parteixi en dues línies. */
 const SHORT_LABEL: Partial<Record<Category, string>> = { capritx: 'Capritx' };
 
 /**
- * Tria d'una categoria: sis rajoletes amb juntes de 2px (com les del dinar),
+ * Tria d'una categoria (les actives + el capritx): rajoletes amb juntes de 2px (com les del dinar),
  * però amb botons de ràdio perquè només se'n pot triar una.
  */
 export function CategoryPicker({
   value,
   onChange,
   error,
+  categories,
 }: {
   value: Category | null;
+  categories: readonly CategoryDef[];
   onChange: (category: Category) => void;
   error?: string;
 }) {
+  const options = [...activeCategories(categories).map((c) => c.id), CAPRITX_ID].map((id) =>
+    categoryInfo(id, categories),
+  );
   return (
     <fieldset aria-describedby={error ? 'category-error' : undefined}>
       <legend className="mb-1 text-sm font-medium">Categoria</legend>
-      <div className="grid grid-cols-3 gap-0.5">
-        {CATEGORIES.map(({ id, label, color }) => {
+      <div className={`grid gap-0.5 ${tileColumns(options.length)}`}>
+        {options.map(({ id, label, color }) => {
           const checked = value === id;
           return (
             <label
