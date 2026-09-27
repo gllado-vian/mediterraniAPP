@@ -17,6 +17,23 @@ export const CATEGORIES: readonly CategoryInfo[] = [
   { id: 'capritx', label: 'Capritx per un dia', color: '#A8402E' },
 ];
 
+/**
+ * Colors que pot tenir una categoria (un per categoria). Els 5 primers són els de
+ * les categories recomanades; els 4 últims els va proposar Impeccable (colorize) i
+ * els va aprovar l'Olga. El granat del capritx en queda fora: és reservat.
+ */
+export const CATEGORY_PALETTE = [
+  { hex: '#6E93A8', name: 'Blau de mar' },
+  { hex: '#F2C166', name: 'Groc de rovell' },
+  { hex: '#6B6E3D', name: 'Oliva fosca' },
+  { hex: '#BF8275', name: 'Terracota rosada' },
+  { hex: '#BCBF69', name: 'Verd d’olivó' },
+  { hex: '#A395C2', name: 'Lavanda' },
+  { hex: '#6FA89A', name: 'Aigua de cala' },
+  { hex: '#D98F4E', name: 'Safrà' },
+  { hex: '#6B4A6E', name: 'Albergínia' },
+] as const;
+
 export const ROTATION_CATEGORIES: readonly RotationCategory[] = [
   'peix',
   'ou',

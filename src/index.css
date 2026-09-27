@@ -18,6 +18,11 @@
   --color-llegum: #6b6e3d;
   --color-vegetaria: #bcbf69;
   --color-capritx: #a8402e;
+  /* Colors nous per a categories creades per l'usuari (Impeccable colorize, aprovats per l'Olga). */
+  --color-lavanda: #a395c2;
+  --color-aigua-de-cala: #6fa89a;
+  --color-safra: #d98f4e;
+  --color-alberginia: #6b4a6e;
   /* Mateix to, enfosquit per a text petit sobre la rajola (≥4.5:1). */
   --color-capritx-tinta: #8c3222;
 

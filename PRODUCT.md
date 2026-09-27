@@ -55,6 +55,9 @@ plat ordenat pel que falta per equilibrar la setmana.
 - Paleta vinculant: fons `#F2F2F2`, superfície/targetes `#E8DACA`, text
   `#3A4229`. Categories: Peix `#6E93A8`, Carn magra `#BF8275`, Ou `#F2C166`,
   Llegum `#6B6E3D`, Vegetarià pur `#BCBF69`, Capritx per un dia `#A8402E`.
+  Colors addicionals per a categories creades per l'usuari (aprovats el 27/09/2026):
+  Lavanda `#A395C2`, Aigua de cala `#6FA89A`, Safrà `#D98F4E`, Albergínia `#6B4A6E`.
+  Un color per categoria; el granat del capritx és reservat.
 - Icones: `@tabler/icons-react`, versió outline (IconFish, IconMeat, IconEgg,
   IconSoup, IconCarrot, IconChefHat).
 - Sense fotos de plats a l'MVP.

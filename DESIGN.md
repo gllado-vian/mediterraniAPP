@@ -13,6 +13,10 @@ colors:
   llegum: "#6b6e3d"
   vegetaria: "#bcbf69"
   capritx: "#a8402e"
+  lavanda: "#a395c2"
+  aigua-de-cala: "#6fa89a"
+  safra: "#d98f4e"
+  alberginia: "#6b4a6e"
   capritx-tinta: "#8c3222"
 typography:
   display:
@@ -138,6 +142,7 @@ Els sis colors de categoria. Només apareixen com a camp de color d'un plat, com
 - **Groc de rovell** (`ou`): Ou. També el fons de la selecció de text.
 - **Oliva fosca** (`llegum`): Llegum.
 - **Verd d'olivó** (`vegetaria`): Vegetarià pur.
+- **Lavanda** (`lavanda`), **Aigua de cala** (`aigua-de-cala`), **Safrà** (`safra`) i **Albergínia** (`alberginia`): colors addicionals per a les categories que crea l’usuari, proposats amb Impeccable (colorize) i aprovats per la propietària. Mateixa família de terra i mar apagada; cap no queda més a prop d’un altre que els parells que ja existien (Ou–Vegetarià), ni tampoc per a daltonisme vermell-verd. Icona i text en tinta (text en tinta fosca sobre Lavanda, Aigua de cala i Safrà) i en ciment sobre Albergínia. **Un color per categoria**: com a màxim 9 categories actives.
 - **Granat de rajola** (`capritx`): Capritx per un dia. Mateixa família que Carn; es distingeixen per forma (ple / marc), icona i nom. Decisió de la propietària: la paleta es queda com està.
 
 ### Tertiary

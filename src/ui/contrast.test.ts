@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { CATEGORIES } from '../domain/categories';
+import { CATEGORIES, CATEGORY_PALETTE } from '../domain/categories';
 import { contrastRatio, inkOn, INK_DARK, INK_DEEP, INK_LIGHT, textInkOn } from './contrast';
 
 describe('contrast', () => {
@@ -31,5 +31,18 @@ describe('contrast', () => {
     expect(textInkOn('#BF8275')).toBe(INK_DEEP);
     expect(textInkOn('#F2C166')).toBe(INK_DARK);
     expect(textInkOn('#A8402E')).toBe(INK_LIGHT);
+  });
+
+  it('la paleta de categories té 9 colors diferents i tots es poden llegir', () => {
+    expect(CATEGORY_PALETTE).toHaveLength(9);
+    expect(new Set(CATEGORY_PALETTE.map((c) => c.hex)).size).toBe(9);
+    CATEGORY_PALETTE.forEach(({ hex, name }) => {
+      expect(contrastRatio(inkOn(hex), hex), name).toBeGreaterThanOrEqual(3);
+      expect(contrastRatio(textInkOn(hex), hex), name).toBeGreaterThanOrEqual(4.5);
+    });
+  });
+
+  it('el granat del capritx queda fora de la paleta de categories', () => {
+    expect(CATEGORY_PALETTE.map((c) => c.hex)).not.toContain('#A8402E');
   });
 });
