@@ -9,10 +9,25 @@ type Screen = 'today' | 'swipe';
 export function App() {
   const [store, setStore] = useState<AppStore | null>(null);
   const [screen, setScreen] = useState<Screen>('today');
+  const [failed, setFailed] = useState(false);
 
   useEffect(() => {
-    openAppDb().then((db) => setStore(createAppStore({ repo: createRepository(db) })));
+    openAppDb()
+      .then((db) => setStore(createAppStore({ repo: createRepository(db) })))
+      .catch(() => setFailed(true));
   }, []);
+
+  if (failed) {
+    return (
+      <main className="mx-auto grid min-h-dvh max-w-md content-center gap-2 px-4">
+        <h1 className="text-xl font-semibold">No puc obrir les dades</h1>
+        <p className="text-tinta-suau">
+          El navegador no em deixa guardar res en aquest mòbil. Si estàs en mode privat, obre
+          l'app en una finestra normal i torna-ho a provar.
+        </p>
+      </main>
+    );
+  }
 
   if (!store) return <main aria-busy="true" className="min-h-dvh bg-ciment" />;
 

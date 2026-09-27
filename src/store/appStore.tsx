@@ -13,6 +13,8 @@ export interface AppState {
   dishes: Dish[];
   settings: Settings;
   load(): Promise<void>;
+  /** Actualitza "avui" si ha canviat el dia (app oberta de nit). */
+  syncToday(): void;
   confirmDinner(dish: Dish, date?: IsoDate): Promise<void>;
   undoDinner(date?: IsoDate): Promise<void>;
   setLunch(lunch: LunchOption | null): Promise<void>;
@@ -57,6 +59,11 @@ export function createAppStore({ repo, now = () => new Date() }: AppStoreDeps): 
         set({ status: 'ready', today: toIsoDate(now()), dishes: inRecipeOrder(dishes), days, settings });
       },
 
+      syncToday() {
+        const today = toIsoDate(now());
+        if (today !== get().today) set({ today });
+      },
+
       async confirmDinner(dish, date = get().today) {
         await repo.confirmDinner(date, dish);
         await refreshDays();
@@ -80,6 +87,11 @@ const AppStoreContext = createContext<AppStore | null>(null);
 export function AppStoreProvider({ store, children }: { store: AppStore; children: ReactNode }) {
   useEffect(() => {
     if (store.getState().status === 'loading') void store.getState().load();
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') store.getState().syncToday();
+    };
+    document.addEventListener('visibilitychange', onVisible);
+    return () => document.removeEventListener('visibilitychange', onVisible);
   }, [store]);
   return <AppStoreContext.Provider value={store}>{children}</AppStoreContext.Provider>;
 }

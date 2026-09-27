@@ -15,8 +15,8 @@ beforeEach(async () => {
   repo = createRepository(await openAppDb(`today-${++n}`));
 });
 
-async function renderToday(onOpenSwipe = vi.fn()) {
-  const store = createAppStore({ repo, now: () => MONDAY });
+async function renderToday(onOpenSwipe = vi.fn(), now = () => MONDAY) {
+  const store = createAppStore({ repo, now });
   render(
     <AppStoreProvider store={store}>
       <TodayScreen onOpenSwipe={onOpenSwipe} />
@@ -86,5 +86,28 @@ describe('TodayScreen', () => {
   it('carrega el recetari base en obrir l’app', async () => {
     await renderToday();
     expect(await repo.listDishes()).toHaveLength(BASE_RECIPES.length);
+  });
+
+  it('mostra el sopar confirmat encara que el plat s’hagi esborrat', async () => {
+    const mine = await repo.addUserDish({
+      name: 'Truita de carbassó',
+      category: 'ou',
+      ingredients: ['Ous'],
+      prepMinutes: 20,
+    });
+    await repo.confirmDinner('2026-09-28', mine);
+    await repo.deleteUserDish(mine.id);
+    await renderToday();
+    const card = screen.getByRole('article', { name: 'Plat del dia' });
+    expect(within(card).getByText('Truita de carbassó')).toBeInTheDocument();
+    expect(screen.getByText('Bon profit!')).toBeInTheDocument();
+  });
+
+  it('canvia de dia quan l’app torna a primer pla després de mitjanit', async () => {
+    let now = MONDAY;
+    await renderToday(vi.fn(), () => now);
+    now = new Date(2026, 8, 29, 19, 0);
+    document.dispatchEvent(new Event('visibilitychange'));
+    expect(await screen.findByRole('heading', { name: 'Dimarts, 29 de setembre' })).toBeInTheDocument();
   });
 });

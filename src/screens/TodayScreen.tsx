@@ -1,5 +1,6 @@
 import { IconArrowsExchange, IconCheck } from '@tabler/icons-react';
 import { useState } from 'react';
+import type { DayRecord, Dish } from '../domain/types';
 import type { RotationCategory } from '../domain/categories';
 import { formatLongDate } from '../domain/format';
 import { proposeTonight } from '../domain/planner';
@@ -15,6 +16,21 @@ const LUNCH_WORD: Record<RotationCategory, string> = {
   vegetaria: 'vegetarià',
 };
 
+/** El plat confirmat, o una còpia feta amb l'historial si el plat s'ha esborrat. */
+function confirmedDishOf(dinner: DayRecord['dinner'], dishes: Dish[]): Dish | undefined {
+  if (dinner?.status !== 'confirmed') return undefined;
+  return (
+    dishes.find((d) => d.id === dinner.dishId) ?? {
+      id: dinner.dishId,
+      name: dinner.dishName,
+      category: dinner.category,
+      ingredients: [],
+      prepMinutes: null,
+      source: 'user',
+    }
+  );
+}
+
 export function TodayScreen({ onOpenSwipe }: { onOpenSwipe: () => void }) {
   const status = useAppStore((s) => s.status);
   const today = useAppStore((s) => s.today);
@@ -23,21 +39,26 @@ export function TodayScreen({ onOpenSwipe }: { onOpenSwipe: () => void }) {
   const confirmDinner = useAppStore((s) => s.confirmDinner);
   const undoDinner = useAppStore((s) => s.undoDinner);
   const [justPlaced, setJustPlaced] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
 
   if (status === 'loading') {
     return <main aria-busy="true" className="min-h-dvh bg-ciment" />;
   }
 
   const dinner = days.find((d) => d.date === today)?.dinner;
-  const confirmedDish =
-    dinner?.status === 'confirmed' ? dishes.find((d) => d.id === dinner.dishId) : undefined;
+  const confirmedDish = confirmedDishOf(dinner, dishes);
   const proposal = confirmedDish ? null : proposeTonight({ today, days, dishes });
   const shownDish = confirmedDish ?? proposal?.dish;
 
   async function confirm() {
-    if (!proposal) return;
-    await confirmDinner(proposal.dish);
-    setJustPlaced(today);
+    if (!proposal || saving) return;
+    setSaving(true);
+    try {
+      await confirmDinner(proposal.dish);
+      setJustPlaced(today);
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
@@ -68,7 +89,7 @@ export function TodayScreen({ onOpenSwipe }: { onOpenSwipe: () => void }) {
             <button
               type="button"
               onClick={() => undoDinner()}
-              className="min-h-11 rounded-(--radius-rajola) px-3 text-sm font-medium underline underline-offset-4"
+              className="min-h-11 rounded-(--radius-rajola) px-3 text-sm font-medium underline decoration-tinta/40 underline-offset-4 transition-colors hover:decoration-tinta"
             >
               Desfer
             </button>
@@ -78,14 +99,15 @@ export function TodayScreen({ onOpenSwipe }: { onOpenSwipe: () => void }) {
             <button
               type="button"
               onClick={confirm}
-              className="h-14 rounded-(--radius-rajola) bg-tinta text-lg font-semibold text-ciment transition-transform active:scale-[0.98]"
+              disabled={saving}
+              className="h-14 rounded-(--radius-rajola) bg-tinta text-lg font-semibold text-ciment transition-[transform,background-color] duration-150 hover:bg-tinta/90 active:scale-[0.98] disabled:opacity-70"
             >
               Sopem això
             </button>
             <button
               type="button"
               onClick={onOpenSwipe}
-              className="h-12 rounded-(--radius-rajola) border-2 border-tinta/25 font-medium transition-colors active:bg-rajola"
+              className="h-12 rounded-(--radius-rajola) border-2 border-tinta/25 font-medium transition-colors duration-150 hover:border-tinta/50 hover:bg-rajola/50 active:bg-rajola"
             >
               Canviar plat
             </button>
