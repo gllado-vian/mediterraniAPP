@@ -18,6 +18,8 @@ interface DishTileProps extends HTMLAttributes<HTMLElement> {
   flipped?: boolean;
   /** Gira la rajola; amb el teclat, Retorn o Espai. */
   onFlip?: () => void;
+  /** Versió més baixa, per quan a sobre hi ha l'avís d'ahir. */
+  compact?: boolean;
 }
 
 /** Rajola d'un plat: camp de color de la categoria amb la icona com a motiu. */
@@ -28,6 +30,7 @@ export function DishTile({
   footer,
   back,
   flipped = false,
+  compact = false,
   onFlip,
   className = '',
   ...rest
@@ -52,10 +55,10 @@ export function DishTile({
       className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-(--radius-rajola) bg-rajola backface-hidden"
     >
       <div
-        className="relative grid min-h-32 flex-1 place-items-center"
+        className={`relative grid flex-1 place-items-center ${compact ? 'min-h-20' : 'min-h-32'}`}
         style={{ backgroundColor: info.color }}
       >
-        <CategoryIcon category={dish.category} size={104} stroke={1.25} color={inkOn(info.color)} />
+        <CategoryIcon category={dish.category} size={compact ? 64 : 104} stroke={1.25} color={inkOn(info.color)} />
         {overlay}
         {back && (
           <span
@@ -66,8 +69,10 @@ export function DishTile({
           </span>
         )}
       </div>
-      <div className="px-5 pt-4 pb-5">
-        <h2 className="text-[1.75rem] leading-tight font-semibold text-balance">{dish.name}</h2>
+      <div className={compact ? 'px-5 pt-3 pb-4' : 'px-5 pt-4 pb-5'}>
+        <h2 className={`${compact ? 'text-2xl' : 'text-[1.75rem]'} leading-tight font-semibold text-balance`}>
+          {dish.name}
+        </h2>
         <p className="mt-1.5 flex items-center gap-2 text-base text-tinta-suau">
           <span>{info.label}</span>
           {time && (

@@ -44,7 +44,7 @@ describe('recetari base', () => {
     expect(BASE_RECIPES.find((d) => d.name === 'Llenties amb verdures')).toMatchObject({
       category: 'llegum',
       prepMinutes: 40,
-      ingredients: ['Llenties', 'Pastanaga', 'Tomàquet', 'Ceba', 'Pebrot', 'All', "Oli d'oliva", 'Llorer'],
+      ingredients: ['Llenties', 'Pastanaga', 'Tomàquet', 'Ceba', 'Pebrot', 'All', 'Oli d’oliva', 'Llorer'],
     });
   });
 
@@ -89,5 +89,16 @@ describe('seedBaseRecipes', () => {
     await seedBaseRecipes(repo);
     expect(await repo.getDish(mine.id)).toEqual(mine);
     expect(await repo.listDishes()).toHaveLength(22);
+  });
+
+  it('els noms i ingredients fan servir l’apòstrof tipogràfic (’)', () => {
+    BASE_RECIPES.forEach((d) => {
+      expect(d.name, d.id).not.toContain("'");
+      d.ingredients.forEach((i) => expect(i, d.id).not.toContain("'"));
+    });
+  });
+
+  it('el remenat es diu en català', () => {
+    expect(BASE_RECIPES.find((d) => d.id === 'base-revuelto-verdures')?.name).toBe('Truita remenada de verdures');
   });
 });

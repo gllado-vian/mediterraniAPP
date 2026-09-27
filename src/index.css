@@ -9,6 +9,8 @@
   --color-rajola: #e8daca;
   --color-tinta: #3a4229;
   --color-tinta-suau: #5b6348;
+  /* Tinta més fosca per a text petit sobre Peix i Carn (≥4.5:1). */
+  --color-tinta-fosca: #1f2412;
 
   --color-peix: #6e93a8;
   --color-carn: #bf8275;

@@ -115,6 +115,12 @@ describe('DishFormScreen', () => {
     expect(await repo.getDish(dish.id)).toBeUndefined();
   });
 
+  it('la categoria capritx es diu curt, però el lector de pantalla la diu sencera', async () => {
+    await renderForm();
+    const radio = screen.getByRole('radio', { name: 'Capritx per un dia' });
+    expect(radio.closest('label')).toHaveTextContent(/^Capritx$/);
+  });
+
   it('un plat nou no es pot esborrar', async () => {
     await renderForm();
     expect(screen.queryByRole('button', { name: 'Esborrar el plat' })).not.toBeInTheDocument();

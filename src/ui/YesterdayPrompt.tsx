@@ -19,7 +19,7 @@ export function YesterdayPrompt({
 }) {
   const { color } = categoryInfo(dish.category);
   return (
-    <section aria-label="Sopar d’ahir" className="mb-4 rounded-(--radius-rajola) bg-rajola p-3">
+    <section aria-label="Sopar d’ahir" className="mb-3 rounded-(--radius-rajola) bg-rajola p-3">
       <div className="flex items-center gap-3">
         <span
           aria-hidden="true"
@@ -30,7 +30,7 @@ export function YesterdayPrompt({
         </span>
         <p className="font-medium text-balance">Ahir: vas sopar {dish.name}?</p>
       </div>
-      <div className="mt-2 flex items-center gap-1">
+      <div className="mt-1.5 flex items-center gap-1">
         <button
           type="button"
           onClick={onYes}
@@ -45,7 +45,7 @@ export function YesterdayPrompt({
           disabled={busy}
           className="min-h-11 rounded-(--radius-rajola) px-3 text-sm font-medium underline decoration-tinta/40 underline-offset-4 transition-colors hover:decoration-tinta disabled:opacity-70"
         >
-          Una altra cosa
+          Un altre plat
         </button>
         <button
           type="button"

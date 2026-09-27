@@ -1,5 +1,7 @@
 export const INK_DARK = '#3A4229';
 export const INK_LIGHT = '#F2F2F2';
+/** Tinta més fosca, només per a text petit on cap de les dues arriba a 4,5:1 (Peix, Carn). */
+export const INK_DEEP = '#1F2412';
 
 function luminance(hex: string): number {
   const [r, g, b] = [1, 3, 5].map((i) => {
@@ -19,4 +21,10 @@ export function inkOn(background: string): string {
   return contrastRatio(INK_DARK, background) >= contrastRatio(INK_LIGHT, background)
     ? INK_DARK
     : INK_LIGHT;
+}
+
+/** Tinta per a text sobre `background`: la de la paleta si arriba a 4,5:1; si no, la més fosca. */
+export function textInkOn(background: string): string {
+  const ink = inkOn(background);
+  return contrastRatio(ink, background) >= 4.5 ? ink : INK_DEEP;
 }

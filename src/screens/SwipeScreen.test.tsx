@@ -58,7 +58,7 @@ describe('SwipeScreen', () => {
   it('mostra primer el plat que millor equilibra la setmana', async () => {
     await renderSwipe();
     // Dilluns sense historial: Peix ja és a la pantalla Avui; comença per Ou
-    expect(topCardName()).toBe('Revuelto de verdures');
+    expect(topCardName()).toBe('Truita remenada de verdures');
   });
 
   it('"Un altre" descarta i passa al següent', async () => {
@@ -159,7 +159,7 @@ describe('SwipeScreen', () => {
     while (topCardName() !== 'Croquetes casolanes' && guard--) {
       await userEvent.click(screen.getByRole('button', { name: 'Un altre' }));
     }
-    expect(screen.getByText("Fa 3 dies de l'últim capritx (el teu marge és de 7).")).toBeInTheDocument();
+    expect(screen.getByText('Fa 3 dies de l’últim capritx (el teu marge és de 7).')).toBeInTheDocument();
   });
 
   it('quan s’acaben els plats, permet tornar a començar', async () => {
@@ -170,7 +170,7 @@ describe('SwipeScreen', () => {
     }
     expect(screen.getByText('No queden més plats')).toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: 'Tornar a començar' }));
-    expect(topCardName()).toBe('Revuelto de verdures');
+    expect(topCardName()).toBe('Truita remenada de verdures');
   });
 
   it('el botó de tornar surt sense desar res', async () => {

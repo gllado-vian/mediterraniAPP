@@ -29,15 +29,14 @@
 | 7 | Resum setmanal per categoria | ✅ fet + polish |
 | 8 | "+info" del plat | ✅ fet + polish |
 | 9 | Export/import JSON + Ajustos (marge capritx, els meus plats) | ✅ fet + polish (9a menú + marge, 9b els meus plats, 9c còpia de seguretat) |
-| 10 | Passada final d'identitat visual + `DESIGN.md` (Impeccable document) | pendent |
+| 10 | Passada final d'identitat visual + `DESIGN.md` (Impeccable document) | 🚧 en curs: 10a ✅ revisió, 10b ✅ correccions, 10c icona, 10d DESIGN.md |
 
 ## On som exactament (pas 10)
 
-Pas 9 tancat en tres peces (9a menú + marge, 9b els meus plats, 9c còpia de seguretat): 203 tests en verd,
-`tsc` net, polish fet, detector d'Impeccable sense findings.
-
-**Esperant el vistiplau de l'Olga** per començar el pas 10: passada final d'identitat visual,
-revisió amb `impeccable-finish-reviewer` i `DESIGN.md` amb `impeccable-documenter`.
+- **10a ✅** Revisió final amb `impeccable-finish-reviewer` (veredicte: publicable amb correccions).
+- **10b ✅** Correccions aplicades (totes, per decisió de l'Olga). El punt 3 de la revisió (focus d'"Importar un fitxer") era un fals positiu: el focus ja es veia (comprovat al navegador).
+- **10c** Icona de l'app: 2–3 opcions Taulell, SVG + PNG (180 iOS, 192/512 Android, maskable) amb procedència anotada.
+- **10d** `DESIGN.md` amb `impeccable-documenter`.
 
 ## Decisions preses durant la construcció
 
@@ -55,6 +54,10 @@ revisió amb `impeccable-finish-reviewer` i `DESIGN.md` amb `impeccable-document
 - Si Impeccable no es carrega en una sessió de VS Code, cal reiniciar la sessió.
 - Resum setmanal: s'hi arriba tocant la fila de 7 rajoletes d'Avui (botó que la cobreix; la llista es manté per als lectors de pantalla). Pantalla "La teva setmana" amb les 7 rajoletes, una rajola per categoria (complerta = plena del color de la categoria; pendent = "x/y · pendent") i els capritxos a part. Brief: `.impeccable/surfaces/src-screens-summaryscreen-tsx.md`.
 - Fila de la setmana (Avui i resum): el dia de capritx no s'omple, queda emmarcat en granat (no compta per a cap quota). Si és avui, la marca d'avui va per dins del marc.
+- Contrast del text sobre color de categoria: `textInkOn` (≥4,5:1). Sobre Peix i Carn fa servir `tinta-fosca` `#1F2412` (variant de la tinta, no un color nou de paleta); les icones continuen amb `inkOn` (≥3:1).
+- Amb l'avís d'ahir obert, la rajola del plat es compacta perquè "Sopem això" i "Canviar plat" càpiguen a 375×667 fins i tot amb noms de dues línies.
+- Textos: apòstrof tipogràfic (’) a tota la interfície i al recetari; a l'avís d'ahir, "Un altre plat"; al selector de categoria, "Capritx" (nom sencer per al lector de pantalla); "Revuelto de verdures" → "Truita remenada de verdures" (mateix id).
+- Totes les pantalles tenen el mateix marge superior (la capçalera no salta en canviar de pantalla); juntes de 2px també a la fila de la setmana.
 - Carn (`#BF8275`) i Capritx (`#A8402E`) són de la mateixa família de color; es distingeixen per forma (ple / marc), icona i nom. L'Olga decideix deixar la paleta com està; si costa distingir-los provant l'app, revisar-ho al pas 10.
 - "+info": tocar la rajola del plat (swipe i Avui) la gira i ensenya el dors; tornar a tocar la torna de cara. Amb teclat, Retorn o Espai. Una icona d'informació a la cantonada del camp de color indica que es pot girar; al dors, una icona de girar.
 - Dors compacte perquè hi càpiga a Avui al mòbil petit: nom, "fa X dies · X cops aquest mes" en una línia, ingredients en dues columnes (si no hi cap, es desplaça dins la rajola; la rajola no canvia de mida).

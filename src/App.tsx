@@ -38,7 +38,7 @@ export function App() {
         <h1 className="text-xl font-semibold">No puc obrir les dades</h1>
         <p className="text-tinta-suau">
           El navegador no em deixa guardar res en aquest mòbil. Si estàs en mode privat, obre
-          l'app en una finestra normal i torna-ho a provar.
+          l’app en una finestra normal i torna-ho a provar.
         </p>
       </main>
     );

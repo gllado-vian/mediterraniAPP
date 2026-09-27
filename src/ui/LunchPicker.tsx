@@ -1,5 +1,5 @@
 import { categoryInfo, isRotationCategory, LUNCH_OPTIONS, type LunchOption } from '../domain/categories';
-import { inkOn } from './contrast';
+import { textInkOn } from './contrast';
 
 const LUNCH_LABEL: Record<LunchOption, string> = {
   peix: 'Peix',
@@ -22,7 +22,7 @@ export function LunchPicker({
   onChange: (lunch: LunchOption | null) => void;
 }) {
   return (
-    <fieldset className="mb-4">
+    <fieldset className="mb-3">
       <legend className="mb-2 text-sm font-medium text-tinta-suau">Què has dinat avui?</legend>
       <div className="grid grid-cols-3 gap-0.5">
         {LUNCH_OPTIONS.map((option) => {
@@ -42,7 +42,7 @@ export function LunchPicker({
                     : 'bg-tinta text-ciment'
                   : 'bg-rajola hover:bg-rajola/70 active:bg-rajola/50',
               ].join(' ')}
-              style={pressed && color ? { backgroundColor: color, color: inkOn(color) } : undefined}
+              style={pressed && color ? { backgroundColor: color, color: textInkOn(color) } : undefined}
             >
               {!pressed && color && (
                 <span

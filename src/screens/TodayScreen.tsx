@@ -100,7 +100,7 @@ export function TodayScreen({
   }
 
   return (
-    <main className="mx-auto flex min-h-dvh max-w-md flex-col px-4 pt-[max(1.25rem,env(safe-area-inset-top))] pb-[max(1.5rem,env(safe-area-inset-bottom))]">
+    <main className="mx-auto flex min-h-dvh max-w-md flex-col px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1.5rem,env(safe-area-inset-bottom))]">
       <header className="flex items-center gap-2 pb-3">
         <h1 className="flex-1 text-lg font-semibold">{formatLongDate(today)}</h1>
         <AppMenu current="today" onNavigate={onNavigate} />
@@ -127,6 +127,7 @@ export function TodayScreen({
 
       {shownDish && (
         <DishTile
+          compact={Boolean(yesterdayDish)}
           dish={shownDish}
           label="Plat del dia"
           back={<DishInfo dish={shownDish} stats={dishStats(shownDish.id, today, days)} />}
@@ -136,7 +137,7 @@ export function TodayScreen({
         />
       )}
 
-      <div className="pt-4">
+      <div className="pt-3">
         {confirmedDish ? (
           <div className="flex items-center justify-between gap-4 rounded-(--radius-rajola) bg-rajola px-5 py-4">
             <div className="flex items-center gap-3">

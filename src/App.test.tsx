@@ -43,7 +43,7 @@ describe('App', () => {
     expect(await screen.findByRole('button', { name: 'Sopem això' })).toBeInTheDocument();
   });
 
-  it('"Una altra cosa" a l’avís d’ahir tria el sopar d’ahir amb el swipe', async () => {
+  it('"Un altre plat" a l’avís d’ahir tria el sopar d’ahir amb el swipe', async () => {
     vi.stubGlobal('matchMedia', (q: string) => ({ matches: q.includes('reduce'), media: q, addEventListener() {}, removeEventListener() {} }));
     const real = db.openAppDb;
     const name = `app-ahir-${Date.now()}`;
@@ -53,7 +53,7 @@ describe('App', () => {
     render(<App />);
 
     const region = await screen.findByRole('region', { name: 'Sopar d’ahir' });
-    await userEvent.click(within(region).getByRole('button', { name: 'Una altra cosa' }));
+    await userEvent.click(within(region).getByRole('button', { name: 'Un altre plat' }));
     await screen.findByRole('heading', { name: 'Què vas sopar ahir?' });
     const card = await screen.findByRole('article', { name: /^Plat proposat/ });
     const chosen = within(card).getByRole('heading', { level: 2 }).textContent;
@@ -115,7 +115,7 @@ describe('App', () => {
     while (!screen.queryByText('No recomanat')) {
       await userEvent.click(screen.getByRole('button', { name: 'Un altre' }));
     }
-    expect(screen.queryByText(/de l'últim capritx/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/de l’últim capritx/)).not.toBeInTheDocument();
   });
 
   it('un plat propi nou surt primer a la proposta d’Avui', async () => {

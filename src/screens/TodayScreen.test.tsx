@@ -240,7 +240,7 @@ describe('TodayScreen', () => {
       expect((await repo.getDay('2026-09-27'))?.dinner).toEqual({ status: 'unknown' });
     });
 
-    it('"Una altra cosa" obre el swipe per a ahir', async () => {
+    it('"Un altre plat" obre el swipe per a ahir', async () => {
       await repo.ensureHouse(new Date(2026, 8, 20));
       const onPickYesterday = vi.fn();
       const store = createAppStore({ repo, now: () => MONDAY });
@@ -250,7 +250,7 @@ describe('TodayScreen', () => {
         </AppStoreProvider>,
       );
       const region = await screen.findByRole('region', { name: 'Sopar d’ahir' });
-      await userEvent.click(within(region).getByRole('button', { name: 'Una altra cosa' }));
+      await userEvent.click(within(region).getByRole('button', { name: 'Un altre plat' }));
       expect(onPickYesterday).toHaveBeenCalledWith('2026-09-27');
     });
 

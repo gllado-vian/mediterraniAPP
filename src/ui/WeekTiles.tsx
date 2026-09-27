@@ -2,7 +2,7 @@ import { categoryInfo } from '../domain/categories';
 import { weekDates } from '../domain/dates';
 import { WEEKDAY_LONG_FROM_MONDAY, WEEKDAY_SHORT } from '../domain/format';
 import type { DayRecord, IsoDate } from '../domain/types';
-import { inkOn } from './contrast';
+import { textInkOn } from './contrast';
 
 /** Fila de 7 rajoletes: cada sopar confirmat hi col·loca el color de la seva categoria. */
 export function WeekTiles({
@@ -16,7 +16,7 @@ export function WeekTiles({
 }) {
   const byDate = new Map(days.map((d) => [d.date, d]));
   return (
-    <ul aria-label="La teva setmana" className="grid grid-cols-7 gap-1">
+    <ul aria-label="La teva setmana" className="grid grid-cols-7 gap-0.5">
       {weekDates(today).map((date, i) => {
         const dinner = byDate.get(date)?.dinner;
         const info = dinner?.status === 'confirmed' ? categoryInfo(dinner.category) : null;
@@ -55,7 +55,7 @@ export function WeekTiles({
             )}
             <span
               className="relative z-10"
-              style={info && !capritx ? { color: inkOn(info.color) } : undefined}
+              style={info && !capritx ? { color: textInkOn(info.color) } : undefined}
             >
               {WEEKDAY_SHORT[i]}
             </span>

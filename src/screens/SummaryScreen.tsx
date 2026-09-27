@@ -3,7 +3,7 @@ import { categoryInfo } from '../domain/categories';
 import { weeklySummary, type SummaryRow } from '../domain/weeklySummary';
 import { useAppStore } from '../store/appStore';
 import { CategoryIcon } from '../ui/CategoryIcon';
-import { inkOn } from '../ui/contrast';
+import { inkOn, textInkOn } from '../ui/contrast';
 import type { MainScreen } from '../ui/AppMenu';
 import { ScreenHeader } from '../ui/ScreenHeader';
 import { WeekTiles } from '../ui/WeekTiles';
@@ -15,7 +15,7 @@ function Row({ row }: { row: SummaryRow }) {
   return (
     <li
       className={`flex min-h-14 items-center gap-3 rounded-(--radius-rajola) py-2 pr-4 pl-2 ${row.complete ? '' : 'bg-rajola'}`}
-      style={row.complete ? { backgroundColor: color, color: ink } : undefined}
+      style={row.complete ? { backgroundColor: color, color: textInkOn(color) } : undefined}
     >
       <span
         aria-hidden="true"

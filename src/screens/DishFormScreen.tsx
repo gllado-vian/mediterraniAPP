@@ -6,7 +6,7 @@ import { CategoryPicker } from '../ui/CategoryPicker';
 import { ScreenHeader } from '../ui/ScreenHeader';
 
 const fieldClass =
-  'rounded-(--radius-rajola) border-2 border-transparent bg-rajola px-3 py-2.5 text-base placeholder:text-tinta-suau/70 focus:border-tinta focus:outline-none aria-invalid:border-capritx-tinta';
+  'rounded-(--radius-rajola) border-2 border-transparent bg-rajola px-3 py-2.5 shadow-[inset_0_-1px_0_rgb(58_66_41/0.3)] text-base placeholder:text-tinta-suau/70 focus:border-tinta focus:outline-none aria-invalid:border-capritx-tinta';
 const inputClass = `mt-1 block w-full ${fieldClass}`;
 
 function FieldError({ id, message }: { id: string; message?: string }) {
@@ -175,7 +175,7 @@ export function DishFormScreen({
             />
           </div>
 
-          <div className="mt-auto grid gap-1">
+          <div className="mt-auto grid gap-1 sm:mt-4">
             <button
               type="submit"
               disabled={saving}
