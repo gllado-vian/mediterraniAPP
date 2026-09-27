@@ -19,7 +19,7 @@ async function renderToday(onOpenSwipe = vi.fn(), now = () => MONDAY) {
   const store = createAppStore({ repo, now });
   render(
     <AppStoreProvider store={store}>
-      <TodayScreen onOpenSwipe={onOpenSwipe} onPickYesterday={vi.fn()} onNavigate={vi.fn()} />
+      <TodayScreen onOpenSwipe={onOpenSwipe} onPickYesterday={vi.fn()} onNavigate={vi.fn()} onOpenCategories={vi.fn()} />
     </AppStoreProvider>,
   );
   await screen.findByRole('heading', { name: 'Dilluns, 28 de setembre' });
@@ -111,7 +111,7 @@ describe('TodayScreen', () => {
     const store = createAppStore({ repo, now: () => MONDAY });
     render(
       <AppStoreProvider store={store}>
-        <TodayScreen onOpenSwipe={vi.fn()} onPickYesterday={vi.fn()} onNavigate={onNavigate} />
+        <TodayScreen onOpenSwipe={vi.fn()} onPickYesterday={vi.fn()} onNavigate={onNavigate} onOpenCategories={vi.fn()} />
       </AppStoreProvider>,
     );
     await userEvent.click(await screen.findByRole('button', { name: 'Veure el resum de la setmana' }));
@@ -123,7 +123,7 @@ describe('TodayScreen', () => {
     const store = createAppStore({ repo, now: () => MONDAY });
     render(
       <AppStoreProvider store={store}>
-        <TodayScreen onOpenSwipe={vi.fn()} onPickYesterday={vi.fn()} onNavigate={onNavigate} />
+        <TodayScreen onOpenSwipe={vi.fn()} onPickYesterday={vi.fn()} onNavigate={onNavigate} onOpenCategories={vi.fn()} />
       </AppStoreProvider>,
     );
     await userEvent.click(await screen.findByRole('button', { name: 'Menú' }));
@@ -253,7 +253,7 @@ describe('TodayScreen', () => {
       const store = createAppStore({ repo, now: () => MONDAY });
       render(
         <AppStoreProvider store={store}>
-          <TodayScreen onOpenSwipe={vi.fn()} onPickYesterday={onPickYesterday} onNavigate={vi.fn()} />
+          <TodayScreen onOpenSwipe={vi.fn()} onPickYesterday={onPickYesterday} onNavigate={vi.fn()} onOpenCategories={vi.fn()} />
         </AppStoreProvider>,
       );
       const region = await screen.findByRole('region', { name: 'Sopar d’ahir' });
@@ -271,16 +271,21 @@ describe('TodayScreen', () => {
 
   it('si no hi ha res per proposar, ho diu i porta a revisar les categories', async () => {
     for (const id of ['peix', 'ou', 'llegum', 'carn', 'vegetaria']) await repo.updateCategory(id, { quota: 0 });
-    const onNavigate = vi.fn();
+    const onOpenCategories = vi.fn();
     const store = createAppStore({ repo, now: () => MONDAY });
     render(
       <AppStoreProvider store={store}>
-        <TodayScreen onOpenSwipe={vi.fn()} onPickYesterday={vi.fn()} onNavigate={onNavigate} />
+        <TodayScreen
+          onOpenSwipe={vi.fn()}
+          onPickYesterday={vi.fn()}
+          onNavigate={vi.fn()}
+          onOpenCategories={onOpenCategories}
+        />
       </AppStoreProvider>,
     );
     expect(await screen.findByText('No tenim cap sopar per proposar')).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Sopem això' })).not.toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: 'Revisar les categories' }));
-    expect(onNavigate).toHaveBeenCalledWith('settings');
+    expect(onOpenCategories).toHaveBeenCalledOnce();
   });
 });

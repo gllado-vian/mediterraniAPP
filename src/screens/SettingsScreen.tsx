@@ -1,4 +1,6 @@
 import { IconChevronRight, IconMinus, IconPlus } from '@tabler/icons-react';
+import { activeCategories } from '../domain/categories';
+import { quotaTotal } from '../domain/categoryRules';
 import { useAppStore } from '../store/appStore';
 import type { MainScreen } from '../ui/AppMenu';
 import { BackupSection } from '../ui/BackupSection';
@@ -14,15 +16,20 @@ export function SettingsScreen({
   onBack,
   onNavigate,
   onOpenMyDishes,
+  onOpenCategories,
 }: {
   onBack: () => void;
   onNavigate: (screen: MainScreen) => void;
   onOpenMyDishes: () => void;
+  onOpenCategories: () => void;
 }) {
   const status = useAppStore((s) => s.status);
   const margin = useAppStore((s) => s.settings.capritxMarginDays);
   const updateSettings = useAppStore((s) => s.updateSettings);
   const myDishes = useAppStore((s) => s.dishes.filter((d) => d.source === 'user').length);
+  const categories = useAppStore((s) => s.categories);
+  const activeCount = activeCategories(categories).length;
+  const dinners = quotaTotal(categories);
 
   const setMargin = (days: number) => void updateSettings({ capritxMarginDays: days });
 
@@ -68,7 +75,7 @@ export function SettingsScreen({
           <button
             type="button"
             onClick={onOpenMyDishes}
-            className="mt-6 flex min-h-16 w-full items-center gap-3 rounded-(--radius-rajola) bg-rajola px-4 py-3 text-left transition-colors hover:bg-rajola/70 active:bg-rajola/50"
+            className="mt-6 flex min-h-14 w-full items-center gap-3 rounded-(--radius-rajola) bg-rajola px-4 py-2 text-left transition-colors hover:bg-rajola/70 active:bg-rajola/50"
           >
             <span className="flex-1">
               <span className="block font-semibold">Els meus plats</span>
@@ -77,6 +84,21 @@ export function SettingsScreen({
                   ? 'Encara no n’has afegit cap'
                   : `${myDishes} ${myDishes === 1 ? 'plat propi' : 'plats propis'}`}
               </span>
+            </span>
+            <IconChevronRight size={20} stroke={1.75} className="text-tinta-suau" aria-hidden="true" />
+          </button>
+
+          <button
+            type="button"
+            onClick={onOpenCategories}
+            className="mt-2 flex min-h-14 w-full items-center gap-3 rounded-(--radius-rajola) bg-rajola px-4 py-2 text-left transition-colors hover:bg-rajola/70 active:bg-rajola/50"
+          >
+            <span className="flex-1">
+              <span className="block font-semibold">Categories</span>
+              <span className="block text-sm text-tinta-suau">
+              {activeCount} {activeCount === 1 ? 'categoria' : 'categories'} · {dinners}{' '}
+              {dinners === 1 ? 'sopar' : 'sopars'}
+            </span>
             </span>
             <IconChevronRight size={20} stroke={1.75} className="text-tinta-suau" aria-hidden="true" />
           </button>

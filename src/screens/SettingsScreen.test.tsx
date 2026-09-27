@@ -19,15 +19,21 @@ async function renderSettings() {
   const onBack = vi.fn();
   const onNavigate = vi.fn();
   const onOpenMyDishes = vi.fn();
+  const onOpenCategories = vi.fn();
   const store = createAppStore({ repo, now: () => new Date(2026, 8, 28, 20) });
   render(
     <AppStoreProvider store={store}>
-      <SettingsScreen onBack={onBack} onNavigate={onNavigate} onOpenMyDishes={onOpenMyDishes} />
+      <SettingsScreen
+        onBack={onBack}
+        onNavigate={onNavigate}
+        onOpenMyDishes={onOpenMyDishes}
+        onOpenCategories={onOpenCategories}
+      />
     </AppStoreProvider>,
   );
   await screen.findByRole('heading', { name: 'Ajustos' });
   const group = await screen.findByRole('group', { name: 'Marge entre capritxos' });
-  return { onBack, onNavigate, onOpenMyDishes, group };
+  return { onBack, onNavigate, onOpenMyDishes, onOpenCategories, group };
 }
 
 describe('SettingsScreen', () => {
@@ -81,6 +87,17 @@ describe('SettingsScreen', () => {
     await repo.addUserDish({ name: 'Truita', category: 'ou', ingredients: [], prepMinutes: null });
     await renderSettings();
     expect(screen.getByRole('button', { name: /Els meus plats/ })).toHaveTextContent('2 plats propis');
+  });
+
+  it('porta a Categories, a continuació d’"Els meus plats", i en diu el resum', async () => {
+    const { onOpenCategories } = await renderSettings();
+    const buttons = screen.getAllByRole('button').map((b) => b.textContent ?? '');
+    const dishes = buttons.findIndex((t) => t.startsWith('Els meus plats'));
+    expect(buttons[dishes + 1]).toMatch(/^Categories/);
+    const link = screen.getByRole('button', { name: /^Categories/ });
+    expect(link).toHaveTextContent('5 categories · 7 sopars');
+    await userEvent.click(link);
+    expect(onOpenCategories).toHaveBeenCalledOnce();
   });
 
   describe('còpia de seguretat', () => {

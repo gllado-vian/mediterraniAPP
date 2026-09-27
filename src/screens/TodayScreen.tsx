@@ -33,10 +33,12 @@ export function TodayScreen({
   onOpenSwipe,
   onPickYesterday,
   onNavigate,
+  onOpenCategories,
 }: {
   onOpenSwipe: () => void;
   onPickYesterday: (date: IsoDate) => void;
   onNavigate: (screen: MainScreen) => void;
+  onOpenCategories: () => void;
 }) {
   const status = useAppStore((s) => s.status);
   const today = useAppStore((s) => s.today);
@@ -163,7 +165,7 @@ export function TodayScreen({
             </p>
             <button
               type="button"
-              onClick={() => onNavigate('settings')}
+              onClick={onOpenCategories}
               className="mt-3 h-12 w-full rounded-(--radius-rajola) bg-tinta font-semibold text-ciment transition-colors hover:bg-tinta/90"
             >
               Revisar les categories

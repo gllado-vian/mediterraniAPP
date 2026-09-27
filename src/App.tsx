@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { openAppDb } from './db/db';
 import { createRepository } from './db/repository';
+import { CategoriesScreen } from './screens/CategoriesScreen';
 import { DishFormScreen } from './screens/DishFormScreen';
 import { HelpScreen } from './screens/HelpScreen';
 import { MyDishesScreen } from './screens/MyDishesScreen';
@@ -17,6 +18,7 @@ type Screen =
   | { name: MainScreen }
   | { name: 'swipe'; date?: IsoDate }
   | { name: 'myDishes' }
+  | { name: 'categories' }
   | { name: 'dishForm'; dishId?: string };
 
 const TODAY: Screen = { name: 'today' };
@@ -54,6 +56,7 @@ export function App() {
           onOpenSwipe={() => setScreen({ name: 'swipe' })}
           onPickYesterday={(date) => setScreen({ name: 'swipe', date })}
           onNavigate={navigate}
+          onOpenCategories={() => setScreen({ name: 'categories' })}
         />
       )}
       {screen.name === 'week' && <SummaryScreen onBack={() => setScreen(TODAY)} onNavigate={navigate} />}
@@ -62,7 +65,11 @@ export function App() {
           onBack={() => setScreen(TODAY)}
           onNavigate={navigate}
           onOpenMyDishes={() => setScreen({ name: 'myDishes' })}
+          onOpenCategories={() => setScreen({ name: 'categories' })}
         />
+      )}
+      {screen.name === 'categories' && (
+        <CategoriesScreen onBack={() => navigate('settings')} onNavigate={navigate} />
       )}
       {screen.name === 'help' && <HelpScreen onBack={() => setScreen(TODAY)} onNavigate={navigate} />}
       {screen.name === 'myDishes' && (

@@ -151,4 +151,17 @@ describe('App', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Tornar' }));
     expect(await screen.findByRole('button', { name: 'Sopem això' })).toBeInTheDocument();
   });
+
+  it('Ajustos → Categories: canviar les vegades i tornar a Ajustos', async () => {
+    const real = db.openAppDb;
+    vi.spyOn(db, 'openAppDb').mockImplementation(() => real(`app-categories-${Date.now()}`));
+    render(<App />);
+    await userEvent.click(await screen.findByRole('button', { name: 'Menú' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Ajustos' }));
+    await userEvent.click(await screen.findByRole('button', { name: /^Categories/ }));
+    await userEvent.click(await screen.findByRole('button', { name: 'Una vegada menys de Peix' }));
+    expect(await screen.findByText('6 de 7 sopars de la setmana')).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Tornar' }));
+    expect(await screen.findByRole('button', { name: /^Categories/ })).toHaveTextContent('5 categories · 6 sopars');
+  });
 });
