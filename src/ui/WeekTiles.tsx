@@ -21,6 +21,9 @@ export function WeekTiles({
         const dinner = byDate.get(date)?.dinner;
         const info = dinner?.status === 'confirmed' ? categoryInfo(dinner.category) : null;
         const isToday = date === today;
+        // El capritx no compta per a cap quota: no omple la rajoleta, l'emmarca.
+        const capritx = info?.id === 'capritx';
+        const placed = justPlaced === date ? 'rajola-nova' : '';
         return (
           <li
             key={date}
@@ -28,20 +31,32 @@ export function WeekTiles({
             aria-label={info ? `${WEEKDAY_LONG_FROM_MONDAY[i]}: ${info.label}` : undefined}
             className={[
               'relative grid aspect-square place-items-center rounded-(--radius-rajola) text-sm font-medium',
-              info ? '' : 'bg-rajola/60 text-tinta-suau',
+              info && !capritx ? '' : 'bg-rajola/60 text-tinta-suau',
               isToday
-                ? 'after:pointer-events-none after:absolute after:inset-0 after:z-20 after:rounded-(--radius-rajola) after:ring-2 after:ring-tinta after:ring-inset'
+                ? `after:pointer-events-none after:absolute after:z-20 after:rounded-(--radius-rajola) after:ring-2 after:ring-tinta after:ring-inset ${capritx ? 'after:inset-[5px] after:rounded-[3px]' : 'after:inset-0'}`
                 : '',
             ].join(' ')}
           >
-            {info && (
+            {info && !capritx && (
               <span
+                data-fill
                 aria-hidden="true"
-                className={`absolute inset-0 rounded-(--radius-rajola) ${justPlaced === date ? 'rajola-nova' : ''}`}
+                className={`absolute inset-0 rounded-(--radius-rajola) ${placed}`}
                 style={{ backgroundColor: info.color }}
               />
             )}
-            <span className="relative z-10" style={info ? { color: inkOn(info.color) } : undefined}>
+            {capritx && (
+              <span
+                data-marc
+                aria-hidden="true"
+                className={`absolute inset-0 rounded-(--radius-rajola) border-[3px] ${placed}`}
+                style={{ borderColor: info.color }}
+              />
+            )}
+            <span
+              className="relative z-10"
+              style={info && !capritx ? { color: inkOn(info.color) } : undefined}
+            >
               {WEEKDAY_SHORT[i]}
             </span>
           </li>

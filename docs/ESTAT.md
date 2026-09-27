@@ -33,7 +33,7 @@
 
 ## On som exactament (pas 8)
 
-Pas 7 tancat (129 tests en verd, `tsc` net, polish de "La teva setmana" fet,
+Pas 7 tancat (132 tests en verd, `tsc` net, polish de "La teva setmana" fet,
 detector d'Impeccable sense findings). **Esperant el vistiplau de l'Olga** per
 començar el pas 8 ("+info" del plat), també amb TDD.
 
@@ -52,6 +52,7 @@ començar el pas 8 ("+info" del plat), també amb TDD.
 - Rajola del plat: camp de color mínim de 128px (abans 192px) perquè "Sopem això" càpiga al mòbil petit (375×667) amb l'avís d'ahir obert.
 - Si Impeccable no es carrega en una sessió de VS Code, cal reiniciar la sessió.
 - Resum setmanal: s'hi arriba tocant la fila de 7 rajoletes d'Avui (botó que la cobreix; la llista es manté per als lectors de pantalla). Pantalla "La teva setmana" amb les 7 rajoletes, una rajola per categoria (complerta = plena del color de la categoria; pendent = "x/y · pendent") i els capritxos a part. Brief: `.impeccable/surfaces/src-screens-summaryscreen-tsx.md`.
+- Fila de la setmana (Avui i resum): el dia de capritx no s'omple, queda emmarcat en granat (no compta per a cap quota). Si és avui, la marca d'avui va per dins del marc.
 
 ## Pendents d'Impeccable (per a la sessió amb el plugin carregat)
 
