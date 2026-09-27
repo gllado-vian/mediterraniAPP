@@ -1,9 +1,9 @@
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
-import { AppMenu } from './AppMenu';
+import { AppMenu, type MainScreen } from './AppMenu';
 
-function renderMenu(current: 'today' | 'week' | 'settings' = 'today', nested = false) {
+function renderMenu(current: MainScreen = 'today', nested = false) {
   const onNavigate = vi.fn();
   render(
     <div>
@@ -25,13 +25,13 @@ describe('AppMenu', () => {
     expect(screen.queryByRole('navigation')).not.toBeInTheDocument();
   });
 
-  it('en obrir-lo ensenya les tres pantalles amb l’actual marcada', async () => {
+  it('en obrir-lo ensenya totes les pantalles amb l’actual marcada', async () => {
     renderMenu('week');
     await userEvent.click(menuButton());
     expect(menuButton()).toHaveAttribute('aria-expanded', 'true');
     const nav = screen.getByRole('navigation', { name: 'Menú' });
     const items = within(nav).getAllByRole('button');
-    expect(items.map((b) => b.textContent)).toEqual(['Avui', 'La teva setmana', 'Ajustos']);
+    expect(items.map((b) => b.textContent)).toEqual(['Avui', 'La teva setmana', 'Ajustos', 'Com funciona']);
     expect(within(nav).getByRole('button', { name: 'La teva setmana' })).toHaveAttribute('aria-current', 'page');
     expect(within(nav).getByRole('button', { name: 'Avui' })).not.toHaveAttribute('aria-current');
   });

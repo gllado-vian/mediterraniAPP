@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { openAppDb } from './db/db';
 import { createRepository } from './db/repository';
 import { DishFormScreen } from './screens/DishFormScreen';
+import { HelpScreen } from './screens/HelpScreen';
 import { MyDishesScreen } from './screens/MyDishesScreen';
 import { SettingsScreen } from './screens/SettingsScreen';
 import { SummaryScreen } from './screens/SummaryScreen';
@@ -63,6 +64,7 @@ export function App() {
           onOpenMyDishes={() => setScreen({ name: 'myDishes' })}
         />
       )}
+      {screen.name === 'help' && <HelpScreen onBack={() => setScreen(TODAY)} onNavigate={navigate} />}
       {screen.name === 'myDishes' && (
         <MyDishesScreen
           onBack={() => navigate('settings')}

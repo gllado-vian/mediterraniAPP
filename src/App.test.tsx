@@ -140,4 +140,15 @@ describe('App', () => {
     const card = await screen.findByRole('article', { name: 'Plat del dia' });
     expect(within(card).getByText('El plat de la casa')).toBeInTheDocument();
   });
+
+  it('des del menú s’obre "Com funciona"', async () => {
+    const real = db.openAppDb;
+    vi.spyOn(db, 'openAppDb').mockImplementation(() => real(`app-ajuda-${Date.now()}`));
+    render(<App />);
+    await userEvent.click(await screen.findByRole('button', { name: 'Menú' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Com funciona' }));
+    expect(await screen.findByRole('heading', { level: 1, name: 'Com funciona' })).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Tornar' }));
+    expect(await screen.findByRole('button', { name: 'Sopem això' })).toBeInTheDocument();
+  });
 });

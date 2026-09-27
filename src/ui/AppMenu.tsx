@@ -1,5 +1,6 @@
 import {
   IconCalendarWeek,
+  IconHelpCircle,
   IconMenu2,
   IconSettings,
   IconToolsKitchen2,
@@ -8,15 +9,16 @@ import {
 } from '@tabler/icons-react';
 import { useEffect, useRef, useState } from 'react';
 
-export type MainScreen = 'today' | 'week' | 'settings';
+export type MainScreen = 'today' | 'week' | 'settings' | 'help';
 
 const ITEMS: { id: MainScreen; label: string; icon: Icon }[] = [
   { id: 'today', label: 'Avui', icon: IconToolsKitchen2 },
   { id: 'week', label: 'La teva setmana', icon: IconCalendarWeek },
   { id: 'settings', label: 'Ajustos', icon: IconSettings },
+  { id: 'help', label: 'Com funciona', icon: IconHelpCircle },
 ];
 
-/** Menú de la capçalera: dona accés a les tres pantalles principals. */
+/** Menú de la capçalera: dona accés a les pantalles principals. */
 export function AppMenu({
   current,
   nested = false,
