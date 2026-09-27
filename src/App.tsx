@@ -3,13 +3,17 @@ import { openAppDb } from './db/db';
 import { createRepository } from './db/repository';
 import { SwipeScreen } from './screens/SwipeScreen';
 import { TodayScreen } from './screens/TodayScreen';
+import type { IsoDate } from './domain/types';
 import { AppStoreProvider, createAppStore, type AppStore } from './store/appStore';
 
-type Screen = 'today' | 'swipe';
+/** El swipe porta la data per a la qual es tria (per defecte, avui). */
+type Screen = { name: 'today' } | { name: 'swipe'; date?: IsoDate };
+
+const TODAY: Screen = { name: 'today' };
 
 export function App() {
   const [store, setStore] = useState<AppStore | null>(null);
-  const [screen, setScreen] = useState<Screen>('today');
+  const [screen, setScreen] = useState<Screen>(TODAY);
   const [failed, setFailed] = useState(false);
 
   useEffect(() => {
@@ -34,11 +38,17 @@ export function App() {
 
   return (
     <AppStoreProvider store={store}>
-      {screen === 'today' && <TodayScreen onOpenSwipe={() => setScreen('swipe')} />}
-      {screen === 'swipe' && (
+      {screen.name === 'today' && (
+        <TodayScreen
+          onOpenSwipe={() => setScreen({ name: 'swipe' })}
+          onPickYesterday={(date) => setScreen({ name: 'swipe', date })}
+        />
+      )}
+      {screen.name === 'swipe' && (
         <SwipeScreen
-          onDone={() => setScreen('today')}
-          onBack={() => setScreen('today')}
+          date={screen.date}
+          onDone={() => setScreen(TODAY)}
+          onBack={() => setScreen(TODAY)}
           // El "+info" arriba al pas 8.
           onOpenInfo={() => {}}
         />

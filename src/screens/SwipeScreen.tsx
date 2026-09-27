@@ -126,7 +126,7 @@ export function SwipeScreen({
 
   const offset = leaving === 'confirm' ? 480 : leaving === 'discard' ? -480 : dx;
   const pull = Math.min(1, Math.abs(dx) / DECIDE_AT);
-  const title = forDate === today ? 'Tria un altre plat' : 'Què vas sopar?';
+  const title = forDate === today ? 'Tria un altre plat' : 'Què vas sopar ahir?';
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-md flex-col overflow-x-clip px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1.5rem,env(safe-area-inset-bottom))]">

@@ -1,12 +1,15 @@
 import { IconArrowsExchange, IconCheck } from '@tabler/icons-react';
 import { useState } from 'react';
-import type { DayRecord, Dish } from '../domain/types';
+import type { DayRecord, Dish, IsoDate } from '../domain/types';
 import type { RotationCategory } from '../domain/categories';
+import { addDays } from '../domain/dates';
 import { formatLongDate } from '../domain/format';
 import { proposeTonight } from '../domain/planner';
 import { useAppStore } from '../store/appStore';
 import { DishTile } from '../ui/DishTile';
+import { LunchPicker } from '../ui/LunchPicker';
 import { WeekTiles } from '../ui/WeekTiles';
+import { YesterdayPrompt } from '../ui/YesterdayPrompt';
 
 const LUNCH_WORD: Record<RotationCategory, string> = {
   peix: 'peix',
@@ -31,13 +34,22 @@ function confirmedDishOf(dinner: DayRecord['dinner'], dishes: Dish[]): Dish | un
   );
 }
 
-export function TodayScreen({ onOpenSwipe }: { onOpenSwipe: () => void }) {
+export function TodayScreen({
+  onOpenSwipe,
+  onPickYesterday,
+}: {
+  onOpenSwipe: () => void;
+  onPickYesterday: (date: IsoDate) => void;
+}) {
   const status = useAppStore((s) => s.status);
   const today = useAppStore((s) => s.today);
+  const houseSince = useAppStore((s) => s.houseSince);
   const days = useAppStore((s) => s.days);
   const dishes = useAppStore((s) => s.dishes);
   const confirmDinner = useAppStore((s) => s.confirmDinner);
   const undoDinner = useAppStore((s) => s.undoDinner);
+  const setLunch = useAppStore((s) => s.setLunch);
+  const markDinnerUnknown = useAppStore((s) => s.markDinnerUnknown);
   const [justPlaced, setJustPlaced] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
@@ -45,20 +57,39 @@ export function TodayScreen({ onOpenSwipe }: { onOpenSwipe: () => void }) {
     return <main aria-busy="true" className="min-h-dvh bg-ciment" />;
   }
 
-  const dinner = days.find((d) => d.date === today)?.dinner;
+  const todayRecord = days.find((d) => d.date === today);
+  const dinner = todayRecord?.dinner;
   const confirmedDish = confirmedDishOf(dinner, dishes);
   const proposal = confirmedDish ? null : proposeTonight({ today, days, dishes });
   const shownDish = confirmedDish ?? proposal?.dish;
 
-  async function confirm() {
-    if (!proposal || saving) return;
+  // Només preguntem per ahir si l'app ja existia i ahir encara és en blanc.
+  const yesterday = addDays(today, -1);
+  const yesterdayOpen =
+    houseSince !== null &&
+    houseSince <= yesterday &&
+    !days.find((d) => d.date === yesterday)?.dinner;
+  const yesterdayDish = yesterdayOpen
+    ? proposeTonight({ today: yesterday, days: days.filter((d) => d.date <= yesterday), dishes })?.dish
+    : undefined;
+
+  /** Evita dobles tocs mentre es desa. */
+  async function save(action: () => Promise<void>) {
+    if (saving) return;
     setSaving(true);
     try {
-      await confirmDinner(proposal.dish);
-      setJustPlaced(today);
+      await action();
     } finally {
       setSaving(false);
     }
+  }
+
+  function confirm() {
+    if (!proposal) return;
+    void save(async () => {
+      await confirmDinner(proposal.dish);
+      setJustPlaced(today);
+    });
   }
 
   return (
@@ -66,6 +97,18 @@ export function TodayScreen({ onOpenSwipe }: { onOpenSwipe: () => void }) {
       <header className="pb-4">
         <h1 className="text-lg font-semibold">{formatLongDate(today)}</h1>
       </header>
+
+      {yesterdayDish && (
+        <YesterdayPrompt
+          dish={yesterdayDish}
+          busy={saving}
+          onYes={() => save(() => confirmDinner(yesterdayDish, yesterday))}
+          onOther={() => onPickYesterday(yesterday)}
+          onUnknown={() => save(() => markDinnerUnknown(yesterday))}
+        />
+      )}
+
+      {!confirmedDish && <LunchPicker value={todayRecord?.lunch} onChange={setLunch} />}
 
       {proposal?.replacedForLunch && (
         <p className="mb-3 flex items-center gap-2 text-sm text-tinta-suau">

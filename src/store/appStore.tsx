@@ -12,12 +12,15 @@ export interface AppState {
   days: DayRecord[];
   dishes: Dish[];
   settings: Settings;
+  /** Dia que es va crear la casa (instal·lació de l'app). */
+  houseSince: IsoDate | null;
   load(): Promise<void>;
   /** Actualitza "avui" si ha canviat el dia (app oberta de nit). */
   syncToday(): void;
   confirmDinner(dish: Dish, date?: IsoDate): Promise<void>;
   undoDinner(date?: IsoDate): Promise<void>;
   setLunch(lunch: LunchOption | null): Promise<void>;
+  markDinnerUnknown(date: IsoDate): Promise<void>;
 }
 
 export interface AppStoreDeps {
@@ -47,16 +50,24 @@ export function createAppStore({ repo, now = () => new Date() }: AppStoreDeps): 
       days: [],
       dishes: [],
       settings: { capritxMarginDays: 7 },
+      houseSince: null,
 
       async load() {
-        await repo.ensureHouse();
+        const house = await repo.ensureHouse(now());
         await seedBaseRecipes(repo);
         const [dishes, days, settings] = await Promise.all([
           repo.listDishes(),
           repo.listAllDays(),
           repo.getSettings(),
         ]);
-        set({ status: 'ready', today: toIsoDate(now()), dishes: inRecipeOrder(dishes), days, settings });
+        set({
+          status: 'ready',
+          today: toIsoDate(now()),
+          houseSince: toIsoDate(new Date(house.createdAt)),
+          dishes: inRecipeOrder(dishes),
+          days,
+          settings,
+        });
       },
 
       syncToday() {
@@ -76,6 +87,11 @@ export function createAppStore({ repo, now = () => new Date() }: AppStoreDeps): 
 
       async setLunch(lunch) {
         await repo.setLunch(get().today, lunch);
+        await refreshDays();
+      },
+
+      async markDinnerUnknown(date) {
+        await repo.markDinnerUnknown(date);
         await refreshDays();
       },
     };

@@ -25,7 +25,7 @@ export function DishTile({ dish, label, overlay, footer, className = '', ...rest
       {...rest}
     >
       <div
-        className="relative grid min-h-48 flex-1 place-items-center"
+        className="relative grid min-h-32 flex-1 place-items-center"
         style={{ backgroundColor: info.color }}
       >
         <CategoryIcon category={dish.category} size={104} stroke={1.25} color={inkOn(info.color)} />

@@ -19,7 +19,7 @@ install_plugin() {
     return
   fi
   claude plugin marketplace add "$marketplace_repo" --scope project
-  claude plugin install "$plugin" --scope project -y
+  claude plugin install "$plugin" --scope project
 }
 
 install_plugin obra/superpowers-marketplace superpowers@superpowers-marketplace

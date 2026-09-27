@@ -40,10 +40,10 @@ export function createRepository(db: AppDb) {
   }
 
   return {
-    async ensureHouse(): Promise<House> {
+    async ensureHouse(createdAt = new Date()): Promise<House> {
       const existing = (await db.get('meta', 'house')) as House | undefined;
       if (existing) return existing;
-      const house: House = { id: crypto.randomUUID(), createdAt: new Date().toISOString() };
+      const house: House = { id: crypto.randomUUID(), createdAt: createdAt.toISOString() };
       await db.put('meta', house, 'house');
       return house;
     },

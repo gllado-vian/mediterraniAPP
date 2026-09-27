@@ -149,4 +149,21 @@ describe('SwipeScreen', () => {
     expect(onBack).toHaveBeenCalledOnce();
     expect(await repo.getDay('2026-09-28')).toBeUndefined();
   });
+
+  it('per a ahir pregunta què vas sopar i desa el plat a ahir', async () => {
+    const store = createAppStore({ repo, now: () => MONDAY });
+    const onDone = vi.fn();
+    render(
+      <AppStoreProvider store={store}>
+        <SwipeScreen date="2026-09-27" onDone={onDone} onBack={vi.fn()} onOpenInfo={vi.fn()} />
+      </AppStoreProvider>,
+    );
+    expect(await screen.findByRole('heading', { name: 'Què vas sopar ahir?' })).toBeInTheDocument();
+    await screen.findByRole('article', { name: /^Plat proposat/ });
+    const chosen = topCardName();
+    await userEvent.click(screen.getByRole('button', { name: 'Aquest!' }));
+    await vi.waitFor(() => expect(onDone).toHaveBeenCalledOnce());
+    expect((await repo.getDay('2026-09-27'))?.dinner).toMatchObject({ dishName: chosen });
+    expect(await repo.getDay('2026-09-28')).toBeUndefined();
+  });
 });
