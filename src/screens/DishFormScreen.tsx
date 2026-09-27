@@ -5,8 +5,9 @@ import { useAppStore } from '../store/appStore';
 import { CategoryPicker } from '../ui/CategoryPicker';
 import { ScreenHeader } from '../ui/ScreenHeader';
 
-const inputClass =
-  'mt-1.5 block w-full rounded-(--radius-rajola) border-2 border-transparent bg-rajola px-3 py-3 text-base placeholder:text-tinta-suau/70 focus:border-tinta focus:outline-none aria-invalid:border-capritx-tinta';
+const fieldClass =
+  'rounded-(--radius-rajola) border-2 border-transparent bg-rajola px-3 py-2.5 text-base placeholder:text-tinta-suau/70 focus:border-tinta focus:outline-none aria-invalid:border-capritx-tinta';
+const inputClass = `mt-1 block w-full ${fieldClass}`;
 
 function FieldError({ id, message }: { id: string; message?: string }) {
   if (!message) return null;
@@ -99,7 +100,7 @@ export function DishFormScreen({
       <ScreenHeader title={editing ? 'Editar plat' : 'Nou plat'} onBack={onBack} />
 
       {ready && (
-        <form onSubmit={save} noValidate className="mt-3 flex flex-1 flex-col gap-6">
+        <form onSubmit={save} noValidate className="mt-1 flex flex-1 flex-col gap-4">
           <div>
             <label htmlFor="dish-name" className="text-sm font-medium">
               Nom
@@ -132,37 +133,41 @@ export function DishFormScreen({
           />
 
           <div>
-            <label htmlFor="dish-minutes" className="text-sm font-medium">
-              Temps (minuts)
-            </label>
-            <input
-              ref={fields.prepMinutes}
-              id="dish-minutes"
-              type="number"
-              inputMode="numeric"
-              min={1}
-              value={minutes}
-              onChange={(e) => {
-                setMinutes(e.target.value);
-                if (error?.field === 'prepMinutes') setError(null);
-              }}
-              aria-invalid={errorOf('prepMinutes') ? true : undefined}
-              aria-describedby={errorOf('prepMinutes') ? 'minutes-error' : undefined}
-              className={`${inputClass} max-w-32 tabular-nums`}
-            />
+            <div className="flex items-center gap-3">
+              <label htmlFor="dish-minutes" className="text-sm font-medium">
+                Temps (minuts)
+              </label>
+              <input
+                ref={fields.prepMinutes}
+                id="dish-minutes"
+                type="number"
+                inputMode="numeric"
+                min={1}
+                value={minutes}
+                onChange={(e) => {
+                  setMinutes(e.target.value);
+                  if (error?.field === 'prepMinutes') setError(null);
+                }}
+                aria-invalid={errorOf('prepMinutes') ? true : undefined}
+                aria-describedby={errorOf('prepMinutes') ? 'minutes-error' : undefined}
+                className={`${fieldClass} w-24 tabular-nums`}
+              />
+            </div>
             <FieldError id="minutes-error" message={errorOf('prepMinutes')} />
           </div>
 
           <div>
-            <label htmlFor="dish-ingredients" className="text-sm font-medium">
-              Ingredients
-            </label>
-            <p id="ingredients-hint" className="text-sm text-tinta-suau">
-              Un per línia.
-            </p>
+            <div className="flex items-baseline gap-2">
+              <label htmlFor="dish-ingredients" className="text-sm font-medium">
+                Ingredients
+              </label>
+              <span id="ingredients-hint" className="text-sm text-tinta-suau">
+                un per línia
+              </span>
+            </div>
             <textarea
               id="dish-ingredients"
-              rows={5}
+              rows={3}
               value={ingredients}
               onChange={(e) => setIngredients(e.target.value)}
               aria-describedby="ingredients-hint"
@@ -170,7 +175,7 @@ export function DishFormScreen({
             />
           </div>
 
-          <div className="mt-auto grid gap-3 pt-2">
+          <div className="mt-auto grid gap-1">
             <button
               type="submit"
               disabled={saving}
