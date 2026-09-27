@@ -4,7 +4,7 @@ import type { Repository } from '../db/repository';
 import { BASE_RECIPES, seedBaseRecipes } from '../domain/baseRecipes';
 import type { LunchOption } from '../domain/categories';
 import { toIsoDate } from '../domain/dates';
-import type { DayRecord, Dish, IsoDate, Settings } from '../domain/types';
+import type { DayRecord, Dish, IsoDate, NewDish, Settings } from '../domain/types';
 
 export interface AppState {
   status: 'loading' | 'ready';
@@ -22,6 +22,9 @@ export interface AppState {
   setLunch(lunch: LunchOption | null): Promise<void>;
   markDinnerUnknown(date: IsoDate): Promise<void>;
   updateSettings(patch: Partial<Settings>): Promise<void>;
+  addDish(input: NewDish): Promise<void>;
+  updateDish(id: string, input: NewDish): Promise<void>;
+  deleteDish(id: string): Promise<void>;
 }
 
 export interface AppStoreDeps {
@@ -43,6 +46,10 @@ export function createAppStore({ repo, now = () => new Date() }: AppStoreDeps): 
   return createStore<AppState>((set, get) => {
     async function refreshDays() {
       set({ days: await repo.listAllDays() });
+    }
+
+    async function refreshDishes() {
+      set({ dishes: inRecipeOrder(await repo.listDishes()) });
     }
 
     return {
@@ -98,6 +105,21 @@ export function createAppStore({ repo, now = () => new Date() }: AppStoreDeps): 
 
       async updateSettings(patch) {
         set({ settings: await repo.updateSettings(patch) });
+      },
+
+      async addDish(input) {
+        await repo.addUserDish(input);
+        await refreshDishes();
+      },
+
+      async updateDish(id, input) {
+        await repo.updateUserDish(id, input);
+        await refreshDishes();
+      },
+
+      async deleteDish(id) {
+        await repo.deleteUserDish(id);
+        await refreshDishes();
       },
     };
   });

@@ -19,9 +19,12 @@ const ITEMS: { id: MainScreen; label: string; icon: Icon }[] = [
 /** Menú de la capçalera: dona accés a les tres pantalles principals. */
 export function AppMenu({
   current,
+  nested = false,
   onNavigate,
 }: {
   current: MainScreen;
+  /** La pantalla és dins de la secció `current` (p. ex. Els meus plats, dins d'Ajustos). */
+  nested?: boolean;
   onNavigate: (screen: MainScreen) => void;
 }) {
   const [open, setOpen] = useState(false);
@@ -48,7 +51,7 @@ export function AppMenu({
 
   function choose(screen: MainScreen) {
     setOpen(false);
-    if (screen !== current) onNavigate(screen);
+    if (screen !== current || nested) onNavigate(screen);
   }
 
   const ToggleIcon = open ? IconX : IconMenu2;
@@ -78,7 +81,7 @@ export function AppMenu({
                 <li key={id}>
                   <button
                     type="button"
-                    aria-current={active ? 'page' : undefined}
+                    aria-current={active ? (nested ? 'true' : 'page') : undefined}
                     onClick={() => choose(id)}
                     className={[
                       'flex min-h-12 w-full items-center gap-3 rounded-(--radius-rajola) px-3 text-left font-medium transition-colors',

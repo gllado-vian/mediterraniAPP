@@ -16,15 +16,16 @@ beforeEach(async () => {
 async function renderSettings() {
   const onBack = vi.fn();
   const onNavigate = vi.fn();
+  const onOpenMyDishes = vi.fn();
   const store = createAppStore({ repo, now: () => new Date(2026, 8, 28, 20) });
   render(
     <AppStoreProvider store={store}>
-      <SettingsScreen onBack={onBack} onNavigate={onNavigate} />
+      <SettingsScreen onBack={onBack} onNavigate={onNavigate} onOpenMyDishes={onOpenMyDishes} />
     </AppStoreProvider>,
   );
   await screen.findByRole('heading', { name: 'Ajustos' });
   const group = await screen.findByRole('group', { name: 'Marge entre capritxos' });
-  return { onBack, onNavigate, group };
+  return { onBack, onNavigate, onOpenMyDishes, group };
 }
 
 describe('SettingsScreen', () => {
@@ -63,5 +64,20 @@ describe('SettingsScreen', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Menú' }));
     await userEvent.click(screen.getByRole('button', { name: 'La teva setmana' }));
     expect(onNavigate).toHaveBeenCalledWith('week');
+  });
+
+  it('porta a "Els meus plats" i diu quants n’hi ha', async () => {
+    const { onOpenMyDishes } = await renderSettings();
+    const link = screen.getByRole('button', { name: /Els meus plats/ });
+    expect(link).toHaveTextContent('Encara no n’has afegit cap');
+    await userEvent.click(link);
+    expect(onOpenMyDishes).toHaveBeenCalledOnce();
+  });
+
+  it('compta els plats propis', async () => {
+    await repo.addUserDish({ name: 'Amanida', category: 'vegetaria', ingredients: [], prepMinutes: null });
+    await repo.addUserDish({ name: 'Truita', category: 'ou', ingredients: [], prepMinutes: null });
+    await renderSettings();
+    expect(screen.getByRole('button', { name: /Els meus plats/ })).toHaveTextContent('2 plats propis');
   });
 });

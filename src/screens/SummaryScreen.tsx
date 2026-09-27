@@ -1,10 +1,11 @@
-import { IconArrowLeft, IconCheck, IconChefHat } from '@tabler/icons-react';
+import { IconCheck, IconChefHat } from '@tabler/icons-react';
 import { categoryInfo } from '../domain/categories';
 import { weeklySummary, type SummaryRow } from '../domain/weeklySummary';
 import { useAppStore } from '../store/appStore';
 import { CategoryIcon } from '../ui/CategoryIcon';
 import { inkOn } from '../ui/contrast';
-import { AppMenu, type MainScreen } from '../ui/AppMenu';
+import type { MainScreen } from '../ui/AppMenu';
+import { ScreenHeader } from '../ui/ScreenHeader';
 import { WeekTiles } from '../ui/WeekTiles';
 
 /** Una rajola per categoria: quan la quota és complerta, el color l'omple sencera. */
@@ -54,18 +55,7 @@ export function SummaryScreen({
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-md flex-col px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1.5rem,env(safe-area-inset-bottom))]">
-      <header className="flex items-center gap-2 pb-3">
-        <button
-          type="button"
-          onClick={onBack}
-          aria-label="Tornar"
-          className="-ml-2 grid size-11 place-items-center rounded-(--radius-rajola) transition-colors hover:bg-rajola/60"
-        >
-          <IconArrowLeft size={24} stroke={1.75} aria-hidden="true" />
-        </button>
-        <h1 className="flex-1 text-lg font-semibold">La teva setmana</h1>
-        <AppMenu current="week" onNavigate={onNavigate} />
-      </header>
+      <ScreenHeader title="La teva setmana" onBack={onBack} menu={{ current: 'week', onNavigate }} />
 
       {status === 'ready' && (
         <>

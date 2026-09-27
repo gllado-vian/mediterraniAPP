@@ -28,7 +28,7 @@
 | 6 | Registre del dinar (no bloquejant, vinculant) + avís "ahir: vas sopar X?" | ✅ fet + polish |
 | 7 | Resum setmanal per categoria | ✅ fet + polish |
 | 8 | "+info" del plat | ✅ fet + polish |
-| 9 | Export/import JSON + Ajustos (marge capritx, els meus plats) | 🚧 en curs: 9a ✅ (menú + Ajustos amb marge), 9b els meus plats, 9c export/import |
+| 9 | Export/import JSON + Ajustos (marge capritx, els meus plats) | 🚧 en curs: 9a ✅ (menú + Ajustos amb marge), 9b ✅ (els meus plats), 9c export/import |
 | 10 | Passada final d'identitat visual + `DESIGN.md` (Impeccable document) | pendent |
 
 ## On som exactament (pas 9)
@@ -36,10 +36,10 @@
 El pas 9 es fa en tres peces, cadascuna amb disseny curt aprovat, TDD, commit i revisió de l'Olga:
 
 - **9a ✅** Menú de capçalera (Avui · La teva setmana · Ajustos) i Ajustos amb el marge entre capritxos (157 tests, `tsc` net, polish fet).
-- **9b** Els meus plats: afegir, editar i esborrar plats propis (ingredients un per línia).
+- **9b ✅** Els meus plats: afegir, editar i esborrar plats propis (176 tests, `tsc` net, polish fet).
 - **9c** Exportar / importar JSON: l'import **substitueix** tot el que hi ha al mòbil, amb confirmació.
 
-**Esperant el vistiplau de l'Olga** per començar la 9b.
+**Esperant el vistiplau de l'Olga** per començar la 9c.
 
 ## Decisions preses durant la construcció
 
@@ -63,6 +63,9 @@ El pas 9 es fa en tres peces, cadascuna amb disseny curt aprovat, TDD, commit i 
 - "Cops aquest mes" = mes natural. Les dades del swipe d'ahir es calculen respecte d'ahir.
 - Navegació: icona de menú a la dreta de la capçalera d'Avui, La teva setmana i Ajustos. Panell de rajoles (la pantalla actual en tinta plena); es tanca en triar, amb Escape, tocant fora o tornant a tocar la icona. El swipe no porta menú. La fletxa de Tornar es manté a La teva setmana i Ajustos.
 - Ajustos · marge entre capritxos: comptador de tres rajoles (− valor +), de 0 a 30 dies, es desa a cada toc. Brief: `.impeccable/surfaces/src-screens-settingsscreen-tsx.md`.
+- Els meus plats: s'hi arriba des d'Ajustos (rajola amb el recompte). Llista només de plats propis (ordre alfabètic); formulari (nom, categoria amb 6 rajoletes de ràdio, temps opcional, ingredients un per línia). Errors al costat del camp (el repositori diu a quin camp pertanyen). Esborrar amb confirmació en línia. El formulari no porta menú (és un pas intermedi, com el swipe); a Els meus plats, el menú marca Ajustos i tocar-lo hi torna. Brief: `.impeccable/surfaces/src-screens-mydishesscreen-tsx.md`.
+- Capçalera compartida `ScreenHeader` (fletxa + títol + menú opcional) a totes les pantalles secundàries.
+- Tests intermitents corregits (TodayScreen): comprovaven la pantalla just després d'esperar la base de dades; ara esperen la pantalla. 0 fallades en 8 passades de la suite.
 
 ## Pendents per a passos següents
 

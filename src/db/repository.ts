@@ -2,7 +2,17 @@ import { isCategory, type LunchOption } from '../domain/categories';
 import type { DayRecord, Dish, House, IsoDate, NewDish, Settings } from '../domain/types';
 import type { AppDb } from './db';
 
-export class DishValidationError extends Error {}
+export type DishField = 'name' | 'category' | 'prepMinutes';
+
+export class DishValidationError extends Error {
+  constructor(
+    message: string,
+    /** Camp del formulari on cal ensenyar l'error. */
+    readonly field: DishField,
+  ) {
+    super(message);
+  }
+}
 
 const DEFAULT_SETTINGS: Settings = { capritxMarginDays: 7 };
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
@@ -13,11 +23,11 @@ function assertDate(date: IsoDate) {
 
 function normalizeDish(input: NewDish): NewDish {
   const name = input.name.trim();
-  if (!name) throw new DishValidationError('Posa-li un nom al plat.');
-  if (!isCategory(input.category)) throw new DishValidationError('Tria una categoria.');
+  if (!name) throw new DishValidationError('Posa-li un nom al plat.', 'name');
+  if (!isCategory(input.category)) throw new DishValidationError('Tria una categoria.', 'category');
   const { prepMinutes } = input;
   if (prepMinutes !== null && !(Number.isInteger(prepMinutes) && prepMinutes > 0)) {
-    throw new DishValidationError('El temps ha de ser un nombre de minuts més gran que 0.');
+    throw new DishValidationError('El temps ha de ser un nombre de minuts més gran que 0.', 'prepMinutes');
   }
   const ingredients = input.ingredients.map((i) => i.trim()).filter(Boolean);
   return { name, category: input.category, ingredients, prepMinutes };

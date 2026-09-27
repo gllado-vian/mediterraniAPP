@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { openAppDb } from './db/db';
 import { createRepository } from './db/repository';
+import { DishFormScreen } from './screens/DishFormScreen';
+import { MyDishesScreen } from './screens/MyDishesScreen';
 import { SettingsScreen } from './screens/SettingsScreen';
 import { SummaryScreen } from './screens/SummaryScreen';
 import { SwipeScreen } from './screens/SwipeScreen';
@@ -10,7 +12,11 @@ import { AppStoreProvider, createAppStore, type AppStore } from './store/appStor
 import type { MainScreen } from './ui/AppMenu';
 
 /** Les pantalles del menú, més el swipe (que porta la data per a la qual es tria). */
-type Screen = { name: MainScreen } | { name: 'swipe'; date?: IsoDate };
+type Screen =
+  | { name: MainScreen }
+  | { name: 'swipe'; date?: IsoDate }
+  | { name: 'myDishes' }
+  | { name: 'dishForm'; dishId?: string };
 
 const TODAY: Screen = { name: 'today' };
 
@@ -51,7 +57,26 @@ export function App() {
       )}
       {screen.name === 'week' && <SummaryScreen onBack={() => setScreen(TODAY)} onNavigate={navigate} />}
       {screen.name === 'settings' && (
-        <SettingsScreen onBack={() => setScreen(TODAY)} onNavigate={navigate} />
+        <SettingsScreen
+          onBack={() => setScreen(TODAY)}
+          onNavigate={navigate}
+          onOpenMyDishes={() => setScreen({ name: 'myDishes' })}
+        />
+      )}
+      {screen.name === 'myDishes' && (
+        <MyDishesScreen
+          onBack={() => navigate('settings')}
+          onNavigate={navigate}
+          onAdd={() => setScreen({ name: 'dishForm' })}
+          onEdit={(dishId) => setScreen({ name: 'dishForm', dishId })}
+        />
+      )}
+      {screen.name === 'dishForm' && (
+        <DishFormScreen
+          dishId={screen.dishId}
+          onDone={() => setScreen({ name: 'myDishes' })}
+          onBack={() => setScreen({ name: 'myDishes' })}
+        />
       )}
       {screen.name === 'swipe' && (
         <SwipeScreen

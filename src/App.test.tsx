@@ -117,4 +117,27 @@ describe('App', () => {
     }
     expect(screen.queryByText(/de l'últim capritx/)).not.toBeInTheDocument();
   });
+
+  it('un plat propi nou surt primer a la proposta d’Avui', async () => {
+    const real = db.openAppDb;
+    vi.spyOn(db, 'openAppDb').mockImplementation(() => real(`app-plats-${Date.now()}`));
+    render(<App />);
+    const today = await screen.findByRole('article', { name: 'Plat del dia' });
+    const category = within(today).getByText(/^(Peix|Ou|Llegum|Carn magra|Vegetarià pur)$/).textContent!;
+
+    await userEvent.click(screen.getByRole('button', { name: 'Menú' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Ajustos' }));
+    await userEvent.click(await screen.findByRole('button', { name: /Els meus plats/ }));
+    await userEvent.click(await screen.findByRole('button', { name: 'Afegir un plat' }));
+    await userEvent.type(await screen.findByLabelText('Nom'), 'El plat de la casa');
+    await userEvent.click(screen.getByRole('radio', { name: category }));
+    await userEvent.click(screen.getByRole('button', { name: 'Desar' }));
+
+    const list = await screen.findByRole('list', { name: 'Els meus plats' });
+    expect(within(list).getByText('El plat de la casa')).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Menú' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Avui' }));
+    const card = await screen.findByRole('article', { name: 'Plat del dia' });
+    expect(within(card).getByText('El plat de la casa')).toBeInTheDocument();
+  });
 });

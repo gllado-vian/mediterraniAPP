@@ -3,12 +3,12 @@ import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { AppMenu } from './AppMenu';
 
-function renderMenu(current: 'today' | 'week' | 'settings' = 'today') {
+function renderMenu(current: 'today' | 'week' | 'settings' = 'today', nested = false) {
   const onNavigate = vi.fn();
   render(
     <div>
       <p>Fora del menú</p>
-      <AppMenu current={current} onNavigate={onNavigate} />
+      <AppMenu current={current} nested={nested} onNavigate={onNavigate} />
     </div>,
   );
   return { onNavigate };
@@ -72,5 +72,14 @@ describe('AppMenu', () => {
     await userEvent.click(menuButton());
     await userEvent.click(menuButton());
     expect(screen.queryByRole('navigation')).not.toBeInTheDocument();
+  });
+
+  it('en una pantalla de dins d’una secció, triar la secció hi torna', async () => {
+    const { onNavigate } = renderMenu('settings', true);
+    await userEvent.click(menuButton());
+    const settings = screen.getByRole('button', { name: 'Ajustos' });
+    expect(settings).toHaveAttribute('aria-current', 'true');
+    await userEvent.click(settings);
+    expect(onNavigate).toHaveBeenCalledWith('settings');
   });
 });

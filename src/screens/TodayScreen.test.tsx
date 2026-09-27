@@ -79,8 +79,11 @@ describe('TodayScreen', () => {
   it('la rajola del dia confirmat porta el nom de la categoria', async () => {
     await renderToday();
     await userEvent.click(screen.getByRole('button', { name: 'Sopem això' }));
-    const week = await screen.findByRole('list', { name: 'La teva setmana' });
-    expect(within(week).getAllByRole('listitem')[0]).toHaveAccessibleName('Dilluns: Peix');
+    // La fila ja hi és abans de confirmar: cal esperar que es refresqui.
+    const week = screen.getByRole('list', { name: 'La teva setmana' });
+    await vi.waitFor(() =>
+      expect(within(week).getAllByRole('listitem')[0]).toHaveAccessibleName('Dilluns: Peix'),
+    );
   });
 
   it('tocar el plat del dia gira la rajola i ensenya el +info', async () => {
@@ -185,8 +188,10 @@ describe('TodayScreen', () => {
       await renderToday();
       await userEvent.click(screen.getByRole('button', { name: 'Peix' }));
       await userEvent.click(await screen.findByRole('button', { name: 'Peix', pressed: true }));
-      await vi.waitFor(async () => expect((await repo.getDay('2026-09-28'))?.lunch).toBeUndefined());
-      expect(screen.queryByText('Canviat perquè has dinat peix')).not.toBeInTheDocument();
+      await vi.waitFor(() =>
+        expect(screen.queryByText('Canviat perquè has dinat peix')).not.toBeInTheDocument(),
+      );
+      expect((await repo.getDay('2026-09-28'))?.lunch).toBeUndefined();
     });
 
     it('"Una altra cosa" no veta cap categoria', async () => {
@@ -229,10 +234,10 @@ describe('TodayScreen', () => {
       await repo.ensureHouse(new Date(2026, 8, 20));
       await renderToday();
       await userEvent.click(screen.getByRole('button', { name: 'No ho recordo' }));
-      await vi.waitFor(async () =>
-        expect((await repo.getDay('2026-09-27'))?.dinner).toEqual({ status: 'unknown' }),
+      await vi.waitFor(() =>
+        expect(screen.queryByRole('region', { name: 'Sopar d’ahir' })).not.toBeInTheDocument(),
       );
-      expect(screen.queryByRole('region', { name: 'Sopar d’ahir' })).not.toBeInTheDocument();
+      expect((await repo.getDay('2026-09-27'))?.dinner).toEqual({ status: 'unknown' });
     });
 
     it('"Una altra cosa" obre el swipe per a ahir', async () => {

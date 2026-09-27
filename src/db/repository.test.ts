@@ -100,6 +100,15 @@ describe('plats', () => {
     ).rejects.toBeInstanceOf(DishValidationError);
   });
 
+  it('l’error de validació diu a quin camp pertany', async () => {
+    const fieldOf = (input: Parameters<typeof repo.addUserDish>[0]) =>
+      repo.addUserDish(input).catch((e: DishValidationError) => e.field);
+    expect(await fieldOf({ name: '', category: 'ou', ingredients: [], prepMinutes: null })).toBe('name');
+    // @ts-expect-error sense categoria a propòsit
+    expect(await fieldOf({ name: 'Pastís', category: null, ingredients: [], prepMinutes: null })).toBe('category');
+    expect(await fieldOf({ name: 'Pastís', category: 'ou', ingredients: [], prepMinutes: Number.NaN })).toBe('prepMinutes');
+  });
+
   it('edita un plat propi', async () => {
     const dish = await repo.addUserDish({
       name: 'Amanida',
