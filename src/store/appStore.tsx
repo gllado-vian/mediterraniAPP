@@ -166,8 +166,7 @@ export function createAppStore({ repo, now = () => new Date() }: AppStoreDeps): 
       },
 
       async importBackup(backup) {
-        // Fins a la còpia v2, una còpia sense categories porta les recomanades.
-        await repo.replaceAll({ ...backup, categories: [...DEFAULT_CATEGORIES] });
+        await repo.replaceAll(backup);
         await get().load();
       },
     };

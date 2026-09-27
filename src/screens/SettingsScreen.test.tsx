@@ -5,6 +5,7 @@ import { openAppDb } from '../db/db';
 import { createRepository, type Repository } from '../db/repository';
 import { AppStoreProvider, createAppStore } from '../store/appStore';
 import { buildBackup } from '../domain/backup';
+import { DEFAULT_CATEGORIES } from '../domain/categories';
 import { SettingsScreen } from './SettingsScreen';
 
 let repo: Repository;
@@ -122,6 +123,7 @@ describe('SettingsScreen', () => {
             { date: '2026-09-20', lunch: 'peix' },
             { date: '2026-09-21', dinner: { status: 'unknown' } },
           ],
+          categories: DEFAULT_CATEGORIES.map((c) => (c.id === 'peix' ? { ...c, name: 'Peix i marisc' } : c)),
         },
         new Date('2026-09-27T20:00:00.000Z'),
       );
@@ -177,6 +179,7 @@ describe('SettingsScreen', () => {
       expect(await repo.getSettings()).toEqual({ capritxMarginDays: 3 });
       expect(within(screen.getByRole('group', { name: 'Marge entre capritxos' })).getByText('3 dies')).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /Els meus plats/ })).toHaveTextContent('1 plat propi');
+      expect((await repo.getCategories())[0].name).toBe('Peix i marisc');
     });
 
     it('si es desmarca la còpia prèvia, substitueix sense baixar res', async () => {

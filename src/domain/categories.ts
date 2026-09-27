@@ -121,15 +121,3 @@ export function lunchOptions(categories: readonly CategoryDef[]): LunchOption[] 
 export function lunchWord(id: CategoryId, categories: readonly CategoryDef[]): string {
   return categoryInfo(id, categories).label.toLocaleLowerCase('ca');
 }
-
-// --- Només per a la còpia de seguretat v1 (es treu a la peça 3b) ---
-
-const LEGACY_IDS: readonly string[] = [...DEFAULT_CATEGORIES.map((c) => c.id), CAPRITX_ID];
-
-export function isCategory(value: unknown): value is Category {
-  return LEGACY_IDS.includes(value as string);
-}
-
-export function isRotationCategory(value: unknown): value is RotationCategory {
-  return value !== CAPRITX_ID && isCategory(value);
-}

@@ -36,7 +36,7 @@
 **MVP complet: els 10 passos fets.**
 
 **En curs (després de l'MVP): pàgina "Com funciona" i categories editables.** Pla aprovat per l'Olga, en peces:
-0 ✅ paleta ampliada amb 4 colors (Lavanda, Aigua de cala, Safrà, Albergínia) · 1 ✅ pàgina "Com funciona" · 2 ✅ domini parametritzat per categories · 3a ✅ categories desades i connectades a les pantalles · 3b còpia v2 · 4 pantalla Categories · 5 formulari de categoria · 6 documents · tancament amb Impeccable (polish, audit, finish-reviewer, document) i Superpowers (code review, verificació, tancament de branca).
+0 ✅ paleta ampliada amb 4 colors (Lavanda, Aigua de cala, Safrà, Albergínia) · 1 ✅ pàgina "Com funciona" · 2 ✅ domini parametritzat per categories · 3a ✅ categories desades i connectades a les pantalles · 3b ✅ còpia v2 · 4 pantalla Categories · 5 formulari de categoria · 6 documents · tancament amb Impeccable (polish, audit, finish-reviewer, document) i Superpowers (code review, verificació, tancament de branca).
  208 tests en verd, `tsc` net, detector d'Impeccable sense findings.
 
 - Pas 10: revisió final amb `impeccable-finish-reviewer` (publicable amb correccions; aplicades totes), icona "rajola del dia" amb amanida (`docs/ICONES.md`) i `DESIGN.md` + `.impeccable/design.json` redactats per `impeccable-documenter` a partir del codi.
