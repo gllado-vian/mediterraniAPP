@@ -148,6 +148,19 @@ describe('historial de dies', () => {
     });
   });
 
+  it('desfà un sopar confirmat sense perdre el dinar', async () => {
+    await repo.setLunch('2026-09-28', 'ou');
+    await repo.confirmDinner('2026-09-28', baseDish);
+    await repo.clearDinner('2026-09-28');
+    expect(await repo.getDay('2026-09-28')).toEqual({ date: '2026-09-28', lunch: 'ou' });
+  });
+
+  it('llista tot l’historial', async () => {
+    await repo.setLunch('2027-01-02', 'peix');
+    await repo.setLunch('2026-09-28', 'ou');
+    expect((await repo.listAllDays()).map((d) => d.date)).toEqual(['2026-09-28', '2027-01-02']);
+  });
+
   it('marca un sopar com a no recordat', async () => {
     await repo.markDinnerUnknown('2026-09-27');
     expect((await repo.getDay('2026-09-27'))?.dinner).toEqual({ status: 'unknown' });

@@ -1,1 +1,69 @@
 @import 'tailwindcss';
+@import '@fontsource-variable/figtree';
+
+@theme {
+  --font-sans: 'Figtree Variable', ui-sans-serif, system-ui, sans-serif;
+
+  /* Identitat: el fons és el ciment de les juntes, les targetes són rajoles. */
+  --color-ciment: #f2f2f2;
+  --color-rajola: #e8daca;
+  --color-tinta: #3a4229;
+  --color-tinta-suau: #5b6348;
+
+  --color-peix: #6e93a8;
+  --color-carn: #bf8275;
+  --color-ou: #f2c166;
+  --color-llegum: #6b6e3d;
+  --color-vegetaria: #bcbf69;
+  --color-capritx: #a8402e;
+
+  --radius-rajola: 6px;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@layer base {
+  html {
+    background: var(--color-ciment);
+    color: var(--color-tinta);
+    -webkit-tap-highlight-color: transparent;
+    font-feature-settings: 'tnum' 0;
+  }
+
+  body {
+    @apply font-sans antialiased;
+    caret-color: var(--color-tinta);
+    overscroll-behavior-y: none;
+  }
+
+  ::selection {
+    background: var(--color-ou);
+    color: var(--color-tinta);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-tinta);
+    outline-offset: 3px;
+  }
+}
+
+/* Interacció signatura: col·locar la rajola del dia a la setmana. */
+@keyframes rajola-col-locada {
+  from {
+    transform: scale(0.55);
+    clip-path: inset(50% 50% 50% 50% round var(--radius-rajola));
+  }
+  to {
+    transform: scale(1);
+    clip-path: inset(0 0 0 0 round var(--radius-rajola));
+  }
+}
+
+.rajola-nova {
+  animation: rajola-col-locada 520ms var(--ease-out-expo) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rajola-nova {
+    animation: none;
+  }
+}

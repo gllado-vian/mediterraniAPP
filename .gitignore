@@ -7,3 +7,4 @@ coverage/
 .impeccable/config.local.json
 .impeccable/hook.cache.json
 .claude/settings.local.json
+.impeccable/review/

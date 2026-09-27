@@ -104,6 +104,10 @@ export function createRepository(db: AppDb) {
       return db.getAll('days', IDBKeyRange.bound(from, to));
     },
 
+    listAllDays(): Promise<DayRecord[]> {
+      return db.getAll('days');
+    },
+
     setLunch(date: IsoDate, lunch: LunchOption | null): Promise<void> {
       return updateDay(date, ({ lunch: _old, ...day }) => (lunch ? { ...day, lunch } : day));
     },
@@ -118,6 +122,10 @@ export function createRepository(db: AppDb) {
           category: dish.category,
         },
       }));
+    },
+
+    clearDinner(date: IsoDate): Promise<void> {
+      return updateDay(date, ({ dinner: _old, ...day }) => day);
     },
 
     markDinnerUnknown(date: IsoDate): Promise<void> {
