@@ -8,3 +8,18 @@ coverage/
 .impeccable/hook.cache.json
 .claude/settings.local.json
 .impeccable/review/
+
+# Secrets i configuració local: mai al repositori (vegeu .githooks/pre-commit)
+.env
+.env.*
+!.env.example
+*.local
+*.pem
+*.key
+*.p12
+google-services.json
+GoogleService-Info.plist
+serviceAccount*.json
+
+# Restes del projecte Expo antic
+.expo/

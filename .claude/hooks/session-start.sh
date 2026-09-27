@@ -2,7 +2,11 @@
 # Prepara les sessions de Claude Code al núvol:
 #  - dependències npm (tests amb Vitest i typecheck)
 #  - plugins del projecte: Superpowers (TDD) i Impeccable (disseny)
+#  - a totes les sessions (també en local): activa .githooks/pre-commit
 set -euo pipefail
+
+# A totes les sessions: la comprovació de secrets abans de cada commit (.githooks/pre-commit).
+git -C "$CLAUDE_PROJECT_DIR" config core.hooksPath .githooks
 
 if [ "${CLAUDE_CODE_REMOTE:-}" != "true" ]; then
   exit 0

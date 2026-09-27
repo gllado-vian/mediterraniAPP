@@ -51,6 +51,7 @@
 - Swipe: en cas d'empat entre categories pendents, la del plat rebutjat (el de la pantalla Avui) va després.
 - Swipe: els capritxos porten el segell "No recomanat"; l'avís de marge surt a la targeta, sense passos extra.
 - L'avís d'ahir no surt el dia que s'instal·la l'app (data de creació de la casa).
+- Secrets: cap clau ha estat mai al repositori (revisat a tota la història). `.gitignore` ignora `.env*`, claus i configuracions de Firebase/Google; `.githooks/pre-commit` atura el commit si s'hi cola un fitxer de secrets o una línia que sembli una clau. El hook d'inici de sessió l'activa (`git config core.hooksPath .githooks`). El `.env` i la carpeta `.expo/` del projecte Expo antic s'han esborrat.
 - Els plugins s'instal·len amb el hook `.claude/hooks/session-start.sh` (les sessions noves no ho feien soles). Sense `-y`: la versió actual de Claude Code no l'accepta.
 - Dinar: mini-taulell de 6 rajoletes (juntes de 2px) amb la franja de color de la categoria; en marcar-la, el color l'omple. S'amaga quan el sopar és confirmat.
 - Avís d'ahir: rajola amb la icona de la categoria del plat que tocava (no franja lateral de color, que Impeccable prohibeix). El plat és el que el generador hauria proposat ahir.
