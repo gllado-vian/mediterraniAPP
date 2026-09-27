@@ -3,9 +3,11 @@ import { useState } from 'react';
 import type { DayRecord, Dish, IsoDate } from '../domain/types';
 import type { RotationCategory } from '../domain/categories';
 import { addDays } from '../domain/dates';
+import { dishStats } from '../domain/dishStats';
 import { formatLongDate } from '../domain/format';
 import { proposeTonight } from '../domain/planner';
 import { useAppStore } from '../store/appStore';
+import { DishInfo } from '../ui/DishInfo';
 import { DishTile } from '../ui/DishTile';
 import { LunchPicker } from '../ui/LunchPicker';
 import { WeekTiles } from '../ui/WeekTiles';
@@ -54,6 +56,8 @@ export function TodayScreen({
   const markDinnerUnknown = useAppStore((s) => s.markDinnerUnknown);
   const [justPlaced, setJustPlaced] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  // El gir es guarda per plat: si canvia el plat, torna a sortir de cara.
+  const [flippedId, setFlippedId] = useState<string | null>(null);
 
   if (status === 'loading') {
     return <main aria-busy="true" className="min-h-dvh bg-ciment" />;
@@ -119,7 +123,16 @@ export function TodayScreen({
         </p>
       )}
 
-      {shownDish && <DishTile dish={shownDish} label="Plat del dia" />}
+      {shownDish && (
+        <DishTile
+          dish={shownDish}
+          label="Plat del dia"
+          back={<DishInfo dish={shownDish} stats={dishStats(shownDish.id, today, days)} />}
+          flipped={flippedId === shownDish.id}
+          onFlip={() => setFlippedId((id) => (id === shownDish.id ? null : shownDish.id))}
+          onClick={() => setFlippedId((id) => (id === shownDish.id ? null : shownDish.id))}
+        />
+      )}
 
       <div className="pt-4">
         {confirmedDish ? (

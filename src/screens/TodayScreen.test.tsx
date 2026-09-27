@@ -83,6 +83,26 @@ describe('TodayScreen', () => {
     expect(within(week).getAllByRole('listitem')[0]).toHaveAccessibleName('Dilluns: Peix');
   });
 
+  it('tocar el plat del dia gira la rajola i ensenya el +info', async () => {
+    await renderToday();
+    await userEvent.click(screen.getByRole('article', { name: 'Plat del dia' }));
+    const card = screen.getByRole('article', { name: 'Plat del dia' });
+    expect(within(card).getByRole('list', { name: 'Ingredients' })).toBeInTheDocument();
+    expect(within(card).getByText('No l’has fet mai')).toBeInTheDocument();
+    await userEvent.click(card);
+    expect(within(card).queryByRole('list', { name: 'Ingredients' })).not.toBeInTheDocument();
+  });
+
+  it('el +info d’un plat confirmat avui diu que és d’avui', async () => {
+    await renderToday();
+    await userEvent.click(screen.getByRole('button', { name: 'Sopem això' }));
+    await screen.findByText('Bon profit!');
+    await userEvent.click(screen.getByRole('article', { name: 'Plat del dia' }));
+    const card = screen.getByRole('article', { name: 'Plat del dia' });
+    expect(within(card).getByText('Avui')).toBeInTheDocument();
+    expect(within(card).getByText('1 cop aquest mes')).toBeInTheDocument();
+  });
+
   it('tocar la setmana obre el resum', async () => {
     const onOpenSummary = vi.fn();
     const store = createAppStore({ repo, now: () => MONDAY });

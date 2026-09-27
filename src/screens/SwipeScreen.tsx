@@ -1,8 +1,10 @@
 import { IconAlertTriangle, IconArrowLeft, IconCheck, IconRefresh, IconX } from '@tabler/icons-react';
 import { useCallback, useEffect, useMemo, useRef, useState, type PointerEvent } from 'react';
+import { dishStats } from '../domain/dishStats';
 import { buildSwipeDeck, type SwipeCard } from '../domain/swipeDeck';
-import type { Dish, IsoDate } from '../domain/types';
+import type { IsoDate } from '../domain/types';
 import { useAppStore } from '../store/appStore';
+import { DishInfo } from '../ui/DishInfo';
 import { DishTile } from '../ui/DishTile';
 
 /** Distància (px) a partir de la qual un lliscament decideix. */
@@ -32,13 +34,11 @@ export function SwipeScreen({
   date,
   onDone,
   onBack,
-  onOpenInfo,
 }: {
   /** Dia per al qual es tria (per defecte, avui). */
   date?: IsoDate;
   onDone: () => void;
   onBack: () => void;
-  onOpenInfo: (dish: Dish) => void;
 }) {
   const status = useAppStore((s) => s.status);
   const today = useAppStore((s) => s.today);
@@ -57,6 +57,7 @@ export function SwipeScreen({
   const [dx, setDx] = useState(0);
   const [leaving, setLeaving] = useState<Decision | null>(null);
   const [dragging, setDragging] = useState(false);
+  const [flipped, setFlipped] = useState(false);
   const drag = useRef<{ id: number; x: number; y: number; moved: number } | null>(null);
   const busy = useRef(false);
 
@@ -74,6 +75,7 @@ export function SwipeScreen({
         onDone();
       } else {
         setIndex((i) => i + 1);
+        setFlipped(false);
       }
       setDx(0);
       setLeaving(null);
@@ -114,7 +116,7 @@ export function SwipeScreen({
     const finalDx = e.clientX - d.x;
     if (moved <= TAP_SLOP) {
       setDx(0);
-      onOpenInfo(card.dish);
+      setFlipped((f) => !f);
     } else if (finalDx >= DECIDE_AT) {
       void decide('confirm');
     } else if (finalDx <= -DECIDE_AT) {
@@ -154,6 +156,9 @@ export function SwipeScreen({
               key={card.dish.id}
               dish={card.dish}
               label={`Plat proposat: ${card.dish.name}`}
+              back={<DishInfo dish={card.dish} stats={dishStats(card.dish.id, forDate, days)} />}
+              flipped={flipped}
+              onFlip={() => setFlipped((f) => !f)}
               onPointerDown={onPointerDown}
               onPointerMove={onPointerMove}
               onPointerUp={onPointerUp}
@@ -222,7 +227,10 @@ export function SwipeScreen({
           <p className="max-w-[28ch] text-tinta-suau">Els has vist tots. Vols tornar-los a mirar?</p>
           <button
             type="button"
-            onClick={() => setIndex(0)}
+            onClick={() => {
+              setIndex(0);
+              setFlipped(false);
+            }}
             className="mt-2 flex h-12 items-center gap-2 rounded-(--radius-rajola) bg-tinta px-6 font-semibold text-ciment transition-colors hover:bg-tinta/90"
           >
             <IconRefresh size={20} stroke={2} aria-hidden="true" />

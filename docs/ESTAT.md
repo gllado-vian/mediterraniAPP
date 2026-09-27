@@ -27,15 +27,15 @@
 | 5 | Swipe de plats (ordenat per equilibri pendent; capritxos al final) | ✅ fet (tocar la targeta obrirà el +info al pas 8) |
 | 6 | Registre del dinar (no bloquejant, vinculant) + avís "ahir: vas sopar X?" | ✅ fet + polish |
 | 7 | Resum setmanal per categoria | ✅ fet + polish |
-| 8 | "+info" del plat | pendent |
+| 8 | "+info" del plat | ✅ fet + polish |
 | 9 | Export/import JSON + Ajustos (marge capritx, els meus plats) | pendent |
 | 10 | Passada final d'identitat visual + `DESIGN.md` (Impeccable document) | pendent |
 
-## On som exactament (pas 8)
+## On som exactament (pas 9)
 
-Pas 7 tancat (132 tests en verd, `tsc` net, polish de "La teva setmana" fet,
+Pas 8 tancat (141 tests en verd, `tsc` net, polish del swipe i d'Avui fet,
 detector d'Impeccable sense findings). **Esperant el vistiplau de l'Olga** per
-començar el pas 8 ("+info" del plat), també amb TDD.
+començar el pas 9 (export/import JSON + Ajustos: marge de capritx, els meus plats), també amb TDD.
 
 ## Decisions preses durant la construcció
 
@@ -54,6 +54,13 @@ començar el pas 8 ("+info" del plat), també amb TDD.
 - Resum setmanal: s'hi arriba tocant la fila de 7 rajoletes d'Avui (botó que la cobreix; la llista es manté per als lectors de pantalla). Pantalla "La teva setmana" amb les 7 rajoletes, una rajola per categoria (complerta = plena del color de la categoria; pendent = "x/y · pendent") i els capritxos a part. Brief: `.impeccable/surfaces/src-screens-summaryscreen-tsx.md`.
 - Fila de la setmana (Avui i resum): el dia de capritx no s'omple, queda emmarcat en granat (no compta per a cap quota). Si és avui, la marca d'avui va per dins del marc.
 - Carn (`#BF8275`) i Capritx (`#A8402E`) són de la mateixa família de color; es distingeixen per forma (ple / marc), icona i nom. L'Olga decideix deixar la paleta com està; si costa distingir-los provant l'app, revisar-ho al pas 10.
+- "+info": tocar la rajola del plat (swipe i Avui) la gira i ensenya el dors; tornar a tocar la torna de cara. Amb teclat, Retorn o Espai. Una icona d'informació a la cantonada del camp de color indica que es pot girar; al dors, una icona de girar.
+- Dors compacte perquè hi càpiga a Avui al mòbil petit: nom, "fa X dies · X cops aquest mes" en una línia, ingredients en dues columnes (si no hi cap, es desplaça dins la rajola; la rajola no canvia de mida).
+- "Cops aquest mes" = mes natural. Les dades del swipe d'ahir es calculen respecte d'ahir.
+
+## Pendents per a passos següents
+
+- **Pas 10:** la fila de la setmana d'Avui obre el resum, però no hi ha cap pista visual que es pugui tocar. Revisar-ho amb el mateix criteri que la icona de "+info" de la targeta del plat (pas 8).
 
 ## Pendents d'Impeccable (per a la sessió amb el plugin carregat)
 

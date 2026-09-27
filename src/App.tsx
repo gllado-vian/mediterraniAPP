@@ -52,8 +52,6 @@ export function App() {
           date={screen.date}
           onDone={() => setScreen(TODAY)}
           onBack={() => setScreen(TODAY)}
-          // El "+info" arriba al pas 8.
-          onOpenInfo={() => {}}
         />
       )}
     </AppStoreProvider>

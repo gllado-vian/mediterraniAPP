@@ -30,15 +30,23 @@ async function renderSwipe(props: Partial<Parameters<typeof SwipeScreen>[0]> = {
   const store = createAppStore({ repo, now: () => MONDAY });
   const onDone = vi.fn();
   const onBack = vi.fn();
-  const onOpenInfo = vi.fn();
   render(
     <AppStoreProvider store={store}>
-      <SwipeScreen onDone={onDone} onBack={onBack} onOpenInfo={onOpenInfo} {...props} />
+      <SwipeScreen onDone={onDone} onBack={onBack} {...props} />
     </AppStoreProvider>,
   );
   await screen.findByRole('heading', { name: 'Tria un altre plat' });
   await screen.findByRole('article', { name: /^Plat proposat/ });
-  return { onDone, onBack, onOpenInfo };
+  return { onDone, onBack };
+}
+
+function currentCard() {
+  return screen.getByRole('article', { name: /^Plat proposat/ });
+}
+
+function tap(card: HTMLElement) {
+  fireEvent.pointerDown(card, { clientX: 200, clientY: 300, pointerId: 1 });
+  fireEvent.pointerUp(card, { clientX: 202, clientY: 301, pointerId: 1 });
 }
 
 function topCardName() {
@@ -102,14 +110,36 @@ describe('SwipeScreen', () => {
     await vi.waitFor(() => expect(topCardName()).not.toBe(first));
   });
 
-  it('tocar la targeta obre el +info sense descartar-la', async () => {
-    const { onOpenInfo } = await renderSwipe();
+  it('tocar la targeta la gira i ensenya el +info sense descartar-la', async () => {
+    await renderSwipe();
     const first = topCardName();
-    const card = screen.getByRole('article', { name: /^Plat proposat/ });
-    fireEvent.pointerDown(card, { clientX: 200, clientY: 300, pointerId: 1 });
-    fireEvent.pointerUp(card, { clientX: 202, clientY: 301, pointerId: 1 });
-    expect(onOpenInfo).toHaveBeenCalledWith(expect.objectContaining({ name: first }));
+    tap(currentCard());
+    const card = currentCard();
+    expect(within(card).getByRole('list', { name: 'Ingredients' })).toBeInTheDocument();
+    expect(within(card).getByText('No l’has fet mai')).toBeInTheDocument();
+    expect(within(card).getByText('Cap cop aquest mes')).toBeInTheDocument();
     expect(topCardName()).toBe(first);
+  });
+
+  it('tornar a tocar la targeta la torna de cara', async () => {
+    await renderSwipe();
+    tap(currentCard());
+    tap(currentCard());
+    expect(within(currentCard()).queryByRole('list', { name: 'Ingredients' })).not.toBeInTheDocument();
+  });
+
+  it('amb el teclat, Retorn gira la targeta', async () => {
+    await renderSwipe();
+    currentCard().focus();
+    await userEvent.keyboard('{Enter}');
+    expect(within(currentCard()).getByRole('list', { name: 'Ingredients' })).toBeInTheDocument();
+  });
+
+  it('el plat següent surt de cara', async () => {
+    await renderSwipe();
+    tap(currentCard());
+    await userEvent.click(screen.getByRole('button', { name: 'Un altre' }));
+    expect(within(currentCard()).queryByRole('list', { name: 'Ingredients' })).not.toBeInTheDocument();
   });
 
   it('els capritxos surten al final marcats com a no recomanats', async () => {
@@ -155,7 +185,7 @@ describe('SwipeScreen', () => {
     const onDone = vi.fn();
     render(
       <AppStoreProvider store={store}>
-        <SwipeScreen date="2026-09-27" onDone={onDone} onBack={vi.fn()} onOpenInfo={vi.fn()} />
+        <SwipeScreen date="2026-09-27" onDone={onDone} onBack={vi.fn()} />
       </AppStoreProvider>,
     );
     expect(await screen.findByRole('heading', { name: 'Què vas sopar ahir?' })).toBeInTheDocument();
