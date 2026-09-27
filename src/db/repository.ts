@@ -141,7 +141,50 @@ export function createRepository(db: AppDb) {
     markDinnerUnknown(date: IsoDate): Promise<void> {
       return updateDay(date, (day) => ({ ...day, dinner: { status: 'unknown' } }));
     },
+
+    /** Totes les dades de la casa (per fer-ne una còpia de seguretat). */
+    async exportAll(): Promise<HouseData> {
+      const [house, settings, dishes, days] = await Promise.all([
+        this.ensureHouse(),
+        this.getSettings(),
+        db.getAll('dishes'),
+        db.getAll('days'),
+      ]);
+      return { house, settings, dishes, days };
+    },
+
+    /**
+     * Substitueix les dades de la casa per les d'una còpia, en una sola transacció:
+     * si res falla, no es canvia res. El recetari base es conserva.
+     */
+    async replaceAll(data: HouseData): Promise<void> {
+      const tx = db.transaction(['dishes', 'days', 'meta'], 'readwrite');
+      const dishes = tx.objectStore('dishes');
+      const days = tx.objectStore('days');
+      const meta = tx.objectStore('meta');
+      try {
+        const current = await dishes.getAll();
+        for (const dish of current) if (dish.source === 'user') await dishes.delete(dish.id);
+        for (const dish of data.dishes) if (dish.source === 'user') await dishes.put(dish);
+        await days.clear();
+        for (const day of data.days) await days.put(day);
+        await meta.put(data.house, 'house');
+        await meta.put(data.settings, 'settings');
+      } catch (error) {
+        tx.abort();
+        await tx.done.catch(() => {});
+        throw error;
+      }
+      await tx.done;
+    },
   };
 }
 
 export type Repository = ReturnType<typeof createRepository>;
+
+export interface HouseData {
+  house: House;
+  settings: Settings;
+  dishes: Dish[];
+  days: DayRecord[];
+}

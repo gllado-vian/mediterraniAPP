@@ -28,18 +28,16 @@
 | 6 | Registre del dinar (no bloquejant, vinculant) + avís "ahir: vas sopar X?" | ✅ fet + polish |
 | 7 | Resum setmanal per categoria | ✅ fet + polish |
 | 8 | "+info" del plat | ✅ fet + polish |
-| 9 | Export/import JSON + Ajustos (marge capritx, els meus plats) | 🚧 en curs: 9a ✅ (menú + Ajustos amb marge), 9b ✅ (els meus plats), 9c export/import |
+| 9 | Export/import JSON + Ajustos (marge capritx, els meus plats) | ✅ fet + polish (9a menú + marge, 9b els meus plats, 9c còpia de seguretat) |
 | 10 | Passada final d'identitat visual + `DESIGN.md` (Impeccable document) | pendent |
 
-## On som exactament (pas 9)
+## On som exactament (pas 10)
 
-El pas 9 es fa en tres peces, cadascuna amb disseny curt aprovat, TDD, commit i revisió de l'Olga:
+Pas 9 tancat en tres peces (9a menú + marge, 9b els meus plats, 9c còpia de seguretat): 203 tests en verd,
+`tsc` net, polish fet, detector d'Impeccable sense findings.
 
-- **9a ✅** Menú de capçalera (Avui · La teva setmana · Ajustos) i Ajustos amb el marge entre capritxos (157 tests, `tsc` net, polish fet).
-- **9b ✅** Els meus plats: afegir, editar i esborrar plats propis (176 tests, `tsc` net, polish fet).
-- **9c** Exportar / importar JSON: l'import **substitueix** tot el que hi ha al mòbil, amb confirmació.
-
-**Esperant el vistiplau de l'Olga** per començar la 9c.
+**Esperant el vistiplau de l'Olga** per començar el pas 10: passada final d'identitat visual,
+revisió amb `impeccable-finish-reviewer` i `DESIGN.md` amb `impeccable-documenter`.
 
 ## Decisions preses durant la construcció
 
@@ -65,6 +63,7 @@ El pas 9 es fa en tres peces, cadascuna amb disseny curt aprovat, TDD, commit i 
 - Ajustos · marge entre capritxos: comptador de tres rajoles (− valor +), de 0 a 30 dies, es desa a cada toc. Brief: `.impeccable/surfaces/src-screens-settingsscreen-tsx.md`.
 - Els meus plats: s'hi arriba des d'Ajustos (rajola amb el recompte). Llista només de plats propis (ordre alfabètic); formulari (nom, categoria amb 6 rajoletes de ràdio, temps opcional, ingredients un per línia). Errors al costat del camp (el repositori diu a quin camp pertanyen). Esborrar amb confirmació en línia. El formulari no porta menú (és un pas intermedi, com el swipe); a Els meus plats, el menú marca Ajustos i tocar-lo hi torna. Brief: `.impeccable/surfaces/src-screens-mydishesscreen-tsx.md`. El formulari ha de cabre sencer a 375×667 sense scroll (nou i editant, amb "Esborrar el plat"): ingredients en 3 línies (es desplacen dins la caixa), temps a la mateixa fila que l'etiqueta.
 - Capçalera compartida `ScreenHeader` (fletxa + títol + menú opcional) a totes les pantalles secundàries.
+- Còpia de seguretat (Ajustos): el fitxer porta la casa, els ajustos, els plats propis i tots els dies (el recetari base no, ja és a l'app), amb marca `app: "que-sopem"` i `version: 1`. Es valida sencer abans de fer res; si no és vàlid: "Aquest fitxer no és una còpia de Què sopem." Importar **substitueix** tot en una sola transacció (si falla, no canvia res) i abans ensenya què hi ha al fitxer. Casella "Abans, baixa una còpia del que hi ha ara" marcada per defecte (fitxer `que-sopem-AAAA-MM-DD-abans-d-importar.json`); no surt si el mòbil no té res apuntat. Al mòbil de veritat (iOS) cal provar on va a parar el fitxer exportat.
 - Tests intermitents corregits (TodayScreen): comprovaven la pantalla just després d'esperar la base de dades; ara esperen la pantalla. 0 fallades en 8 passades de la suite.
 
 ## Pendents per a passos següents

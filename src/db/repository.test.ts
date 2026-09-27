@@ -211,3 +211,61 @@ describe('aïllament entre cases', () => {
     expect(await otherRepo.getDay('2026-09-28')).toBeUndefined();
   });
 });
+
+describe('còpia de seguretat', () => {
+  async function fillHouse(target: Repository, name: string) {
+    await target.ensureHouse(new Date(2026, 8, 1, 12));
+    await target.putBaseDishes([baseDish]);
+    await target.updateSettings({ capritxMarginDays: 4 });
+    const mine = await target.addUserDish({ name, category: 'ou', ingredients: ['Ous'], prepMinutes: 15 });
+    await target.setLunch('2026-09-27', 'peix');
+    await target.confirmDinner('2026-09-27', mine);
+    await target.markDinnerUnknown('2026-09-26');
+    return mine;
+  }
+
+  it('exporta la casa, els ajustos, tots els plats i tots els dies', async () => {
+    const mine = await fillHouse(repo, 'Truita');
+    const all = await repo.exportAll();
+    expect(all.house.createdAt.slice(0, 10)).toBe('2026-09-01');
+    expect(all.settings).toEqual({ capritxMarginDays: 4 });
+    expect(all.dishes).toEqual(expect.arrayContaining([baseDish, mine]));
+    expect(all.days.map((d) => d.date)).toEqual(['2026-09-26', '2026-09-27']);
+  });
+
+  it('en importar, substitueix tot el que hi havia (i conserva el recetari base)', async () => {
+    const source = createRepository(await openAppDb(`test-origen-${dbCounter}`));
+    const mine = await fillHouse(source, 'Truita del mòbil vell');
+    const backup = await source.exportAll();
+
+    const old = await repo.addUserDish({ name: 'Plat que desapareix', category: 'peix', ingredients: [], prepMinutes: null });
+    await repo.setLunch('2026-09-20', 'carn');
+    await repo.putBaseDishes([baseDish]);
+
+    await repo.replaceAll({ ...backup, dishes: backup.dishes.filter((d) => d.source === 'user') });
+
+    expect(await repo.getDish(old.id)).toBeUndefined();
+    expect(await repo.getDish(mine.id)).toEqual(mine);
+    expect(await repo.getDish(baseDish.id)).toEqual(baseDish);
+    expect(await repo.getDay('2026-09-20')).toBeUndefined();
+    expect(await repo.listAllDays()).toEqual(backup.days);
+    expect(await repo.getSettings()).toEqual({ capritxMarginDays: 4 });
+    expect(await repo.ensureHouse()).toEqual(backup.house);
+  });
+
+  it('si la substitució falla a mig camí, no es canvia res', async () => {
+    const old = await repo.addUserDish({ name: 'Plat que es queda', category: 'peix', ingredients: [], prepMinutes: null });
+    await repo.setLunch('2026-09-20', 'carn');
+    const broken = {
+      house: { id: 'casa', createdAt: '2026-09-01T00:00:00.000Z' },
+      settings: { capritxMarginDays: 7 },
+      dishes: [],
+      // Un dia sense data no es pot desar: la transacció ha de desfer-se sencera.
+      days: [{ date: '2026-09-27' }, {} as never],
+    };
+    await expect(repo.replaceAll(broken)).rejects.toThrow();
+    expect(await repo.getDish(old.id)).toBeDefined();
+    expect((await repo.getDay('2026-09-20'))?.lunch).toBe('carn');
+    expect(await repo.getDay('2026-09-27')).toBeUndefined();
+  });
+});

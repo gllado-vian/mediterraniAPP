@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, type ReactNode } from 'react';
 import { createStore, useStore, type StoreApi } from 'zustand';
 import type { Repository } from '../db/repository';
+import { buildBackup, type Backup } from '../domain/backup';
 import { BASE_RECIPES, seedBaseRecipes } from '../domain/baseRecipes';
 import type { LunchOption } from '../domain/categories';
 import { toIsoDate } from '../domain/dates';
@@ -25,6 +26,10 @@ export interface AppState {
   addDish(input: NewDish): Promise<void>;
   updateDish(id: string, input: NewDish): Promise<void>;
   deleteDish(id: string): Promise<void>;
+  /** Còpia de seguretat de tota la casa. */
+  exportBackup(): Promise<Backup>;
+  /** Substitueix totes les dades per les d'una còpia (ja validada) i les torna a carregar. */
+  importBackup(backup: Backup): Promise<void>;
 }
 
 export interface AppStoreDeps {
@@ -120,6 +125,15 @@ export function createAppStore({ repo, now = () => new Date() }: AppStoreDeps): 
       async deleteDish(id) {
         await repo.deleteUserDish(id);
         await refreshDishes();
+      },
+
+      async exportBackup() {
+        return buildBackup(await repo.exportAll(), now());
+      },
+
+      async importBackup(backup) {
+        await repo.replaceAll(backup);
+        await get().load();
       },
     };
   });

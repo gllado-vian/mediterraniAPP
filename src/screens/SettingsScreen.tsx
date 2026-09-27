@@ -1,6 +1,7 @@
 import { IconChevronRight, IconMinus, IconPlus } from '@tabler/icons-react';
 import { useAppStore } from '../store/appStore';
 import type { MainScreen } from '../ui/AppMenu';
+import { BackupSection } from '../ui/BackupSection';
 import { ScreenHeader } from '../ui/ScreenHeader';
 
 const MIN_MARGIN = 0;
@@ -67,7 +68,7 @@ export function SettingsScreen({
           <button
             type="button"
             onClick={onOpenMyDishes}
-            className="mt-8 flex min-h-16 w-full items-center gap-3 rounded-(--radius-rajola) bg-rajola px-4 py-3 text-left transition-colors hover:bg-rajola/70 active:bg-rajola/50"
+            className="mt-6 flex min-h-16 w-full items-center gap-3 rounded-(--radius-rajola) bg-rajola px-4 py-3 text-left transition-colors hover:bg-rajola/70 active:bg-rajola/50"
           >
             <span className="flex-1">
               <span className="block font-semibold">Els meus plats</span>
@@ -79,6 +80,8 @@ export function SettingsScreen({
             </span>
             <IconChevronRight size={20} stroke={1.75} className="text-tinta-suau" aria-hidden="true" />
           </button>
+
+          <BackupSection />
         </>
       )}
     </main>
