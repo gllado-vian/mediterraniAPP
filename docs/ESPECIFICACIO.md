@@ -98,7 +98,7 @@ Marge de capritx · Els meus plats · Exportar / Importar JSON (tota la info).
 Rebost, llista de la compra, caducitats, tuppers, primer/segon plat, postres,
 proposta automàtica de categoria per nom, sincronització al núvol.
 
-## Supòsits pendents de validar
+## Decisions confirmades després de l'entrevista
 
-- "Modificar el recetari base" s'interpreta com **completar-lo** amb plats
-  propis; els plats base són immutables.
+- El recetari base **no es pot tocar** (ni editar, ni esborrar, ni amagar).
+  L'usuari només pot afegir plats propis i editar/esborrar els que ha afegit.
