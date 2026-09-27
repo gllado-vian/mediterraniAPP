@@ -6,7 +6,7 @@
 
 1. `docs/ESPECIFICACIO.md` — especificació resultant de l'entrevista (mana sobre la proposta original).
 2. `PRODUCT.md` — context de producte per a Impeccable (aprovat per l'Olga).
-3. `.impeccable/surfaces/src-screens-todayscreen-tsx.md` — contracte de direcció visual **Taulell** (aprovat).
+3. `.impeccable/surfaces/src-screens-todayscreen-tsx.md` — contracte de direcció visual **Taulell** (aprovat). Les altres pantalles l'hereten (`.impeccable/surfaces/`).
 
 ## Mètode de treball acordat
 
@@ -26,16 +26,16 @@
 | 4 | Pantalla "plat del dia" + botó cap al swipe | ✅ fet + polish |
 | 5 | Swipe de plats (ordenat per equilibri pendent; capritxos al final) | ✅ fet (tocar la targeta obrirà el +info al pas 8) |
 | 6 | Registre del dinar (no bloquejant, vinculant) + avís "ahir: vas sopar X?" | ✅ fet + polish |
-| 7 | Resum setmanal per categoria | pendent |
+| 7 | Resum setmanal per categoria | ✅ fet + polish |
 | 8 | "+info" del plat | pendent |
 | 9 | Export/import JSON + Ajustos (marge capritx, els meus plats) | pendent |
 | 10 | Passada final d'identitat visual + `DESIGN.md` (Impeccable document) | pendent |
 
-## On som exactament (pas 7)
+## On som exactament (pas 8)
 
-Pas 6 tancat (118 tests en verd, `tsc` net, polish de la pantalla Avui fet,
+Pas 7 tancat (129 tests en verd, `tsc` net, polish de "La teva setmana" fet,
 detector d'Impeccable sense findings). **Esperant el vistiplau de l'Olga** per
-començar el pas 7 (resum setmanal per categoria), també amb TDD.
+començar el pas 8 ("+info" del plat), també amb TDD.
 
 ## Decisions preses durant la construcció
 
@@ -51,6 +51,7 @@ començar el pas 7 (resum setmanal per categoria), també amb TDD.
 - Avís d'ahir: rajola amb la icona de la categoria del plat que tocava (no franja lateral de color, que Impeccable prohibeix). El plat és el que el generador hauria proposat ahir.
 - Rajola del plat: camp de color mínim de 128px (abans 192px) perquè "Sopem això" càpiga al mòbil petit (375×667) amb l'avís d'ahir obert.
 - Si Impeccable no es carrega en una sessió de VS Code, cal reiniciar la sessió.
+- Resum setmanal: s'hi arriba tocant la fila de 7 rajoletes d'Avui (botó que la cobreix; la llista es manté per als lectors de pantalla). Pantalla "La teva setmana" amb les 7 rajoletes, una rajola per categoria (complerta = plena del color de la categoria; pendent = "x/y · pendent") i els capritxos a part. Brief: `.impeccable/surfaces/src-screens-summaryscreen-tsx.md`.
 
 ## Pendents d'Impeccable (per a la sessió amb el plugin carregat)
 

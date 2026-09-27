@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
 import { openAppDb } from './db/db';
 import { createRepository } from './db/repository';
+import { SummaryScreen } from './screens/SummaryScreen';
 import { SwipeScreen } from './screens/SwipeScreen';
 import { TodayScreen } from './screens/TodayScreen';
 import type { IsoDate } from './domain/types';
 import { AppStoreProvider, createAppStore, type AppStore } from './store/appStore';
 
 /** El swipe porta la data per a la qual es tria (per defecte, avui). */
-type Screen = { name: 'today' } | { name: 'swipe'; date?: IsoDate };
+type Screen = { name: 'today' } | { name: 'swipe'; date?: IsoDate } | { name: 'summary' };
 
 const TODAY: Screen = { name: 'today' };
 
@@ -42,8 +43,10 @@ export function App() {
         <TodayScreen
           onOpenSwipe={() => setScreen({ name: 'swipe' })}
           onPickYesterday={(date) => setScreen({ name: 'swipe', date })}
+          onOpenSummary={() => setScreen({ name: 'summary' })}
         />
       )}
+      {screen.name === 'summary' && <SummaryScreen onBack={() => setScreen(TODAY)} />}
       {screen.name === 'swipe' && (
         <SwipeScreen
           date={screen.date}

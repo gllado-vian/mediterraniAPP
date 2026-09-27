@@ -19,7 +19,7 @@ async function renderToday(onOpenSwipe = vi.fn(), now = () => MONDAY) {
   const store = createAppStore({ repo, now });
   render(
     <AppStoreProvider store={store}>
-      <TodayScreen onOpenSwipe={onOpenSwipe} onPickYesterday={vi.fn()} />
+      <TodayScreen onOpenSwipe={onOpenSwipe} onPickYesterday={vi.fn()} onOpenSummary={vi.fn()} />
     </AppStoreProvider>,
   );
   await screen.findByRole('heading', { name: 'Dilluns, 28 de setembre' });
@@ -81,6 +81,18 @@ describe('TodayScreen', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Sopem això' }));
     const week = await screen.findByRole('list', { name: 'La teva setmana' });
     expect(within(week).getAllByRole('listitem')[0]).toHaveAccessibleName('Dilluns: Peix');
+  });
+
+  it('tocar la setmana obre el resum', async () => {
+    const onOpenSummary = vi.fn();
+    const store = createAppStore({ repo, now: () => MONDAY });
+    render(
+      <AppStoreProvider store={store}>
+        <TodayScreen onOpenSwipe={vi.fn()} onPickYesterday={vi.fn()} onOpenSummary={onOpenSummary} />
+      </AppStoreProvider>,
+    );
+    await userEvent.click(await screen.findByRole('button', { name: 'Veure el resum de la setmana' }));
+    expect(onOpenSummary).toHaveBeenCalledOnce();
   });
 
   it('carrega el recetari base en obrir l’app', async () => {
@@ -195,7 +207,7 @@ describe('TodayScreen', () => {
       const store = createAppStore({ repo, now: () => MONDAY });
       render(
         <AppStoreProvider store={store}>
-          <TodayScreen onOpenSwipe={vi.fn()} onPickYesterday={onPickYesterday} />
+          <TodayScreen onOpenSwipe={vi.fn()} onPickYesterday={onPickYesterday} onOpenSummary={vi.fn()} />
         </AppStoreProvider>,
       );
       const region = await screen.findByRole('region', { name: 'Sopar d’ahir' });

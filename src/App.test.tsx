@@ -64,4 +64,16 @@ describe('App', () => {
     const yesterday = addDays(toIsoDate(new Date()), -1);
     expect((await repo.getDay(yesterday))?.dinner).toMatchObject({ dishName: chosen });
   });
+
+  it('tocar la setmana obre el resum i "Tornar" torna a Avui', async () => {
+    const real = db.openAppDb;
+    vi.spyOn(db, 'openAppDb').mockImplementation(() => real(`app-resum-${Date.now()}`));
+    render(<App />);
+    await userEvent.click(await screen.findByRole('button', { name: 'Sopem això' }));
+    await userEvent.click(await screen.findByRole('button', { name: 'Veure el resum de la setmana' }));
+    const list = await screen.findByRole('list', { name: 'Resum per categoria' });
+    expect(within(list).getAllByRole('listitem')).toHaveLength(5);
+    await userEvent.click(screen.getByRole('button', { name: 'Tornar' }));
+    expect(await screen.findByText('Bon profit!')).toBeInTheDocument();
+  });
 });

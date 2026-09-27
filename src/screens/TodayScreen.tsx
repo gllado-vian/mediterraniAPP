@@ -37,9 +37,11 @@ function confirmedDishOf(dinner: DayRecord['dinner'], dishes: Dish[]): Dish | un
 export function TodayScreen({
   onOpenSwipe,
   onPickYesterday,
+  onOpenSummary,
 }: {
   onOpenSwipe: () => void;
   onPickYesterday: (date: IsoDate) => void;
+  onOpenSummary: () => void;
 }) {
   const status = useAppStore((s) => s.status);
   const today = useAppStore((s) => s.today);
@@ -157,8 +159,15 @@ export function TodayScreen({
           </div>
         )}
 
-        <div className="mt-6">
+        {/* La llista es queda com a llista; el botó la cobreix sencera. */}
+        <div className="relative mt-6">
           <WeekTiles today={today} days={days} justPlaced={justPlaced} />
+          <button
+            type="button"
+            onClick={onOpenSummary}
+            aria-label="Veure el resum de la setmana"
+            className="absolute -inset-1 z-30 rounded-(--radius-rajola) transition-colors hover:bg-tinta/5 active:bg-tinta/10"
+          />
         </div>
       </div>
     </main>
