@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { openAppDb } from './db/db';
 import { createRepository } from './db/repository';
+import { SwipeScreen } from './screens/SwipeScreen';
 import { TodayScreen } from './screens/TodayScreen';
 import { AppStoreProvider, createAppStore, type AppStore } from './store/appStore';
 
@@ -35,19 +36,12 @@ export function App() {
     <AppStoreProvider store={store}>
       {screen === 'today' && <TodayScreen onOpenSwipe={() => setScreen('swipe')} />}
       {screen === 'swipe' && (
-        // El swipe arriba al pas 5.
-        <main className="mx-auto grid min-h-dvh max-w-md place-items-center px-4 text-center">
-          <div>
-            <p className="text-lg font-semibold">El swipe arriba al pas 5</p>
-            <button
-              type="button"
-              onClick={() => setScreen('today')}
-              className="mt-4 h-12 rounded-(--radius-rajola) border-2 border-tinta/25 px-6 font-medium"
-            >
-              Tornar
-            </button>
-          </div>
-        </main>
+        <SwipeScreen
+          onDone={() => setScreen('today')}
+          onBack={() => setScreen('today')}
+          // El "+info" arriba al pas 8.
+          onOpenInfo={() => {}}
+        />
       )}
     </AppStoreProvider>
   );

@@ -16,6 +16,8 @@
   --color-llegum: #6b6e3d;
   --color-vegetaria: #bcbf69;
   --color-capritx: #a8402e;
+  /* Mateix to, enfosquit per a text petit sobre la rajola (≥4.5:1). */
+  --color-capritx-tinta: #8c3222;
 
   --radius-rajola: 6px;
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);

@@ -23,9 +23,9 @@
 | 1 | Model de dades local (idb) | ✅ fet |
 | 2 | Recetari base (20 plats + "Fora de casa") | ✅ fet |
 | 3 | Generador del pla setmanal dinàmic | ✅ fet |
-| 4 | Pantalla "plat del dia" + botó cap al swipe | ✅ fet (pendent `/impeccable polish` amb el plugin carregat) |
-| 5 | Swipe de plats (ordenat per equilibri pendent; capritxos al final) | ⏭️ següent |
-| 6 | Registre del dinar (no bloquejant, vinculant) + avís "ahir: vas sopar X?" | pendent |
+| 4 | Pantalla "plat del dia" + botó cap al swipe | ✅ fet + polish |
+| 5 | Swipe de plats (ordenat per equilibri pendent; capritxos al final) | ✅ fet (tocar la targeta obrirà el +info al pas 8) |
+| 6 | Registre del dinar (no bloquejant, vinculant) + avís "ahir: vas sopar X?" | ⏭️ següent |
 | 7 | Resum setmanal per categoria | pendent |
 | 8 | "+info" del plat | pendent |
 | 9 | Export/import JSON + Ajustos (marge capritx, els meus plats) | pendent |
@@ -37,6 +37,9 @@
 - Ingredients passats al català: pepino→cogombre, pavo→gall dindi, orègan→orenga.
 - La identitat (colors + icones) ja s'aplica des del pas 4; el pas 10 és la passada global.
 - Plats base ordenats segons el recetari (l'store els reordena; IndexedDB els retorna per id).
+- Swipe: en cas d'empat entre categories pendents, la del plat rebutjat (el de la pantalla Avui) va després.
+- Swipe: els capritxos porten el segell "No recomanat"; l'avís de marge surt a la targeta, sense passos extra.
+- Els plugins s'instal·len amb el hook `.claude/hooks/session-start.sh` (les sessions noves no ho feien soles).
 
 ## Pendents d'Impeccable (per a la sessió amb el plugin carregat)
 
