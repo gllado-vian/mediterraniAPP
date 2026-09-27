@@ -1,0 +1,44 @@
+# Estat del projecte i traspàs entre sessions
+
+Última actualització: 27/09/2026 · Branca: `claude/que-sopem-pwa-mvp-5kixi9`
+
+## Fonts de veritat (llegir primer)
+
+1. `docs/ESPECIFICACIO.md` — especificació resultant de l'entrevista (mana sobre la proposta original).
+2. `PRODUCT.md` — context de producte per a Impeccable (aprovat per l'Olga).
+3. `.impeccable/surfaces/src-screens-todayscreen-tsx.md` — contracte de direcció visual **Taulell** (aprovat).
+
+## Mètode de treball acordat
+
+- **Superpowers TDD** a cada pas: test primer, veure'l fallar, codi mínim, refactor. `npm test` i `npx tsc --noEmit` nets abans de cada commit.
+- **Impeccable**: `/impeccable polish` en acabar cada pantalla (passos 4, 5, 7, 8 i 10); detector sense findings.
+- **Pas a pas**: acabar cada peça, fer commit + push, i **ensenyar-la a l'Olga abans de passar a la següent**.
+- Tot en català; textos curts, directes i propers.
+- No implementar res de les "idees futures".
+
+## Progrés
+
+| Pas | Peça | Estat |
+| --- | --- | --- |
+| 1 | Model de dades local (idb) | ✅ fet |
+| 2 | Recetari base (20 plats + "Fora de casa") | ✅ fet |
+| 3 | Generador del pla setmanal dinàmic | ✅ fet |
+| 4 | Pantalla "plat del dia" + botó cap al swipe | ✅ fet (pendent `/impeccable polish` amb el plugin carregat) |
+| 5 | Swipe de plats (ordenat per equilibri pendent; capritxos al final) | ⏭️ següent |
+| 6 | Registre del dinar (no bloquejant, vinculant) + avís "ahir: vas sopar X?" | pendent |
+| 7 | Resum setmanal per categoria | pendent |
+| 8 | "+info" del plat | pendent |
+| 9 | Export/import JSON + Ajustos (marge capritx, els meus plats) | pendent |
+| 10 | Passada final d'identitat visual + `DESIGN.md` (Impeccable document) | pendent |
+
+## Decisions preses durant la construcció
+
+- Ordre de categories del pla: es queda fix (varia sol quan l'usuari tria un altre plat).
+- Ingredients passats al català: pepino→cogombre, pavo→gall dindi, orègan→orenga.
+- La identitat (colors + icones) ja s'aplica des del pas 4; el pas 10 és la passada global.
+- Plats base ordenats segons el recetari (l'store els reordena; IndexedDB els retorna per id).
+
+## Pendents d'Impeccable (per a la sessió amb el plugin carregat)
+
+- Tirada de direcció degradada (impeccable.style bloquejat per la xarxa de l'entorn). La direcció Taulell ja està aprovada: no cal tornar-la a triar.
+- Revisió final amb `impeccable-finish-reviewer` i `DESIGN.md` amb `impeccable-documenter`: fer-ho al pas 10.
